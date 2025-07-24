@@ -7,10 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Contexto\" />
-    <Folder Include="Mapeamentos\" />
-    <Folder Include="Cache\" />
-    <Folder Include="Repositorios\" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.58" />
+	<PackageReference Include="EntityFrameworkCore.H2" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CadastroDePessoas.Application\CadastroDePessoas.Application.csproj" />
   </ItemGroup>
 
 </Project>

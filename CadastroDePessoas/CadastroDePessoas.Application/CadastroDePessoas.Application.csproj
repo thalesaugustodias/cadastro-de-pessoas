@@ -7,18 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Comandos\Pessoa\CriarPessoa\" />
-    <Folder Include="Comandos\Pessoa\AtualizarPessoa\" />
-    <Folder Include="Comandos\Pessoa\RemoverPessoa\" />
-    <Folder Include="Comandos\Usuario\CriarUsuario\" />
-    <Folder Include="Comandos\Usuario\AutenticarUsuario\" />
-    <Folder Include="DTOs\Usuario\" />
-    <Folder Include="DTOs\Pessoa\" />
-    <Folder Include="Interfaces\" />
-    <Folder Include="Services\" />
-    <Folder Include="Queries\Pessoa\ListarPessoa\" />
-    <Folder Include="Queries\Pessoa\ObterPessoa\" />
-    <Folder Include="Queries\Usuario\ObterUsuario\" />
+    <Folder Include="CQRS\Comandos\Usuario\CriarUsuario\" />
+    <Folder Include="CQRS\Queries\Usuario\ObterUsuario\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="FluentValidation" Version="12.0.0" />
+    <PackageReference Include="MediatR" Version="13.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.7" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.13.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CadastroDePessoas.Domain\CadastroDePessoas.Domain.csproj" />
   </ItemGroup>
 
 </Project>
