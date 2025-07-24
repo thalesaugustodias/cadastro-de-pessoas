@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Comandos\Pessoa\CriarPessoa\" />
+    <Folder Include="Comandos\Pessoa\AtualizarPessoa\" />
+    <Folder Include="Comandos\Pessoa\RemoverPessoa\" />
+    <Folder Include="Comandos\Usuario\CriarUsuario\" />
+    <Folder Include="Comandos\Usuario\AutenticarUsuario\" />
+    <Folder Include="DTOs\Usuario\" />
+    <Folder Include="DTOs\Pessoa\" />
+    <Folder Include="Interfaces\" />
+    <Folder Include="Services\" />
+    <Folder Include="Queries\Pessoa\ListarPessoa\" />
+    <Folder Include="Queries\Pessoa\ObterPessoa\" />
+    <Folder Include="Queries\Usuario\ObterUsuario\" />
+  </ItemGroup>
+
+</Project>
