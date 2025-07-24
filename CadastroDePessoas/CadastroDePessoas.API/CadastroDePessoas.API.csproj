@@ -15,4 +15,8 @@
     <Folder Include="V2\Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CadastroDePessoas.Application\CadastroDePessoas.Application.csproj" />
+  </ItemGroup>
+
 </Project>

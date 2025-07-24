@@ -12,25 +12,12 @@ namespace CadastroDePessoas.Infraestructure.Contexto
         {
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                // Configuração para H2
-                optionsBuilder.UseH2("jdbc:h2:mem:cadastro_pessoas;DB_CLOSE_DELAY=-1", option => {
-                    option.MigrationsAssembly(typeof(AppDbContexto).Assembly.FullName);
-                });
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Aplica todas as configurações de mapeamento
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContexto).Assembly);
 
-            // Seed inicial de usuário admin
             var adminId = Guid.NewGuid();
             modelBuilder.Entity<Usuario>().HasData(
                 new

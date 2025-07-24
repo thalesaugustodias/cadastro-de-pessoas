@@ -24,4 +24,8 @@
     <Folder Include="Validacoes\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CadastroDePessoas.Domain\CadastroDePessoas.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -4,6 +4,7 @@ using CadastroDePessoas.Domain.Interfaces;
 using CadastroDePessoas.Infraestructure.Cache;
 using CadastroDePessoas.Infraestructure.Contexto;
 using CadastroDePessoas.Infraestructure.Repositorios;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
@@ -16,9 +17,7 @@ namespace CadastroDePessoas.IoC
         {
             // Contexto
             services.AddDbContext<AppDbContexto>(options =>
-                options.UseH2("jdbc:h2:mem:cadastro_pessoas;DB_CLOSE_DELAY=-1", option => {
-                    option.MigrationsAssembly(typeof(AppDbContexto).Assembly.FullName);
-                }));
+                 options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
 
             // Repositórios
             services.AddScoped<IRepositorioPessoa, RepositorioPessoa>();
