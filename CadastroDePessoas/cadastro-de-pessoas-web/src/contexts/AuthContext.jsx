@@ -12,16 +12,26 @@ export const AuthProvider = ({ children }) => {
         const validateToken = async () => {
             if (token) {
                 try {
-                    // Poderia verificar o token no backend se necessário
-                    setUser({ nome: 'Usuário Autenticado' }); // Exemplo simples
-                    setLoading(false);
+                    // ?? Verificar token no backend
+                    const verifyResponse = await authService.verifyToken();
+                    
+                    if (verifyResponse.valid) {
+                        // Decodificar token para obter informações do usuário
+                        const decodedToken = authService.decodeToken(token);
+                        setUser({
+                            id: decodedToken?.sub,
+                            email: decodedToken?.email || verifyResponse.user?.email,
+                            name: decodedToken?.name || verifyResponse.user?.name || 'Usuário',
+                        });
+                    } else {
+                        logout();
+                    }
                 } catch (error) {
+                    console.error('Token inválido:', error);
                     logout();
-                    setLoading(false);
                 }
-            } else {
-                setLoading(false);
             }
+            setLoading(false);
         };
 
         validateToken();
@@ -29,36 +39,89 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, senha) => {
         try {
+            setLoading(true);
+            
+            // ?? Usar o serviço corrigido
             const response = await authService.login(email, senha);
-            const { token } = response;
+            const { token: newToken } = response;
 
-            localStorage.setItem('token', token);
-            setToken(token);
-            setUser({ nome: 'Usuário Autenticado' }); // Em uma aplicação real, você decodificaria o token ou buscaria os dados do usuário
+            // Armazenar token
+            localStorage.setItem('token', newToken);
+            setToken(newToken);
 
-            return { success: true };
+            // Decodificar token para obter dados do usuário
+            const decodedToken = authService.decodeToken(newToken);
+            setUser({
+                id: decodedToken?.sub,
+                email: decodedToken?.email || email,
+                name: decodedToken?.name || 'Usuário',
+            });
+
+            return { success: true, message: response.message };
         } catch (error) {
+            console.error('Erro no login:', error);
+            
+            let errorMessage = 'Erro ao realizar login';
+            
+            if (error.response?.data?.errors) {
+                // Erros de validação do FluentValidation
+                const errors = Object.values(error.response.data.errors).flat();
+                errorMessage = errors.join(', ');
+            } else if (error.response?.data?.detail) {
+                // Erro específico da API
+                errorMessage = error.response.data.detail;
+            } else if (error.response?.data?.message) {
+                // Mensagem de erro personalizada
+                errorMessage = error.response.data.message;
+            } else if (error.message) {
+                // Erro do axios ou rede
+                errorMessage = error.message;
+            }
+
             return {
                 success: false,
-                message: error.response?.data?.detail || 'Erro ao realizar login'
+                message: errorMessage
             };
+        } finally {
+            setLoading(false);
         }
     };
 
-    const logout = () => {
-        localStorage.removeItem('token');
-        setToken(null);
-        setUser(null);
+    const logout = async () => {
+        try {
+            // Notificar o backend sobre logout
+            await authService.logout();
+        } catch (error) {
+            // Ignora erros de logout
+        } finally {
+            // Limpar estado local
+            localStorage.removeItem('token');
+            setToken(null);
+            setUser(null);
+        }
+    };
+
+    const isTokenExpired = () => {
+        if (!token) return true;
+        
+        try {
+            const decodedToken = authService.decodeToken(token);
+            const currentTime = Date.now() / 1000;
+            return decodedToken.exp < currentTime;
+        } catch (error) {
+            return true;
+        }
     };
 
     return (
         <AuthContext.Provider value={{
             user,
             token,
-            authenticated: !!token,
+            authenticated: !!token && !isTokenExpired(),
             loading,
             login,
-            logout
+            logout,
+            isTokenExpired
         }}>
             {children}
         </AuthContext.Provider>

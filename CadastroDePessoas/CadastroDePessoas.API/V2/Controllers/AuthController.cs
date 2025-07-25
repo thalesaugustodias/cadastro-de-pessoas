@@ -8,28 +8,10 @@ namespace CadastroDePessoas.API.V2.Controllers
 {
     [ApiController]
     [Route("api/v2/[controller]")]
-    [Tags("?? Autenticação V2")]
     public class AuthController(IMediator mediator) : ControllerBase
     {
-        /// <summary>
-        /// Realiza login do usuário - V2
-        /// </summary>
-        /// <param name="loginDto">Dados de login (email e senha)</param>
-        /// <returns>Token JWT para autenticação com informações extras</returns>
-        /// <remarks>
-        /// **?? Endpoint PÚBLICO** - Não requer autenticação
-        /// 
-        /// **Melhorias na V2:**
-        /// - ? Timestamp na resposta
-        /// - ? Informações do usuário
-        /// - ? Versão identificada
-        /// 
-        /// **Usuário padrão para teste:**
-        /// - Email: admin@exemplo.com
-        /// - Senha: Admin@123
-        /// </remarks>
         [HttpPost("login")]
-        [AllowAnonymous] // ?? Público - Login não pode exigir autenticação
+        [AllowAnonymous]
         public async Task<ActionResult<object>> Login([FromBody] UsuarioLoginDTO loginDto)
         {
             var comando = new AutenticarUsuarioComando
@@ -54,14 +36,8 @@ namespace CadastroDePessoas.API.V2.Controllers
             });
         }
 
-        /// <summary>
-        /// Endpoint para logout - V2
-        /// </summary>
-        /// <remarks>
-        /// **?? Endpoint PÚBLICO** - Logout pode ser feito sem token válido
-        /// </remarks>
         [HttpPost("logout")]
-        [AllowAnonymous] // ?? Público - Logout não precisa de token válido
+        [AllowAnonymous]
         public ActionResult Logout()
         {
             return Ok(new 
@@ -72,14 +48,8 @@ namespace CadastroDePessoas.API.V2.Controllers
             });
         }
 
-        /// <summary>
-        /// Verifica se o token está válido - V2 com mais informações
-        /// </summary>
-        /// <remarks>
-        /// **?? Endpoint PROTEGIDO** - Requer autenticação JWT
-        /// </remarks>
         [HttpGet("verify")]
-        [Authorize] // ?? Protegido - Explicitamente marcado
+        [Authorize]
         public ActionResult VerifyToken()
         {
             return Ok(new 
