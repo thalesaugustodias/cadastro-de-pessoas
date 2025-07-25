@@ -9,6 +9,20 @@ namespace CadastroDePessoas.Application.Services
 {
     public class ServiceToken(IConfiguration configuration) : IServiceToken
     {
+        private string ObterChaveJwt()
+        {
+            // Prioriza variável de ambiente, depois appsettings
+            var chave = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") 
+                     ?? configuration["Jwt:Chave"];
+
+            if (string.IsNullOrEmpty(chave))
+            {
+                throw new InvalidOperationException("Chave JWT não configurada. Configure a variável de ambiente JWT_SECRET_KEY ou a configuração Jwt:Chave.");
+            }
+
+            return chave;
+        }
+
         public string GerarToken(Guid usuarioId, string email, string nome, IEnumerable<string> roles = null)
         {
             var claims = new List<Claim>
@@ -27,9 +41,10 @@ namespace CadastroDePessoas.Application.Services
                 }
             }
 
-            var chave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Chave"]));
+            var chaveSecreta = ObterChaveJwt();
+            var chave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(chaveSecreta));
             var credenciais = new SigningCredentials(chave, SecurityAlgorithms.HmacSha256);
-            var expiracao = DateTime.UtcNow.AddHours(double.Parse(configuration["Jwt:ExpiracionHoras"]));
+            var expiracao = DateTime.UtcNow.AddHours(double.Parse(configuration["Jwt:ExpiracionHoras"] ?? "1"));
 
             var token = new JwtSecurityToken(
                 issuer: configuration["Jwt:Emissor"],
@@ -45,7 +60,8 @@ namespace CadastroDePessoas.Application.Services
         public ClaimsPrincipal ValidarToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var chave = Encoding.ASCII.GetBytes(configuration["Jwt:Chave"]);
+            var chaveSecreta = ObterChaveJwt();
+            var chave = Encoding.UTF8.GetBytes(chaveSecreta);
 
             var validationParameters = new TokenValidationParameters
             {

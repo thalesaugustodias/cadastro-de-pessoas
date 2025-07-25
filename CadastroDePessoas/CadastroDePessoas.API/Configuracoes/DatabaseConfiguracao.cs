@@ -1,4 +1,5 @@
 ﻿using CadastroDePessoas.Infraestructure.Contexto;
+using Microsoft.EntityFrameworkCore;
 
 namespace CadastroDePessoas.API.Configuracoes
 {

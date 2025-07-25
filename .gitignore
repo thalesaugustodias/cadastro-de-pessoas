@@ -416,3 +416,4 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+/CadastroDePessoas/CadastroDePessoas.API/appsettings.Development.json

@@ -1,10 +1,15 @@
 import axios from 'axios';
 
-const isDevelopment = process.env.NODE_ENV === 'development';
-const baseURL = isDevelopment ? 'https://localhost:5001/api' : '/api';
+const getBaseURL = () => {
+    if (process.env.NODE_ENV === 'development') {
+        return process.env.REACT_APP_API_URL || 'https://localhost:5001/api';
+    }
+    
+    return '/api';
+};
 
 const api = axios.create({
-    baseURL,
+    baseURL: getBaseURL(),
     headers: {
         'Content-Type': 'application/json',
     },

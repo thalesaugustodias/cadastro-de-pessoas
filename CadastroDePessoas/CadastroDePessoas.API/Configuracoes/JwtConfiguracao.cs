@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace CadastroDePessoas.API.Configuracoes
 {
@@ -6,8 +8,16 @@ namespace CadastroDePessoas.API.Configuracoes
     {
         public static IServiceCollection AdicionarJwtAutenticacao(this IServiceCollection services, IConfiguration configuration)
         {
-            var chaveSecreta = configuration["Jwt:Chave"];
-            var chaveBytes = Encoding.ASCII.GetBytes(chaveSecreta);
+            // Prioriza variável de ambiente, depois appsettings
+            var chaveSecreta = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") 
+                            ?? configuration["Jwt:Chave"];
+
+            if (string.IsNullOrEmpty(chaveSecreta))
+            {
+                throw new InvalidOperationException("Chave JWT não configurada. Configure a variável de ambiente JWT_SECRET_KEY ou a configuração Jwt:Chave.");
+            }
+
+            var chaveBytes = Encoding.UTF8.GetBytes(chaveSecreta);
 
             services.AddAuthentication(x =>
             {

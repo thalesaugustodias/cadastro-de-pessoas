@@ -14,7 +14,7 @@ namespace CadastroDePessoas.API.V2.Controllers
     [ApiController]
     [Route("api/v2/[controller]")]
     [Authorize]
-    public class PessoasController(IMediator mediator,IValidator<CriarPessoaComando> validadorCriar,IValidator<AtualizarPessoaComando> validadorAtualizar) : ControllerBase
+    public class PessoasController(IMediator mediator) : ControllerBase
     {
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PessoaDTO>>> ObterTodos()
@@ -32,21 +32,12 @@ namespace CadastroDePessoas.API.V2.Controllers
 
         [HttpPost]
         public async Task<ActionResult<PessoaDTO>> Criar(CriarPessoaComando comando)
-        {
+        {            
             if (string.IsNullOrEmpty(comando.Endereco))
             {
-                ModelState.AddModelError("Endereco", "O endereço é obrigatório na versão 2 da API");
-                return BadRequest(ModelState);
-            }
-
-            var validacao = await validadorCriar.ValidateAsync(comando);
-            if (!validacao.IsValid)
-            {
-                foreach (var erro in validacao.Errors)
-                {
-                    ModelState.AddModelError(erro.PropertyName, erro.ErrorMessage);
-                }
-                return BadRequest(ModelState);
+                throw new ValidationException(new[] { 
+                    new FluentValidation.Results.ValidationFailure("Endereco", "O endereço é obrigatório na versão 2 da API") 
+                });
             }
 
             var resultado = await mediator.Send(comando);
@@ -58,18 +49,9 @@ namespace CadastroDePessoas.API.V2.Controllers
         {
             if (string.IsNullOrEmpty(comando.Endereco))
             {
-                ModelState.AddModelError("Endereco", "O endereço é obrigatório na versão 2 da API");
-                return BadRequest(ModelState);
-            }
-
-            var validacao = await validadorAtualizar.ValidateAsync(comando);
-            if (!validacao.IsValid)
-            {
-                foreach (var erro in validacao.Errors)
-                {
-                    ModelState.AddModelError(erro.PropertyName, erro.ErrorMessage);
-                }
-                return BadRequest(ModelState);
+                throw new ValidationException(new[] { 
+                    new FluentValidation.Results.ValidationFailure("Endereco", "O endereço é obrigatório na versão 2 da API") 
+                });
             }
 
             var resultado = await mediator.Send(comando);
