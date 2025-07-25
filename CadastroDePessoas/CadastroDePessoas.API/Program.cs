@@ -1,5 +1,6 @@
 using CadastroDePessoas.API.Configuracoes;
 using CadastroDePessoas.API.Filtros;
+using CadastroDePessoas.API.Middlewares;
 using CadastroDePessoas.IoC;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,6 +32,8 @@ else
     app.UseHsts();
 }
 
+app.UseMiddleware<SecurityMiddleware>();
+
 app.InicializarDatabase();
 app.UsarSwagger();
 
@@ -45,5 +48,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapFallbackToFile("index.html");
+
 
 app.Run();

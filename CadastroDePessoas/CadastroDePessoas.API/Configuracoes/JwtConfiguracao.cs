@@ -8,7 +8,6 @@ namespace CadastroDePessoas.API.Configuracoes
     {
         public static IServiceCollection AdicionarJwtAutenticacao(this IServiceCollection services, IConfiguration configuration)
         {
-            // Prioriza variável de ambiente, depois appsettings
             var chaveSecreta = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") 
                             ?? configuration["Jwt:Chave"];
 
@@ -39,6 +38,23 @@ namespace CadastroDePessoas.API.Configuracoes
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero
                 };
+            });
+
+            services.AddAuthorization(options =>
+            {
+                // Política padrão: exige autenticação para todos os endpoints
+                options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+
+                // Política para administradores (futura expansão)
+                options.AddPolicy("AdminOnly", policy =>
+                    policy.RequireAuthenticatedUser()
+                          .RequireClaim("role", "admin"));
+
+                // Política para usuários autenticados
+                options.AddPolicy("AuthenticatedUser", policy =>
+                    policy.RequireAuthenticatedUser());
             });
 
             return services;

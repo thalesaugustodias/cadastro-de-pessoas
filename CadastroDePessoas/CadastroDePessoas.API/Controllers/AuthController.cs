@@ -1,6 +1,7 @@
 using CadastroDePessoas.Application.CQRS.Comandos.Usuario.AutenticarUsuario;
 using CadastroDePessoas.Application.DTOs.Usuario;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CadastroDePessoas.API.Controllers
@@ -10,6 +11,7 @@ namespace CadastroDePessoas.API.Controllers
     public class AuthController(IMediator mediator) : ControllerBase
     {
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<ActionResult<object>> Login([FromBody] UsuarioLoginDTO loginDto)
         {
             var comando = new AutenticarUsuarioComando
@@ -29,13 +31,14 @@ namespace CadastroDePessoas.API.Controllers
         }
 
         [HttpPost("logout")]
+        [AllowAnonymous]
         public ActionResult Logout()
         {
             return Ok(new { message = "Logout realizado com sucesso" });
         }
 
         [HttpGet("verify")]
-        [Microsoft.AspNetCore.Authorization.Authorize]
+        [Authorize]
         public ActionResult VerifyToken()
         {
             return Ok(new 
