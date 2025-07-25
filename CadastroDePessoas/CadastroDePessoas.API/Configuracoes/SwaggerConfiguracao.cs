@@ -9,34 +9,69 @@ namespace CadastroDePessoas.API.Configuracoes
         {
             services.AddSwaggerGen(c =>
             {
+                c.DocInclusionPredicate((docName, description) =>
+                {
+                    if (docName == "v1")
+                    {
+                        return description.RelativePath.Contains("/v1/") || 
+                               (!description.RelativePath.Contains("/v2/") && !description.RelativePath.Contains("/v1/"));
+                    }
+                    else if (docName == "v2")
+                    {
+                        return description.RelativePath.Contains("/v2/");
+                    }
+                    return false;
+                });
+
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Cadastro de Pessoas API",
-                    Version = "v1",
-                    Description = "API para cadastro de pessoas com operações CRUD",
+                    Version = "v1.0",
+                    Description = @"**Versão 1 da API** para cadastro de pessoas com operações CRUD e autenticação JWT.
+                    
+                    **Funcionalidades:**
+                    - ✅ Cadastro de pessoas (endereço opcional)
+                    - ✅ Autenticação JWT
+                    - ✅ CRUD completo
+                    
+                    **Usuário padrão:** admin@exemplo.com / Admin@123",
                     Contact = new OpenApiContact
                     {
-                        Name = "Seu Nome",
-                        Email = "seuemail@exemplo.com"
+                        Name = "Stefanini Challenge - V1",
+                        Email = "admin@exemplo.com"
                     }
                 });
 
                 c.SwaggerDoc("v2", new OpenApiInfo
                 {
                     Title = "Cadastro de Pessoas API",
-                    Version = "v2",
-                    Description = "API para cadastro de pessoas com operações CRUD - Versão 2 com endereço obrigatório",
+                    Version = "v2.0",
+                    Description = @"**Versão 2 da API** para cadastro de pessoas com melhorias e endereço obrigatório.
+                    
+                    **Melhorias na V2:**
+                    - ✅ Endereço **obrigatório** em pessoas
+                    - ✅ Autenticação JWT com informações extras
+                    - ✅ Timestamps nas respostas
+                    - ✅ Validações aprimoradas
+                    
+                    **Usuário padrão:** admin@exemplo.com / Admin@123",
                     Contact = new OpenApiContact
                     {
-                        Name = "Seu Nome",
-                        Email = "seuemail@exemplo.com"
+                        Name = "Stefanini Challenge - V2",
+                        Email = "admin@exemplo.com"
                     }
                 });
 
-                // Configuração para JWT
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = "JWT Authorization header usando o esquema Bearer. Exemplo: \"Authorization: Bearer {token}\"",
+                    Description = @"JWT Authorization header usando o esquema Bearer. 
+                                   
+                    **Passos:**
+                    1. Faça login em `/auth/login`
+                    2. Copie o token retornado
+                    3. Cole aqui no formato: `Bearer {seu-token}`
+                    
+                    **Exemplo:** `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,
@@ -58,7 +93,6 @@ namespace CadastroDePessoas.API.Configuracoes
                     }
                 });
 
-                // Adicionar comentários XML
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 if (File.Exists(xmlPath))
@@ -75,8 +109,9 @@ namespace CadastroDePessoas.API.Configuracoes
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cadastro de Pessoas API v1");
-                c.SwaggerEndpoint("/swagger/v2/swagger.json", "Cadastro de Pessoas API v2");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1.0");
+                c.SwaggerEndpoint("/swagger/v2/swagger.json", "API v2.0");
+                
                 c.RoutePrefix = string.Empty;
             });
 
