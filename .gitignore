@@ -526,3 +526,4 @@ dist/
 .Trashes
 ehthumbs.db
 Thumbs.db
+/CadastroDePessoas/CadastroDePessoas.Infraestructure/Migrations
