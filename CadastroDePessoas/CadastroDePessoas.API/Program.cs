@@ -1,25 +1,55 @@
+using CadastroDePessoas.API.Configuracoes;
+using CadastroDePessoas.API.Filtros;
+using CadastroDePessoas.IoC;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ApiExcecaoFiltro>();
+})
+.AddFluentValidation();
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AdicionarSwagger();
+
+builder.Services.AdicionarCorsConfiguracao(builder.Configuration);
+
+builder.Services.AdicionarJwtAutenticacao(builder.Configuration);
+
+builder.Services.AdicionarDatabase(builder.Configuration);
+
+builder.Services.AdicionarInfraestrutura(builder.Configuration);
+
+builder.Services.AdicionarMediatR();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/error");
+    app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+app.InicializarDatabase();
 
+app.UsarSwagger();
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+app.UsarCorsConfiguracao();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapFallbackToFile("index.html");
 
 app.Run();

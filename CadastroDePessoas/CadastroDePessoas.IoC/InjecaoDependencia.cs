@@ -15,18 +15,14 @@ namespace CadastroDePessoas.IoC
     {
         public static IServiceCollection AdicionarInfraestrutura(this IServiceCollection services, IConfiguration configuration)
         {
-            // Contexto
             services.AddDbContext<AppDbContexto>(options =>
                  options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
 
-            // Repositórios
             services.AddScoped<IRepositorioPessoa, RepositorioPessoa>();
             services.AddScoped<IRepositorioUsuario, RepositorioUsuario>();
 
-            // Serviços
             services.AddScoped<IServiceToken, ServiceToken>();
 
-            // Cache
             if (bool.Parse(configuration["UseRedisCache"] ?? "false"))
             {
                 services.AddSingleton<IConnectionMultiplexer>(sp =>
@@ -35,7 +31,6 @@ namespace CadastroDePessoas.IoC
             }
             else
             {
-                // Usar cache em memória se Redis não estiver disponível
                 services.AddDistributedMemoryCache();
                 services.AddSingleton<IServiceCache, ServicoCache>();
             }
