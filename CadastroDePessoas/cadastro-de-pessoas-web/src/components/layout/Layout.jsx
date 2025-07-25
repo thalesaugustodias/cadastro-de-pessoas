@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Flex, useDisclosure } from '@chakra-ui/react';
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
-import Sidebar from './Sidebar';
+import SideBar from './SideBar';  // Corrigido: SideBar com 'B' maiúsculo
 import Footer from './Footer';
 
 const Layout = () => {
@@ -13,7 +13,7 @@ const Layout = () => {
             <Header onSidebarToggle={onToggle} />
 
             <Flex flex="1" mt="60px">
-                <Sidebar isOpen={isOpen} />
+                <SideBar isOpen={isOpen} />
 
                 <Box
                     flex="1"

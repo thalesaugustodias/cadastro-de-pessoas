@@ -56,3 +56,5 @@ const ActionButtons = ({
         </Flex>
     );
 };
+
+export default ActionButtons;

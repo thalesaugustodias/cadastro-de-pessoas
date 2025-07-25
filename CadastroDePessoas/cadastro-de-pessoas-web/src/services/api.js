@@ -1,8 +1,11 @@
 import axios from 'axios';
 
 const getBaseURL = () => {
-    if (process.env.NODE_ENV === 'development') {
-        return process.env.REACT_APP_API_URL || 'https://localhost:5001/api';
+    // No Vite, variáveis de ambiente são acessadas via import.meta.env
+    const isDevelopment = import.meta.env.DEV;
+    
+    if (isDevelopment) {
+        return import.meta.env.VITE_API_URL || 'https://localhost:5001/api';
     }
     
     return '/api';

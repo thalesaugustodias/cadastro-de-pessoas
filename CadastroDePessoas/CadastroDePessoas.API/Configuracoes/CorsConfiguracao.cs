@@ -5,7 +5,7 @@
         public static IServiceCollection AdicionarCorsConfiguracao(this IServiceCollection services, IConfiguration configuration)
         {
             var corsOrigins = configuration.GetSection("Cors:Origins").Get<string[]>() 
-                ?? new[] { "http://localhost:3000", "https://localhost:3000" };
+                ?? new[] { "http://localhost:3000", "https://localhost:3000", "http://localhost:3001", "https://localhost:3001" };
 
             services.AddCors(options =>
             {

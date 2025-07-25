@@ -15,7 +15,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { mascaraCPF } from '../../utils/masks';
+import { maskCPF } from '../../utils/masks';  // Corrigido: maskCPF
 import { validarCPF } from '../../utils/validators';
 
 const schema = yup.object().shape({
@@ -65,7 +65,7 @@ const PessoaForm = ({ initialData = {}, onSubmit, isLoading, isEdit = false }) =
     // Aplicar máscara de CPF
     React.useEffect(() => {
         if (cpf) {
-            setValue('cpf', mascaraCPF(cpf));
+            setValue('cpf', maskCPF(cpf));  // Corrigido: maskCPF
         }
     }, [cpf, setValue]);
 

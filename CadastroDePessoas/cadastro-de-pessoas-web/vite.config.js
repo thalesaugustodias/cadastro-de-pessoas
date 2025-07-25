@@ -1,10 +1,39 @@
 import { defineConfig } from 'vite';
-import plugin from '@vitejs/plugin-react';
+import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [plugin()],
+    plugins: [react()],
+    esbuild: {
+        loader: 'jsx',
+        include: /src\/.*\.[jt]sx?$/,
+        exclude: []
+    },
+    optimizeDeps: {
+        esbuildOptions: {
+            loader: {
+                '.js': 'jsx',
+                '.ts': 'tsx',
+            },
+        },
+    },
+    define: {
+        // Definir variáveis globais se necessário
+        global: 'globalThis',
+    },
     server: {
-        port: 50681,
+        port: 3001,
+        host: true,
+        proxy: {
+            '/api': {
+                target: 'https://localhost:5001',
+                changeOrigin: true,
+                secure: false
+            }
+        }
+    },
+    build: {
+        outDir: 'build',
+        sourcemap: false
     }
 })

@@ -1,18 +1,21 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { ChakraProvider } from '@chakra-ui/react';
 import { AuthProvider } from './contexts/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
-import AppRoutes from './routes';
+import AppRoutes from './routes.jsx';
 
 const App = () => {
     return (
-        <Router>
-            <AuthProvider>
-                <NotificationProvider>
-                    <AppRoutes />
-                </NotificationProvider>
-            </AuthProvider>
-        </Router>
+        <ChakraProvider>
+            <Router>
+                <AuthProvider>
+                    <NotificationProvider>
+                        <AppRoutes />
+                    </NotificationProvider>
+                </AuthProvider>
+            </Router>
+        </ChakraProvider>
     );
 };
 

@@ -11,15 +11,14 @@ import {
     Text,
     Container,
     Center,
-    Image,
     useColorModeValue,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import { useNotification } from '../hooks/useNotification';
+import { useAuth } from '../../hooks/useAuth';
+import { useNotification } from '../../hooks/useNotification';
 
 const schema = yup.object().shape({
     email: yup.string().email('Digite um e-mail válido').required('O e-mail é obrigatório'),
