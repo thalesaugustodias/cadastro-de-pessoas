@@ -1,5 +1,6 @@
 ﻿using CadastroDePessoas.Domain.Entidades;
 using Microsoft.EntityFrameworkCore;
+using BC = BCrypt.Net.BCrypt;
 
 namespace CadastroDePessoas.Infraestructure.Contexto
 {
@@ -18,16 +19,26 @@ namespace CadastroDePessoas.Infraestructure.Contexto
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContexto).Assembly);
 
-            var adminId = Guid.NewGuid();
+            // 🔐 Gerar hash correto para senha "Admin@123"
+            var senhaHasheada = BC.HashPassword("Admin@123", 12);
+            var adminId = Guid.Parse("11111111-1111-1111-1111-111111111111"); // ID fixo para não gerar novo a cada migration
+
             modelBuilder.Entity<Usuario>().HasData(
                 new
                 {
                     Id = adminId,
                     Nome = "Administrador",
                     Email = "admin@exemplo.com",
-                    // Senha: Admin@123
-                    Senha = "$2a$11$zd2CNBJ/6iQn6eN1QkLUAOLkL9JA7LrRrTVLQxXKp1lzHOa1OD3Q2",
-                    DataCadastro = DateTime.UtcNow
+                    Senha = senhaHasheada, // Hash gerado em tempo de compilação
+                    DataCadastro = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc) // Data fixa
+                },
+                new
+                {
+                    Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                    Nome = "Usuário Teste",
+                    Email = "user@teste.com",
+                    Senha = BC.HashPassword("User@123", 12),
+                    DataCadastro = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 }
             );
         }

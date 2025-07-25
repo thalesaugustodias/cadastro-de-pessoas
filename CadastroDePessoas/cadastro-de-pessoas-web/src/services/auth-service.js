@@ -13,6 +13,12 @@ export const authService = {
         return response.data;
     },
 
+    register: async (nome, email, senha) => {
+        // ?? Registro de novo usuário
+        const response = await api.post('/v1/auth/register', { nome, email, senha });
+        return response.data;
+    },
+
     logout: async () => {
         try {
             await api.post('/v1/auth/logout');
@@ -28,6 +34,12 @@ export const authService = {
         return response.data;
     },
 
+    resetAdmin: async () => {
+        // ?? Reset de emergência (apenas desenvolvimento)
+        const response = await api.post('/v1/auth/reset-admin');
+        return response.data;
+    },
+
     // Utilitário para decodificar JWT (básico)
     decodeToken: (token) => {
         try {
@@ -38,5 +50,23 @@ export const authService = {
             console.error('Erro ao decodificar token:', error);
             return null;
         }
+    }
+};
+
+export const healthService = {
+    checkHealth: async () => {
+        const response = await api.get('/v1/health');
+        return response.data;
+    },
+
+    checkDatabase: async () => {
+        const response = await api.get('/v1/health/database');
+        return response.data;
+    },
+
+    resetDatabase: async () => {
+        // ?? Reset do banco (apenas desenvolvimento)
+        const response = await api.post('/v1/health/reset-database');
+        return response.data;
     }
 };

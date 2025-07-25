@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="CQRS\Comandos\Usuario\CriarUsuario\" />
     <Folder Include="CQRS\Queries\Usuario\ObterUsuario\" />
   </ItemGroup>
 

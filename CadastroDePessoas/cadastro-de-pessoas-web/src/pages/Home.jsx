@@ -24,31 +24,33 @@ import Loading from '../components/ui/Loading';
 const StatCard = ({ title, value, icon, color, helpText }) => (
     <Card>
         <CardBody>
-            <Flex justifyContent="space-between" alignItems="center">
-                <Box>
-                    <StatLabel fontSize="sm" fontWeight="medium" color="gray.500">
-                        {title}
-                    </StatLabel>
-                    <StatNumber fontSize="3xl" fontWeight="bold">
-                        {value}
-                    </StatNumber>
-                    {helpText && (
-                        <StatHelpText fontSize="sm" color="gray.500">
-                            {helpText}
-                        </StatHelpText>
-                    )}
-                </Box>
-                <Flex
-                    w="12"
-                    h="12"
-                    align="center"
-                    justify="center"
-                    rounded="full"
-                    bg={color + '.100'}
-                >
-                    <Icon as={icon} boxSize="6" color={color + '.500'} />
+            <Stat>
+                <Flex justifyContent="space-between" alignItems="center">
+                    <Box>
+                        <StatLabel fontSize="sm" fontWeight="medium" color="gray.500">
+                            {title}
+                        </StatLabel>
+                        <StatNumber fontSize="3xl" fontWeight="bold">
+                            {value}
+                        </StatNumber>
+                        {helpText && (
+                            <StatHelpText fontSize="sm" color="gray.500">
+                                {helpText}
+                            </StatHelpText>
+                        )}
+                    </Box>
+                    <Flex
+                        w="12"
+                        h="12"
+                        align="center"
+                        justify="center"
+                        rounded="full"
+                        bg={color + '.100'}
+                    >
+                        <Icon as={icon} boxSize="6" color={color + '.500'} />
+                    </Flex>
                 </Flex>
-            </Flex>
+            </Stat>
         </CardBody>
     </Card>
 );
