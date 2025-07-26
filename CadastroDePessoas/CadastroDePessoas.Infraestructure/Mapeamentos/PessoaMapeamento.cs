@@ -38,7 +38,6 @@ namespace CadastroDePessoas.Infraestructure.Mapeamentos
 
             builder.Property(p => p.DataAtualizacao);
 
-            // Índice para CPF (deve ser único)
             builder.HasIndex(p => p.CPF)
                 .IsUnique();
         }

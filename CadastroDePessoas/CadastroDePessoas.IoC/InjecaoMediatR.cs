@@ -12,13 +12,10 @@ namespace CadastroDePessoas.IoC
         {
             var applicationAssembly = Assembly.Load("CadastroDePessoas.Application");
 
-            // Registrar MediatR
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(applicationAssembly));
             
-            // Registrar validadores FluentValidation
             services.AddValidatorsFromAssembly(applicationAssembly);
             
-            // Registrar pipeline behavior para validação automática
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             return services;

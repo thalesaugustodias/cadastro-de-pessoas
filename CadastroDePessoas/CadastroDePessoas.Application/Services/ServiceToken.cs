@@ -12,8 +12,7 @@ namespace CadastroDePessoas.Application.Services
         private string ObterChaveJwt()
         {
             // Prioriza variável de ambiente, depois appsettings
-            var chave = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") 
-                     ?? configuration["Jwt:Chave"];
+            var chave = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? configuration["Jwt:Chave"];
 
             if (string.IsNullOrEmpty(chave))
             {

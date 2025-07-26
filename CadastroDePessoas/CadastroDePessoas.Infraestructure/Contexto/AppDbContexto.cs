@@ -1,6 +1,5 @@
 ﻿using CadastroDePessoas.Domain.Entidades;
 using Microsoft.EntityFrameworkCore;
-using BC = BCrypt.Net.BCrypt;
 
 namespace CadastroDePessoas.Infraestructure.Contexto
 {

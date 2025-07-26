@@ -23,8 +23,7 @@ namespace CadastroDePessoas.Infraestructure.Cache
         public async Task<T> ObterAsync<T>(string chave)
         {
             var valor = await _database.StringGetAsync(chave);
-            if (valor.IsNullOrEmpty)
-                return default;
+            if (valor.IsNullOrEmpty) return default;
 
             return JsonSerializer.Deserialize<T>(valor, _jsonOptions);
         }

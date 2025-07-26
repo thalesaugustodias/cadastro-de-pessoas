@@ -9,7 +9,6 @@ namespace CadastroDePessoas.Infraestructure.Contexto
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContexto>();
             
-            // Connection string para design time
             var connectionString = "Data Source=cadastro_pessoas.db";
             optionsBuilder.UseSqlite(connectionString);
 
