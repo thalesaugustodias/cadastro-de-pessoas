@@ -20,10 +20,10 @@ const api = axios.create({
 
 // Endpoints que não precisam de token
 const publicEndpoints = [
-    '/auth/login',
-    '/auth/register',
-    '/auth/logout',
-    '/auth/reset-admin',
+    '/api/v1/Auth/login',
+    '/api/v1/Auth/register',
+    '/api/v1/Auth/logout',
+    '/api/v1/Auth/reset-admin',
     '/health',
     '/health/database',
     '/health/reset-database'
@@ -82,7 +82,7 @@ api.interceptors.response.use(
             switch (status) {
                 case 401:
                     if (!error.config?.url?.includes('/auth/login')) {
-                        console.warn('?? Token inválido - redirecionando para login');
+                        console.warn('Token inválido - redirecionando para login');
                         localStorage.removeItem('token');
                         localStorage.removeItem('user');
                         
@@ -93,26 +93,26 @@ api.interceptors.response.use(
                     break;
                     
                 case 403:
-                    console.warn('?? Acesso negado');
+                    console.warn('Acesso negado');
                     break;
                     
                 case 404:
-                    console.warn('?? Recurso não encontrado');
+                    console.warn('Recurso não encontrado');
                     break;
                     
                 case 422:
-                    console.warn('?? Dados inválidos:', data);
+                    console.warn('Dados inválidos:', data);
                     break;
                     
                 case 500:
-                    console.error('?? Erro interno do servidor');
+                    console.error('Erro interno do servidor');
                     break;
                     
                 default:
-                    console.error(`? Erro HTTP ${status}:`, data);
+                    console.error(`Erro HTTP ${status}:`, data);
             }
         } else if (error.request) {
-            console.error('?? Erro de rede - Servidor indisponível');
+            console.error('Erro de rede - Servidor indisponível');
         }
 
         return Promise.reject(error);

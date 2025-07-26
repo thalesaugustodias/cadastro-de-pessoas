@@ -1,13 +1,10 @@
 import axios from 'axios';
 
-// Serviço para consulta de CEP via ViaCEP
 export const cepService = {
     buscarCep: async (cep) => {
         try {
-            // Remove caracteres não numéricos
             const cepLimpo = cep.replace(/\D/g, '');
             
-            // Verifica se o CEP tem 8 dígitos
             if (cepLimpo.length !== 8) {
                 throw new Error('CEP deve ter 8 dígitos');
             }

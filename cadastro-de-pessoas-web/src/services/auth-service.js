@@ -3,7 +3,7 @@ import api from './api';
 export const authService = {
     login: async (email, senha) => {
         try {
-            const response = await api.post('/auth/login', {
+            const response = await api.post('/api/v1/auth/login', {
                 email,
                 senha
             });
@@ -25,7 +25,6 @@ export const authService = {
                 message: response.data.message || 'Erro no login'
             };
         } catch (error) {
-            console.error('Erro no login:', error);
             
             if (error.response?.data?.message) {
                 return {
@@ -50,18 +49,28 @@ export const authService = {
 
     register: async (nome, email, senha) => {
         try {
-            const response = await api.post('/auth/register', {
+            const response = await api.post('/api/v1/Auth/register', {
                 nome,
                 email,
                 senha
             });
-
-            return response.data;
+            if (response.data.success && response.data.token) {
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+                return response.data;
+            }
+            return {
+                success: false,
+                message: response.data.message || 'Erro no registro'
+            };
         } catch (error) {
             if (error.response?.data?.message) {
                 throw new Error(error.response.data.message);
             }
-            throw error;
+            if (error.response?.status === 401) {
+                throw new Error('Erro ao registrar. Verifique as credenciais.');
+            }
+            throw new Error('Erro de conexão. Verifique se o servidor está rodando.');
         }
     },
 
@@ -73,7 +82,7 @@ export const authService = {
 
     verifyToken: async () => {
         try {
-            const response = await api.get('/auth/verify');
+            const response = await api.get('/api/v1/auth/verify');
             return response.data;
         } catch (error) {
             throw error;
@@ -82,7 +91,7 @@ export const authService = {
 
     getProfile: async () => {
         try {
-            const response = await api.get('/auth/profile');
+            const response = await api.get('/api/v1/auth/profile');
             return response.data;
         } catch (error) {
             throw error;
@@ -91,10 +100,9 @@ export const authService = {
 
     updateProfile: async (profileData) => {
         try {
-            const response = await api.put('/auth/profile', profileData);
+            const response = await api.put('/api/v1/auth/profile', profileData);
             
             if (response.data.success) {
-                // Atualizar dados do usuário no localStorage
                 localStorage.setItem('user', JSON.stringify(response.data.user));
             }
             
@@ -102,16 +110,7 @@ export const authService = {
         } catch (error) {
             throw error;
         }
-    },
-
-    resetAdmin: async () => {
-        try {
-            const response = await api.post('/auth/reset-admin');
-            return response.data;
-        } catch (error) {
-            throw error;
-        }
-    },
+    },   
 
     getCurrentUser: () => {
         try {
@@ -132,27 +131,21 @@ export const authService = {
         return !!token && !authService.isTokenExpired(token);
     },
 
-    // Função para decodificar JWT token
     decodeToken: (token) => {
         try {
             if (!token) return null;
             
-            // JWT tem 3 partes separadas por pontos: header.payload.signature
             const parts = token.split('.');
             if (parts.length !== 3) {
                 throw new Error('Token JWT inválido');
             }
 
-            // Decodificar o payload (segunda parte)
             const payload = parts[1];
             
-            // Adicionar padding se necessário para o base64url
             const paddedPayload = payload + '=='.substring(0, (4 - payload.length % 4) % 4);
             
-            // Decodificar de base64url para string
             const decodedPayload = atob(paddedPayload.replace(/-/g, '+').replace(/_/g, '/'));
             
-            // Converter string JSON para objeto
             return JSON.parse(decodedPayload);
         } catch (error) {
             console.error('Erro ao decodificar token:', error);
@@ -160,7 +153,6 @@ export const authService = {
         }
     },
 
-    // Função para verificar se o token está expirado
     isTokenExpired: (token) => {
         try {
             const decodedToken = authService.decodeToken(token);
@@ -179,7 +171,7 @@ export const authService = {
 export const healthService = {
     checkHealth: async () => {
         try {
-            const response = await api.get('/health');
+            const response = await api.get('/api/v1/health');
             return response.data;
         } catch (error) {
             throw error;
@@ -188,19 +180,10 @@ export const healthService = {
 
     checkDatabase: async () => {
         try {
-            const response = await api.get('/health/database');
+            const response = await api.get('/api/v1/health/database');
             return response.data;
         } catch (error) {
             throw error;
         }
-    },
-
-    resetDatabase: async () => {
-        try {
-            const response = await api.post('/health/reset-database');
-            return response.data;
-        } catch (error) {
-            throw error;
-        }
-    }
+    }    
 };
