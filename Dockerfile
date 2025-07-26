@@ -5,12 +5,11 @@ WORKDIR /app
 # Copiar todos os arquivos do repositório para o diretório /app
 COPY . ./
 
-# Navegar para o diretório onde está o .sln
-WORKDIR /app/CadastroDePessoas.API
+# Restaurar dependências (o .sln está na raiz do repositório)
 RUN dotnet restore CadastroDePessoas.sln
 
 # Fazer build da aplicação
-RUN dotnet publish CadastroDePessoas.API.csproj -c Release -o /app/out
+RUN dotnet publish CadastroDePessoas.API/CadastroDePessoas.API.csproj -c Release -o out
 
 # Imagem de runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
