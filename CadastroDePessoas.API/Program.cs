@@ -6,7 +6,6 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configurar codificação UTF-8
 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 Console.OutputEncoding = Encoding.UTF8;
 
@@ -27,6 +26,10 @@ builder.Services.AdicionarMediatR();
 
 var app = builder.Build();
 
+app.UseMiddleware<CorsPreflightMiddleware>();
+
+app.UsarCorsConfiguracao(app.Environment);
+
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -45,14 +48,11 @@ app.UsarSwagger();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-app.UsarCorsConfiguracao();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.MapFallbackToFile("index.html");
-
 
 app.Run();

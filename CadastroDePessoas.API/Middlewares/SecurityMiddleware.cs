@@ -18,12 +18,19 @@ namespace CadastroDePessoas.API.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            AdicionarHeadersSeguranca(context);
+            
+            if (context.Request.Method == "OPTIONS")
+            {
+                await _next(context);
+                return;
+            }
 
+            AdicionarHeadersSeguranca(context);
             LogarTentativaAcesso(context);
 
             if (!ValidarOrigemRequisicao(context))
             {
+                _logger.LogWarning("Origem não autorizada: {Origin}", context.Request.Headers["Origin"].FirstOrDefault());
                 context.Response.StatusCode = 403;
                 await context.Response.WriteAsync("Origem não autorizada");
                 return;
@@ -49,7 +56,8 @@ namespace CadastroDePessoas.API.Middlewares
             response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
             response.Headers.Add("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
             
-            response.Headers.Add("Content-Security-Policy", "default-src 'self'");
+           
+            response.Headers.Add("Content-Security-Policy", "default-src 'self'; connect-src 'self' https://cadastro-de-pessoas-web.onrender.com");
             
             response.Headers.Remove("Server");
             response.Headers.Remove("X-Powered-By");
@@ -80,18 +88,26 @@ namespace CadastroDePessoas.API.Middlewares
         private static bool ValidarOrigemRequisicao(HttpContext context)
         {
             var origin = context.Request.Headers["Origin"].FirstOrDefault();
-            var referer = context.Request.Headers["Referer"].FirstOrDefault();
+            var host = context.Request.Host.Host;
 
-            if (context.Request.Host.Host.Contains("localhost"))
+            // Allow localhost and render.com domains
+            if (host.Contains("localhost") || host.Contains("render.com"))
+                return true;
+
+            // Allow requests without Origin header (direct API calls)
+            if (string.IsNullOrEmpty(origin))
                 return true;
 
             var origensPermitidas = new[]
             {
-                "https://your-domain.com",
-                "https://www.your-domain.com"
+                "https://cadastro-de-pessoas-web.onrender.com",
+                "http://localhost:3001",
+                "https://localhost:3001",
+                "http://localhost:3000",
+                "https://localhost:3000"
             };
 
-            return string.IsNullOrEmpty(origin) || origensPermitidas.Contains(origin);
+            return origensPermitidas.Contains(origin);
         }
 
         private bool ValidarRateLimit(HttpContext context)
@@ -107,6 +123,8 @@ namespace CadastroDePessoas.API.Middlewares
                 "/api/v2/auth/login",
                 "/api/v1/auth/logout",
                 "/api/v2/auth/logout",
+                "/api/v1/auth/register",
+                "/api/v1/auth/reset-admin",
                 "/api/v1/health",
                 "/api/v2/health",
                 "/swagger",
