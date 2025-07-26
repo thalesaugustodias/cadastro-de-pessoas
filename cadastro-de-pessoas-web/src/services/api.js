@@ -8,7 +8,8 @@ const getBaseURL = () => {
         return import.meta.env.VITE_API_URL || 'https://localhost:5001/api/v1';
     }
     
-    return '/api/v1';
+    // Em produção, usa a variável de ambiente ou fallback para a URL do Render
+    return import.meta.env.VITE_API_URL || 'https://cadastro-de-pessoas-vina.onrender.com/api/v1';
 };
 
 const api = axios.create({
@@ -16,6 +17,7 @@ const api = axios.create({
     headers: {
         'Content-Type': 'application/json; charset=utf-8',
     },
+    timeout: 30000, // 30 segundos timeout para produção
 });
 
 // Endpoints que não precisam de token
@@ -45,7 +47,7 @@ api.interceptors.request.use(
             }
         }
         
-        // Log para debug (remover em produção)
+        // Log para debug (só em desenvolvimento)
         if (import.meta.env.DEV) {
             console.log(`?? API Request: ${config.method?.toUpperCase()} ${config.url}`, {
                 headers: config.headers,
@@ -65,7 +67,7 @@ api.interceptors.request.use(
 // ?? Interceptor de RESPONSE - Tratar respostas e erros
 api.interceptors.response.use(
     (response) => {
-        // Log para debug (remover em produção)
+        // Log para debug (só em desenvolvimento)
         if (import.meta.env.DEV) {
             console.log(`? API Response: ${response.status}`, response.data);
         }
@@ -73,7 +75,7 @@ api.interceptors.response.use(
         return response;
     },
     (error) => {
-        // Log para debug
+        // Log para debug (só em desenvolvimento)
         if (import.meta.env.DEV) {
             console.error(`? API Error: ${error.response?.status}`, {
                 url: error.config?.url,
@@ -103,7 +105,7 @@ api.interceptors.response.use(
                     break;
                     
                 case 403:
-                    console.warn('? Acesso negado');
+                    console.warn('?? Acesso negado');
                     break;
                     
                 case 404:
@@ -119,7 +121,7 @@ api.interceptors.response.use(
                     break;
                     
                 default:
-                    console.error(`?? Erro HTTP ${status}:`, data);
+                    console.error(`? Erro HTTP ${status}:`, data);
             }
         } else if (error.request) {
             // Erro de rede

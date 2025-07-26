@@ -22,9 +22,14 @@ export default defineConfig({
     build: {
         outDir: 'build',
         sourcemap: false,
+        minify: 'esbuild',
         rollupOptions: {
             output: {
-                manualChunks: undefined,
+                manualChunks: {
+                    vendor: ['react', 'react-dom'],
+                    chakra: ['@chakra-ui/react', '@emotion/react', '@emotion/styled', 'framer-motion'],
+                    utils: ['axios', 'react-router-dom', 'react-hook-form']
+                },
             }
         }
     },
