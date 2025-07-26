@@ -2,15 +2,15 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
 
-# Primeiro, vamos copiar tudo para dentro do container para garantir que temos todos os arquivos
+# Copiar todos os arquivos do repositório para o diretório /app
 COPY . ./
 
-# Navegar para o diretório correto e restaurar dependências
-WORKDIR /app/CadastroDePessoas
+# Navegar para o diretório onde está o .sln
+WORKDIR /app/CadastroDePessoas.API
 RUN dotnet restore CadastroDePessoas.sln
 
 # Fazer build da aplicação
-RUN dotnet publish CadastroDePessoas.API/CadastroDePessoas.API.csproj -c Release -o ../out
+RUN dotnet publish CadastroDePessoas.API.csproj -c Release -o /app/out
 
 # Imagem de runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
@@ -23,6 +23,5 @@ RUN mkdir -p /var/lib/render/app-data
 # Configurar variáveis de ambiente
 ENV ASPNETCORE_URLS=http://+:10000
 ENV ASPNETCORE_ENVIRONMENT=Production
-
 EXPOSE 10000
 ENTRYPOINT ["dotnet", "CadastroDePessoas.API.dll"]
