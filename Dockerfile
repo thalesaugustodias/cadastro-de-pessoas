@@ -2,16 +2,14 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
 
-# Copiar arquivos de solução e projeto primeiro para melhor cache do Docker
-COPY *.sln ./
-COPY */*.csproj ./
-RUN for file in $(ls *.csproj); do mkdir -p ${file%.*}/ && mv $file ${file%.*}/; done
-
-# Restaurar dependências
-RUN dotnet restore CadastroDePessoas.sln
-
-# Copiar código fonte
+# Copiar todos os arquivos do repositório para o diretório /app
 COPY . ./
+
+# Listar arquivos para debug
+RUN ls -R /app
+
+# Restaurar dependências (o .sln está na raiz do repositório)
+RUN dotnet restore CadastroDePessoas.sln
 
 # Fazer build da aplicação
 RUN dotnet publish CadastroDePessoas.API/CadastroDePessoas.API.csproj -c Release -o out

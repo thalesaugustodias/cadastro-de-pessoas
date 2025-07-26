@@ -11,8 +11,8 @@
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
 	</ItemGroup>
@@ -22,17 +22,5 @@
 		<ProjectReference Include="..\CadastroDePessoas.Infraestructure\CadastroDePessoas.Infraestructure.csproj" />
 		<ProjectReference Include="..\CadastroDePessoas.IoC\CadastroDePessoas.IoC.csproj" />
 	</ItemGroup>
-	
-	<!-- Only build frontend if the directory exists -->
-	<Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish" Condition="Exists('$(SolutionDir)cadastro-de-pessoas-web')">
-		<Exec WorkingDirectory="$(SolutionDir)cadastro-de-pessoas-web" Command="npm install" />
-		<Exec WorkingDirectory="$(SolutionDir)cadastro-de-pessoas-web" Command="npm run build" />
-		<ItemGroup>
-			<DistFiles Include="$(SolutionDir)cadastro-de-pessoas-web\build\**" />
-			<ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
-				<RelativePath>wwwroot\%(RecursiveDir)%(FileName)%(Extension)</RelativePath>
-				<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-			</ResolvedFileToPublish>
-		</ItemGroup>
-	</Target>
+
 </Project>

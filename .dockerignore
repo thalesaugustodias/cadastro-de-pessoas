@@ -52,3 +52,8 @@ Thumbs.db
 .env.local
 .env.production
 .env.staging
+
+cadastro-de-pessoas-web/
+bin/
+obj/
+*.log
