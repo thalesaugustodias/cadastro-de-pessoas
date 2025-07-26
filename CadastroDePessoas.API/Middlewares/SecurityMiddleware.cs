@@ -5,23 +5,14 @@ namespace CadastroDePessoas.API.Middlewares
     /// <summary>
     /// Middleware para adicionar camadas extras de segurança
     /// </summary>
-    public class SecurityMiddleware
+    public class SecurityMiddleware(RequestDelegate next, ILogger<SecurityMiddleware> logger)
     {
-        private readonly RequestDelegate _next;
-        private readonly ILogger<SecurityMiddleware> _logger;
-
-        public SecurityMiddleware(RequestDelegate next, ILogger<SecurityMiddleware> logger)
-        {
-            _next = next;
-            _logger = logger;
-        }
-
         public async Task InvokeAsync(HttpContext context)
         {
             
             if (context.Request.Method == "OPTIONS")
             {
-                await _next(context);
+                await next(context);
                 return;
             }
 
@@ -30,7 +21,7 @@ namespace CadastroDePessoas.API.Middlewares
 
             if (!ValidarOrigemRequisicao(context))
             {
-                _logger.LogWarning("Origem não autorizada: {Origin}", context.Request.Headers["Origin"].FirstOrDefault());
+                logger.LogWarning("Origem não autorizada: {Origin}", context.Request.Headers["Origin"].FirstOrDefault());
                 context.Response.StatusCode = 403;
                 await context.Response.WriteAsync("Origem não autorizada");
                 return;
@@ -43,7 +34,7 @@ namespace CadastroDePessoas.API.Middlewares
                 return;
             }
 
-            await _next(context);
+            await next(context);
         }
 
         private void AdicionarHeadersSeguranca(HttpContext context)
@@ -73,13 +64,13 @@ namespace CadastroDePessoas.API.Middlewares
             var isAuthenticated = context.User?.Identity?.IsAuthenticated ?? false;
             var userId = context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            _logger.LogInformation(
+            logger.LogInformation(
                 "API Access: {Method} {Path} | IP: {IP} | UserAgent: {UserAgent} | Auth: {IsAuth} | User: {UserId}",
                 method, path, ip, userAgent, isAuthenticated, userId ?? "Anonymous");
 
             if (!isAuthenticated && !IsEndpointPublico(path))
             {
-                _logger.LogWarning(
+                logger.LogWarning(
                     "Tentativa de acesso não autorizado: {Method} {Path} | IP: {IP}",
                     method, path, ip);
             }
@@ -90,11 +81,9 @@ namespace CadastroDePessoas.API.Middlewares
             var origin = context.Request.Headers["Origin"].FirstOrDefault();
             var host = context.Request.Host.Host;
 
-            // Allow localhost and render.com domains
             if (host.Contains("localhost") || host.Contains("render.com"))
                 return true;
 
-            // Allow requests without Origin header (direct API calls)
             if (string.IsNullOrEmpty(origin))
                 return true;
 
@@ -112,7 +101,7 @@ namespace CadastroDePessoas.API.Middlewares
 
         private bool ValidarRateLimit(HttpContext context)
         { 
-            return true; // Implementar lógica de rate limiting se necessário
+            return true; // Implementar lógica de rate limiting qnd necessário
         }
 
         private bool IsEndpointPublico(string path)

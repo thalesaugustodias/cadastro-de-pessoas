@@ -4,7 +4,6 @@ namespace CadastroDePessoas.API.Middlewares
     {
         public async Task InvokeAsync(HttpContext context)
         {
-            // Handle preflight requests for CORS
             if (context.Request.Method == "OPTIONS")
             {
                 context.Response.Headers.Add("Access-Control-Allow-Origin", "https://cadastro-de-pessoas-web.onrender.com");

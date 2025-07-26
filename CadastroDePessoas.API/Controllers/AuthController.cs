@@ -1,40 +1,28 @@
+using CadastroDePessoas.Application.CQRS.Comandos.Usuario.AutenticarUsuario;
+using CadastroDePessoas.Application.CQRS.Comandos.Usuario.CriarUsuario;
+using CadastroDePessoas.Infraestructure.Contexto;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CadastroDePessoas.Application.CQRS.Comandos.Usuario.AutenticarUsuario;
-using CadastroDePessoas.Application.CQRS.Comandos.Usuario.CriarUsuario;
-using CadastroDePessoas.Application.DTOs.Usuario;
 using Microsoft.EntityFrameworkCore;
-using CadastroDePessoas.Infraestructure.Contexto;
 
 namespace CadastroDePessoas.API.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    [Tags("?? Autenticação")]
     public class AuthController(IMediator mediator, AppDbContexto dbContext) : ControllerBase
     {
         /// <summary>
         /// Realiza login do usuário
-        /// </summary>
-        /// <param name="loginDto">Dados de login</param>
-        /// <returns>Token JWT e dados do usuário</returns>
-        /// <remarks>
-        /// **?? Endpoint PÚBLICO** - Para autenticação inicial
-        /// 
-        /// **Usuários padrão para teste:**
-        /// - admin@exemplo.com / Admin@123
-        /// - user@teste.com / User@123
-        /// </remarks>
+        /// </summary>       
         [HttpPost("login")]
-        [AllowAnonymous] // ?? Público - Login precisa ser acessível sem token
+        [AllowAnonymous]
         public async Task<ActionResult<object>> Login([FromBody] AutenticarUsuarioComando loginDto)
         {
             try
             {
                 var token = await mediator.Send(loginDto);
                 
-                // Buscar dados do usuário para retornar
                 var usuario = await dbContext.Usuarios
                     .Where(u => u.Email == loginDto.Email)
                     .Select(u => new
@@ -79,23 +67,9 @@ namespace CadastroDePessoas.API.Controllers
 
         /// <summary>
         /// Cria novo usuário no sistema
-        /// </summary>
-        /// <param name="criarUsuarioDto">Dados do usuário</param>
-        /// <returns>Confirmação de criação</returns>
-        /// <remarks>
-        /// **?? Endpoint PÚBLICO TEMPORÁRIO** - Para facilitar testes iniciais
-        /// 
-        /// **Regras de senha:**
-        /// - Mínimo 6 caracteres
-        /// - Pelo menos 1 letra minúscula
-        /// - Pelo menos 1 letra maiúscula  
-        /// - Pelo menos 1 número
-        /// - Pelo menos 1 caractere especial (@$!%*?&)
-        /// 
-        /// **Exemplo de senha válida:** MinhaSenh@123
-        /// </remarks>
+        /// </summary>   
         [HttpPost("register")]
-        [AllowAnonymous] // ?? Temporariamente público para facilitar testes
+        [AllowAnonymous]
         public async Task<ActionResult<object>> Register([FromBody] CriarUsuarioComando criarUsuarioDto)
         {
             try
@@ -126,11 +100,8 @@ namespace CadastroDePessoas.API.Controllers
         /// <summary>
         /// Endpoint para logout (apenas remove token no client-side)
         /// </summary>
-        /// <remarks>
-        /// **?? Endpoint PÚBLICO** - Logout pode ser feito sem token válido
-        /// </remarks>
         [HttpPost("logout")]
-        [AllowAnonymous] // ?? Público - Logout não precisa de token válido
+        [AllowAnonymous]
         public ActionResult Logout()
         {
             return Ok(new { message = "Logout realizado com sucesso" });
@@ -139,11 +110,8 @@ namespace CadastroDePessoas.API.Controllers
         /// <summary>
         /// Verifica se o token está válido
         /// </summary>
-        /// <remarks>
-        /// **?? Endpoint PROTEGIDO** - Requer autenticação JWT
-        /// </remarks>
         [HttpGet("verify")]
-        [Authorize] // ?? Protegido - Explicitamente marcado
+        [Authorize]
         public ActionResult VerifyToken()
         {
             return Ok(new 
@@ -161,9 +129,6 @@ namespace CadastroDePessoas.API.Controllers
         /// <summary>
         /// Obtém dados do perfil do usuário autenticado
         /// </summary>
-        /// <remarks>
-        /// **?? Endpoint PROTEGIDO** - Requer autenticação JWT
-        /// </remarks>
         [HttpGet("profile")]
         [Authorize]
         public async Task<ActionResult<object>> GetProfile()
@@ -185,7 +150,7 @@ namespace CadastroDePessoas.API.Controllers
                         nome = u.Nome,
                         email = u.Email,
                         dataCadastro = u.DataCadastro,
-                        ultimoAcesso = DateTime.UtcNow // Pode ser implementado tracking real
+                        ultimoAcesso = DateTime.UtcNow
                     })
                     .FirstOrDefaultAsync();
 
@@ -209,9 +174,6 @@ namespace CadastroDePessoas.API.Controllers
         /// <summary>
         /// Atualiza dados do perfil do usuário
         /// </summary>
-        /// <remarks>
-        /// **?? Endpoint PROTEGIDO** - Requer autenticação JWT
-        /// </remarks>
         [HttpPut("profile")]
         [Authorize]
         public async Task<ActionResult<object>> UpdateProfile([FromBody] UpdateProfileRequest request)
@@ -232,13 +194,11 @@ namespace CadastroDePessoas.API.Controllers
                     return NotFound(new { message = "Usuário não encontrado" });
                 }
 
-                // Verificar se email já existe para outro usuário
                 if (await dbContext.Usuarios.AnyAsync(u => u.Email == request.Email && u.Id != userGuid))
                 {
                     return BadRequest(new { message = "E-mail já está em uso por outro usuário" });
                 }
 
-                // Usar o método da entidade para atualizar
                 usuario.AtualizarPerfil(request.Nome, request.Email);
                 
                 await dbContext.SaveChangesAsync();
@@ -260,57 +220,7 @@ namespace CadastroDePessoas.API.Controllers
             {
                 return StatusCode(500, new { message = "Erro interno do servidor" });
             }
-        }
-
-        /// <summary>
-        /// Reset de senha de emergência (APENAS DESENVOLVIMENTO)
-        /// </summary>
-        /// <remarks>
-        /// **?? ENDPOINT DE EMERGÊNCIA** - Recria usuário admin padrão
-        /// 
-        /// Use apenas se perdeu acesso ao sistema!
-        /// </remarks>
-        [HttpPost("reset-admin")]
-        [AllowAnonymous] // ?? Público apenas para emergência
-        public async Task<ActionResult<object>> ResetAdmin()
-        {
-            var ambiente = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            
-            if (ambiente != "Development")
-            {
-                return BadRequest(new { message = "Endpoint disponível apenas em ambiente de desenvolvimento" });
-            }
-
-            try
-            {
-                var resetUsuario = new CriarUsuarioComando
-                {
-                    Nome = "Admin Reset",
-                    Email = "admin.reset@exemplo.com",
-                    Senha = "AdminReset@123"
-                };
-
-                await mediator.Send(resetUsuario);
-
-                return Ok(new
-                {
-                    message = "Admin de emergência criado com sucesso",
-                    credentials = new
-                    {
-                        email = resetUsuario.Email,
-                        password = resetUsuario.Senha
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    message = "Erro ao criar admin de emergência",
-                    error = ex.Message
-                });
-            }
-        }
+        }       
     }
 
     public class UpdateProfileRequest

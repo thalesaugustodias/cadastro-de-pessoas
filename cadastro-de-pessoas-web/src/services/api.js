@@ -1,14 +1,12 @@
 import axios from 'axios';
 
 const getBaseURL = () => {
-    // No Vite, variáveis de ambiente são acessadas via import.meta.env
     const isDevelopment = import.meta.env.DEV;
     
     if (isDevelopment) {
         return import.meta.env.VITE_API_URL || 'https://localhost:5001/api/v1';
     }
     
-    // Em produção, usa a variável de ambiente ou fallback para a URL do Render
     return import.meta.env.VITE_API_URL || 'https://cadastro-de-pessoas-vina.onrender.com/api/v1';
 };
 
@@ -17,7 +15,7 @@ const api = axios.create({
     headers: {
         'Content-Type': 'application/json; charset=utf-8',
     },
-    timeout: 30000, // 30 segundos timeout para produção
+    timeout: 30000,
 });
 
 // Endpoints que não precisam de token
@@ -31,15 +29,12 @@ const publicEndpoints = [
     '/health/reset-database'
 ];
 
-// ?? Interceptor de REQUEST - Adicionar token apenas quando necessário
 api.interceptors.request.use(
     (config) => {
-        // Verificar se é um endpoint público
         const isPublicEndpoint = publicEndpoints.some(endpoint => 
             config.url?.includes(endpoint)
         );
         
-        // Só adicionar token se não for endpoint público
         if (!isPublicEndpoint) {
             const token = localStorage.getItem('token');
             if (token) {
@@ -47,7 +42,6 @@ api.interceptors.request.use(
             }
         }
         
-        // Log para debug (só em desenvolvimento)
         if (import.meta.env.DEV) {
             console.log(`?? API Request: ${config.method?.toUpperCase()} ${config.url}`, {
                 headers: config.headers,
@@ -64,10 +58,8 @@ api.interceptors.request.use(
     }
 );
 
-// ?? Interceptor de RESPONSE - Tratar respostas e erros
 api.interceptors.response.use(
     (response) => {
-        // Log para debug (só em desenvolvimento)
         if (import.meta.env.DEV) {
             console.log(`? API Response: ${response.status}`, response.data);
         }
@@ -75,7 +67,6 @@ api.interceptors.response.use(
         return response;
     },
     (error) => {
-        // Log para debug (só em desenvolvimento)
         if (import.meta.env.DEV) {
             console.error(`? API Error: ${error.response?.status}`, {
                 url: error.config?.url,
@@ -85,19 +76,16 @@ api.interceptors.response.use(
             });
         }
 
-        // Tratar diferentes tipos de erro
         if (error.response) {
             const { status, data } = error.response;
             
             switch (status) {
                 case 401:
-                    // Token inválido ou expirado - mas só redirecionar se não for tentativa de login
                     if (!error.config?.url?.includes('/auth/login')) {
                         console.warn('?? Token inválido - redirecionando para login');
                         localStorage.removeItem('token');
                         localStorage.removeItem('user');
                         
-                        // Só redireciona se não estiver já na página de login
                         if (window.location.pathname !== '/login') {
                             window.location.href = '/login';
                         }
@@ -124,7 +112,6 @@ api.interceptors.response.use(
                     console.error(`? Erro HTTP ${status}:`, data);
             }
         } else if (error.request) {
-            // Erro de rede
             console.error('?? Erro de rede - Servidor indisponível');
         }
 
