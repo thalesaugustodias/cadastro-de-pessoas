@@ -5,32 +5,52 @@ const getBaseURL = () => {
     const isDevelopment = import.meta.env.DEV;
     
     if (isDevelopment) {
-        return import.meta.env.VITE_API_URL || 'https://localhost:5001/api';
+        return import.meta.env.VITE_API_URL || 'https://localhost:5001/api/v1';
     }
     
-    return '/api';
+    return '/api/v1';
 };
 
 const api = axios.create({
     baseURL: getBaseURL(),
     headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
     },
 });
 
-// ?? Interceptor de REQUEST - Adicionar token
+// Endpoints que não precisam de token
+const publicEndpoints = [
+    '/auth/login',
+    '/auth/register',
+    '/auth/logout',
+    '/auth/reset-admin',
+    '/health',
+    '/health/database',
+    '/health/reset-database'
+];
+
+// ?? Interceptor de REQUEST - Adicionar token apenas quando necessário
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+        // Verificar se é um endpoint público
+        const isPublicEndpoint = publicEndpoints.some(endpoint => 
+            config.url?.includes(endpoint)
+        );
+        
+        // Só adicionar token se não for endpoint público
+        if (!isPublicEndpoint) {
+            const token = localStorage.getItem('token');
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
         }
         
         // Log para debug (remover em produção)
         if (import.meta.env.DEV) {
             console.log(`?? API Request: ${config.method?.toUpperCase()} ${config.url}`, {
                 headers: config.headers,
-                data: config.data
+                data: config.data,
+                isPublic: isPublicEndpoint
             });
         }
         
@@ -69,18 +89,21 @@ api.interceptors.response.use(
             
             switch (status) {
                 case 401:
-                    // Token inválido ou expirado
-                    console.warn('?? Token inválido - redirecionando para login');
-                    localStorage.removeItem('token');
-                    
-                    // Só redireciona se não estiver já na página de login
-                    if (window.location.pathname !== '/login') {
-                        window.location.href = '/login';
+                    // Token inválido ou expirado - mas só redirecionar se não for tentativa de login
+                    if (!error.config?.url?.includes('/auth/login')) {
+                        console.warn('?? Token inválido - redirecionando para login');
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('user');
+                        
+                        // Só redireciona se não estiver já na página de login
+                        if (window.location.pathname !== '/login') {
+                            window.location.href = '/login';
+                        }
                     }
                     break;
                     
                 case 403:
-                    console.warn('?? Acesso negado');
+                    console.warn('? Acesso negado');
                     break;
                     
                 case 404:

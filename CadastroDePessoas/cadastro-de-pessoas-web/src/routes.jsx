@@ -7,6 +7,10 @@ import ListarPessoas from './pages/pessoas/ListarPessoas';
 import CriarPessoa from './pages/pessoas/CriarPessoa';
 import EditarPessoa from './pages/pessoas/EditarPessoa';
 import DetalhesPessoa from './pages/pessoas/DetalhesPessoa';
+import ImportarDados from './pages/pessoas/ImportarDados';
+import ExportarDados from './pages/pessoas/ExportarDados';
+import MeuPerfil from './pages/sistema/MeuPerfil';
+import Configuracoes from './pages/sistema/Configuracoes';
 import NotFound from './pages/NotFound';
 import { useAuth } from './hooks/useAuth';
 
@@ -35,8 +39,12 @@ const AppRoutes = () => {
                     <Route index element={<ListarPessoas />} />
                     <Route path="criar" element={<CriarPessoa />} />
                     <Route path="editar/:id" element={<EditarPessoa />} />
+                    <Route path="importar" element={<ImportarDados />} />
+                    <Route path="exportar" element={<ExportarDados />} />
                     <Route path=":id" element={<DetalhesPessoa />} />
                 </Route>
+                <Route path="perfil" element={<MeuPerfil />} />
+                <Route path="configuracoes" element={<Configuracoes />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />

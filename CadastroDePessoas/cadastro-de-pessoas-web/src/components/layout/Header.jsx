@@ -4,26 +4,19 @@ import {
     Flex,
     Text,
     IconButton,
-    useColorModeValue,
     HStack,
     Menu,
     MenuButton,
     MenuList,
     MenuItem,
     Avatar,
-    Badge,
     Tooltip,
     useBreakpointValue,
     Divider,
 } from '@chakra-ui/react';
 
-import { 
-    HamburgerIcon, 
-    BellIcon, 
-    SettingsIcon,
-    ChevronDownIcon 
-} from '@chakra-ui/icons';
-import { FiUser, FiLogOut, FiShield } from 'react-icons/fi';
+import { HamburgerIcon, ChevronDownIcon } from '@chakra-ui/icons';
+import { FiUser, FiLogOut } from 'react-icons/fi';
 import { useAuth } from '../../hooks/useAuth';
 
 const Header = ({ onSidebarToggle }) => {
@@ -105,40 +98,8 @@ const Header = ({ onSidebarToggle }) => {
                     </Flex>
                 </Flex>
 
-                {/* Ações do usuário */}
+                {/* Menu do usuário */}
                 <HStack spacing={4}>
-                    {/* Notificações */}
-                    <Tooltip label="Notificações" placement="bottom">
-                        <Box position="relative">
-                            <IconButton
-                                aria-label="Notificações"
-                                icon={<BellIcon />}
-                                variant="ghost"
-                                size="lg"
-                                _hover={{
-                                    bg: 'gray.100',
-                                    transform: 'scale(1.05)',
-                                }}
-                            />
-                            <Badge
-                                position="absolute"
-                                top="-1"
-                                right="-1"
-                                colorScheme="red"
-                                borderRadius="full"
-                                w="5"
-                                h="5"
-                                fontSize="xs"
-                                display="flex"
-                                alignItems="center"
-                                justifyContent="center"
-                            >
-                                3
-                            </Badge>
-                        </Box>
-                    </Tooltip>
-
-                    {/* Menu do usuário */}
                     <Menu>
                         <MenuButton
                             as={Flex}
@@ -219,24 +180,6 @@ const Header = ({ onSidebarToggle }) => {
                                 _hover={{ bg: 'gray.50' }}
                             >
                                 Meu Perfil
-                            </MenuItem>
-                            
-                            <MenuItem
-                                icon={<SettingsIcon />}
-                                fontWeight="500"
-                                py={3}
-                                _hover={{ bg: 'gray.50' }}
-                            >
-                                Configurações
-                            </MenuItem>
-                            
-                            <MenuItem
-                                icon={<FiShield />}
-                                fontWeight="500"
-                                py={3}
-                                _hover={{ bg: 'gray.50' }}
-                            >
-                                Privacidade
                             </MenuItem>
                             
                             <Divider />

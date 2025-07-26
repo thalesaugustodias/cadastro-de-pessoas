@@ -2,71 +2,205 @@ import api from './api';
 
 export const authService = {
     login: async (email, senha) => {
-        // ?? FIX: Endpoint correto para V1 da API
-        const response = await api.post('/v1/auth/login', { email, senha });
-        return response.data;
-    },
-
-    loginV2: async (email, senha) => {
-        // Endpoint para V2 da API com informações extras
-        const response = await api.post('/v2/auth/login', { email, senha });
-        return response.data;
-    },
-
-    register: async (nome, email, senha) => {
-        // ?? Registro de novo usuário
-        const response = await api.post('/v1/auth/register', { nome, email, senha });
-        return response.data;
-    },
-
-    logout: async () => {
         try {
-            await api.post('/v1/auth/logout');
+            const response = await api.post('/auth/login', {
+                email,
+                senha
+            });
+
+            if (response.data.success && response.data.token) {
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+                
+                return {
+                    success: true,
+                    token: response.data.token,
+                    user: response.data.user,
+                    message: response.data.message
+                };
+            }
+
+            return {
+                success: false,
+                message: response.data.message || 'Erro no login'
+            };
         } catch (error) {
-            // Ignora erros de logout, apenas remove token local
-            console.warn('Erro no logout:', error);
+            console.error('Erro no login:', error);
+            
+            if (error.response?.data?.message) {
+                return {
+                    success: false,
+                    message: error.response.data.message
+                };
+            }
+
+            if (error.response?.status === 401) {
+                return {
+                    success: false,
+                    message: 'Email ou senha incorretos'
+                };
+            }
+
+            return {
+                success: false,
+                message: 'Erro de conexão. Verifique se o servidor está rodando.'
+            };
         }
     },
 
+    register: async (nome, email, senha) => {
+        try {
+            const response = await api.post('/auth/register', {
+                nome,
+                email,
+                senha
+            });
+
+            return response.data;
+        } catch (error) {
+            if (error.response?.data?.message) {
+                throw new Error(error.response.data.message);
+            }
+            throw error;
+        }
+    },
+
+    logout: () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        return Promise.resolve();
+    },
+
     verifyToken: async () => {
-        // Verifica se o token é válido no backend
-        const response = await api.get('/v1/auth/verify');
-        return response.data;
+        try {
+            const response = await api.get('/auth/verify');
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    getProfile: async () => {
+        try {
+            const response = await api.get('/auth/profile');
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    updateProfile: async (profileData) => {
+        try {
+            const response = await api.put('/auth/profile', profileData);
+            
+            if (response.data.success) {
+                // Atualizar dados do usuário no localStorage
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+            }
+            
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
     },
 
     resetAdmin: async () => {
-        // ?? Reset de emergência (apenas desenvolvimento)
-        const response = await api.post('/v1/auth/reset-admin');
-        return response.data;
+        try {
+            const response = await api.post('/auth/reset-admin');
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
     },
 
-    // Utilitário para decodificar JWT (básico)
+    getCurrentUser: () => {
+        try {
+            const userStr = localStorage.getItem('user');
+            return userStr ? JSON.parse(userStr) : null;
+        } catch (error) {
+            console.error('Erro ao recuperar usuário:', error);
+            return null;
+        }
+    },
+
+    getToken: () => {
+        return localStorage.getItem('token');
+    },
+
+    isAuthenticated: () => {
+        const token = localStorage.getItem('token');
+        return !!token && !authService.isTokenExpired(token);
+    },
+
+    // Função para decodificar JWT token
     decodeToken: (token) => {
         try {
-            const payload = token.split('.')[1];
-            const decodedPayload = atob(payload);
+            if (!token) return null;
+            
+            // JWT tem 3 partes separadas por pontos: header.payload.signature
+            const parts = token.split('.');
+            if (parts.length !== 3) {
+                throw new Error('Token JWT inválido');
+            }
+
+            // Decodificar o payload (segunda parte)
+            const payload = parts[1];
+            
+            // Adicionar padding se necessário para o base64url
+            const paddedPayload = payload + '=='.substring(0, (4 - payload.length % 4) % 4);
+            
+            // Decodificar de base64url para string
+            const decodedPayload = atob(paddedPayload.replace(/-/g, '+').replace(/_/g, '/'));
+            
+            // Converter string JSON para objeto
             return JSON.parse(decodedPayload);
         } catch (error) {
             console.error('Erro ao decodificar token:', error);
             return null;
+        }
+    },
+
+    // Função para verificar se o token está expirado
+    isTokenExpired: (token) => {
+        try {
+            const decodedToken = authService.decodeToken(token);
+            if (!decodedToken || !decodedToken.exp) {
+                return true;
+            }
+            
+            const currentTime = Date.now() / 1000;
+            return decodedToken.exp < currentTime;
+        } catch (error) {
+            return true;
         }
     }
 };
 
 export const healthService = {
     checkHealth: async () => {
-        const response = await api.get('/v1/health');
-        return response.data;
+        try {
+            const response = await api.get('/health');
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
     },
 
     checkDatabase: async () => {
-        const response = await api.get('/v1/health/database');
-        return response.data;
+        try {
+            const response = await api.get('/health/database');
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
     },
 
     resetDatabase: async () => {
-        // ?? Reset do banco (apenas desenvolvimento)
-        const response = await api.post('/v1/health/reset-database');
-        return response.data;
+        try {
+            const response = await api.post('/health/reset-database');
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
     }
 };

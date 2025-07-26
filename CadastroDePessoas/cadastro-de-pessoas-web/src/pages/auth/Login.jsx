@@ -10,7 +10,6 @@ import {
     Heading,
     Text,
     Container,
-    Center,
     Alert,
     AlertIcon,
     AlertDescription,
@@ -22,7 +21,6 @@ import {
     Tab,
     TabPanel,
     Icon,
-    useColorModeValue,
     Stack,
     Flex,
 } from '@chakra-ui/react';
@@ -33,14 +31,11 @@ import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useNotification } from '../../hooks/useNotification';
-import { authService, healthService } from '../../services/auth-service';
+import { authService } from '../../services/auth-service';
 import { 
     FiMail, 
     FiLock, 
     FiUser, 
-    FiShield, 
-    FiRefreshCw,
-    FiDatabase,
     FiLogIn,
     FiUserPlus,
 } from 'react-icons/fi';
@@ -68,7 +63,7 @@ const registerSchema = yup.object().shape({
 
 const Login = () => {
     const { login } = useAuth();
-    const { showError, showSuccess, showWarning } = useNotification();
+    const { showError, showSuccess } = useNotification();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = React.useState(false);
     const [loginError, setLoginError] = React.useState('');
@@ -121,36 +116,6 @@ const Login = () => {
                 ? Object.values(error.response.data.errors).flat().join(', ')
                 : error.response?.data?.message || 'Erro ao criar usuário';
             showError(errorMsg);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const resetAdmin = async () => {
-        try {
-            setIsLoading(true);
-            const result = await authService.resetAdmin();
-            showWarning(`Admin de emergência criado: ${result.credentials.email} / ${result.credentials.password}`);
-        } catch (error) {
-            showError('Erro ao criar admin de emergência');
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const resetDatabase = async () => {
-        if (!window.confirm('?? ATENÇÃO: Isso irá apagar TODOS os dados! Continuar?')) {
-            return;
-        }
-
-        try {
-            setIsLoading(true);
-            const result = await healthService.resetDatabase();
-            showSuccess('Banco resetado! Use: admin@exemplo.com / Admin@123');
-            loginForm.setValue('email', 'admin@exemplo.com');
-            loginForm.setValue('senha', 'Admin@123');
-        } catch (error) {
-            showError('Erro ao resetar banco de dados');
         } finally {
             setIsLoading(false);
         }
@@ -230,7 +195,7 @@ const Login = () => {
                                 textAlign="center"
                                 maxW="md"
                             >
-                                Sistema moderno e intuitivo para gerenciamento de cadastros
+                                Sistema de gerenciamento de cadastros
                             </Text>
                         </VStack>
                     </VStack>
@@ -283,7 +248,7 @@ const Login = () => {
                                     <VStack spacing={8} align="stretch">
                                         <Box textAlign="center">
                                             <Heading as="h1" size="xl" mb={3} color="gray.800">
-                                                Bem-vindo de volta! ??
+                                                Bem-vindo de volta
                                             </Heading>
                                             <Text color="gray.600" fontSize="lg">
                                                 Entre com suas credenciais para continuar
@@ -380,50 +345,13 @@ const Login = () => {
                                             <AlertIcon color="blue.500" />
                                             <Box>
                                                 <Text fontSize="sm" fontWeight="600" color="blue.800">
-                                                    Usuários de demonstração:
+                                                    Usuário de demonstração:
                                                 </Text>
                                                 <Text fontSize="sm" color="blue.700" mt={1}>
-                                                    • admin@exemplo.com / Admin@123<br />
-                                                    • user@teste.com / User@123
+                                                    admin@exemplo.com / Admin@123
                                                 </Text>
                                             </Box>
                                         </Alert>
-
-                                        <Divider />
-
-                                        <VStack spacing={4}>
-                                            <Text fontSize="sm" color="gray.500" fontWeight="500">
-                                                Problemas para entrar?
-                                            </Text>
-                                            <Stack 
-                                                direction={{ base: 'column', sm: 'row' }}
-                                                width="full"
-                                                spacing={3}
-                                            >
-                                                <Button
-                                                    size="md"
-                                                    variant="outline"
-                                                    colorScheme="orange"
-                                                    onClick={resetAdmin}
-                                                    isLoading={isLoading}
-                                                    leftIcon={<FiShield />}
-                                                    flex="1"
-                                                >
-                                                    Admin Emergência
-                                                </Button>
-                                                <Button
-                                                    size="md"
-                                                    variant="outline"
-                                                    colorScheme="red"
-                                                    onClick={resetDatabase}
-                                                    isLoading={isLoading}
-                                                    leftIcon={<FiDatabase />}
-                                                    flex="1"
-                                                >
-                                                    Resetar Banco
-                                                </Button>
-                                            </Stack>
-                                        </VStack>
                                     </VStack>
                                 </TabPanel>
 
@@ -432,7 +360,7 @@ const Login = () => {
                                     <VStack spacing={8} align="stretch">
                                         <Box textAlign="center">
                                             <Heading as="h1" size="xl" mb={3} color="gray.800">
-                                                Criar nova conta ?
+                                                Criar nova conta
                                             </Heading>
                                             <Text color="gray.600" fontSize="lg">
                                                 Cadastre-se para acessar o sistema

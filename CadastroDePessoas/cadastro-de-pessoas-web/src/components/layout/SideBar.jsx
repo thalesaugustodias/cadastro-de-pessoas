@@ -5,12 +5,10 @@ import {
     VStack,
     Text,
     Icon,
-    useColorModeValue,
     Divider,
     Badge,
     Tooltip,
     useBreakpointValue,
-    Collapse,
     HStack,
 } from '@chakra-ui/react';
 
@@ -19,15 +17,10 @@ import {
     FiHome, 
     FiUsers, 
     FiPlusCircle, 
-    FiBarChart, 
     FiSettings,
-    FiHelpCircle,
-    FiTrendingUp,
-    FiDatabase,
     FiUser,
-    FiEdit,
-    FiPieChart,
-    FiActivity,
+    FiDownload,
+    FiUpload,
 } from 'react-icons/fi';
 
 const SidebarItem = ({ icon, children, to, isActive, badge, description }) => {
@@ -181,16 +174,6 @@ const Sidebar = ({ isOpen }) => {
                     >
                         Início
                     </SidebarItem>
-
-                    <SidebarItem
-                        icon={FiBarChart}
-                        to="/estatisticas"
-                        isActive={location.pathname === '/estatisticas'}
-                        description="Métricas e relatórios"
-                        badge="Em breve"
-                    >
-                        Estatísticas
-                    </SidebarItem>
                 </SidebarSection>
 
                 {/* Gerenciamento de Pessoas */}
@@ -214,32 +197,19 @@ const Sidebar = ({ isOpen }) => {
                     </SidebarItem>
 
                     <SidebarItem
-                        icon={FiEdit}
+                        icon={FiUpload}
                         to="/pessoas/importar"
                         isActive={location.pathname === '/pessoas/importar'}
                         description="Upload em lote"
-                        badge="Novo"
                     >
                         Importar Dados
                     </SidebarItem>
-                </SidebarSection>
-
-                {/* Relatórios */}
-                <SidebarSection title="Relatórios">
-                    <SidebarItem
-                        icon={FiTrendingUp}
-                        to="/relatorios/crescimento"
-                        isActive={location.pathname === '/relatorios/crescimento'}
-                        description="Análise de crescimento"
-                    >
-                        Crescimento
-                    </SidebarItem>
 
                     <SidebarItem
-                        icon={FiDatabase}
-                        to="/relatorios/exportar"
-                        isActive={location.pathname === '/relatorios/exportar'}
-                        description="Backup e exportação"
+                        icon={FiDownload}
+                        to="/pessoas/exportar"
+                        isActive={location.pathname === '/pessoas/exportar'}
+                        description="Exportar PDF/Excel"
                     >
                         Exportar Dados
                     </SidebarItem>
@@ -266,44 +236,8 @@ const Sidebar = ({ isOpen }) => {
                     >
                         Configurações
                     </SidebarItem>
-
-                    <SidebarItem
-                        icon={FiHelpCircle}
-                        to="/ajuda"
-                        isActive={location.pathname === '/ajuda'}
-                        description="Documentação e suporte"
-                    >
-                        Ajuda & Suporte
-                    </SidebarItem>
                 </SidebarSection>
             </VStack>
-
-            {/* Rodapé da sidebar */}
-            <Box
-                position="absolute"
-                bottom="0"
-                left="0"
-                right="0"
-                p="6"
-                bg="gray.50"
-                borderTop="1px solid"
-                borderColor="gray.100"
-            >
-                <Box
-                    bg="linear-gradient(135deg, #1e77f3 0%, #26ece9 100%)"
-                    p="4"
-                    borderRadius="xl"
-                    color="white"
-                    textAlign="center"
-                >
-                    <Text fontSize="sm" fontWeight="600" mb="1">
-                        Sistema Moderno
-                    </Text>
-                    <Text fontSize="xs" opacity="0.9">
-                        Versão 2.0 - Design Elegante
-                    </Text>
-                </Box>
-            </Box>
         </Box>
     );
 };

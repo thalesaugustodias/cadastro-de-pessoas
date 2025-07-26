@@ -18,5 +18,16 @@
         }
 
         protected Usuario() { }
+
+        public void AtualizarPerfil(string nome, string email)
+        {
+            Nome = nome;
+            Email = email;
+        }
+
+        public void AlterarSenha(string novaSenha)
+        {
+            Senha = novaSenha;
+        }
     }
 }

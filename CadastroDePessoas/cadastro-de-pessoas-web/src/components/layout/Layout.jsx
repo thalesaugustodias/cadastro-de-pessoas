@@ -37,19 +37,18 @@ const Layout = () => {
                         />
                     )}
 
-                    {/* Conteúdo principal */}
-                    <Box p={{ base: 4, md: 8 }}>
-                        <Box
-                            bg="white"
-                            borderRadius="2xl"
-                            boxShadow="base"
-                            border="1px solid"
-                            borderColor="gray.100"
-                            overflow="hidden"
-                            minH="calc(100vh - 140px)"
-                        >
-                            <Outlet />
-                        </Box>
+                    {/* Conteúdo principal com padding adequado */}
+                    <Box
+                        minH="calc(100vh - 72px)"
+                        bg="white"
+                        m={{ base: 4, md: 6 }}
+                        borderRadius="2xl"
+                        boxShadow="base"
+                        border="1px solid"
+                        borderColor="gray.100"
+                        overflow="hidden"
+                    >
+                        <Outlet />
                     </Box>
                 </Box>
             </Flex>

@@ -8,13 +8,12 @@ import {
     Icon,
     Link,
     Divider,
-    Badge,
 } from '@chakra-ui/react';
 import { 
     FiHeart,
-    FiCode,
-    FiShield,
     FiZap,
+    FiShield,
+    FiCode,
 } from 'react-icons/fi';
 
 const Footer = () => {
@@ -74,7 +73,7 @@ const Footer = () => {
                             color="gray.600"
                             textAlign={{ base: 'center', md: 'left' }}
                         >
-                            Sistema moderno e intuitivo para gerenciamento de cadastros
+                            Sistema de gerenciamento de cadastros
                         </Text>
                     </VStack>
 
@@ -121,58 +120,28 @@ const Footer = () => {
                             © {currentYear} Cadastro de Pessoas.
                         </Text>
                         <Text>
-                            Feito com
+                            Desenvolvido com
                         </Text>
                         <Icon as={FiHeart} color="red.500" />
-                        <Text>
-                            e tecnologia moderna
-                        </Text>
                     </HStack>
 
-                    <HStack spacing={4}>
-                        <Badge colorScheme="brand" variant="subtle">
-                            React 18
-                        </Badge>
-                        <Badge colorScheme="success" variant="subtle">
-                            .NET 8
-                        </Badge>
-                        <Badge colorScheme="accent" variant="subtle">
-                            Chakra UI
-                        </Badge>
+                    <HStack spacing={6} fontSize="sm">
+                        <Link 
+                            color="gray.500" 
+                            _hover={{ color: 'brand.500' }}
+                            fontWeight="500"
+                        >
+                            Suporte
+                        </Link>
+                        <Link 
+                            color="gray.500" 
+                            _hover={{ color: 'brand.500' }}
+                            fontWeight="500"
+                        >
+                            Documentação
+                        </Link>
                     </HStack>
                 </Flex>
-
-                {/* Links adicionais */}
-                <HStack spacing={6} fontSize="sm">
-                    <Link 
-                        color="gray.500" 
-                        _hover={{ color: 'brand.500' }}
-                        fontWeight="500"
-                    >
-                        Privacidade
-                    </Link>
-                    <Link 
-                        color="gray.500" 
-                        _hover={{ color: 'brand.500' }}
-                        fontWeight="500"
-                    >
-                        Termos
-                    </Link>
-                    <Link 
-                        color="gray.500" 
-                        _hover={{ color: 'brand.500' }}
-                        fontWeight="500"
-                    >
-                        Suporte
-                    </Link>
-                    <Link 
-                        color="gray.500" 
-                        _hover={{ color: 'brand.500' }}
-                        fontWeight="500"
-                    >
-                        Documentação
-                    </Link>
-                </HStack>
             </VStack>
         </Box>
     );

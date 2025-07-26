@@ -18,7 +18,6 @@ import {
     Progress,
     Badge,
     Avatar,
-    AvatarGroup,
     Grid,
     GridItem,
 } from '@chakra-ui/react';
@@ -27,12 +26,10 @@ import {
     FiUsers, 
     FiUserPlus, 
     FiCalendar, 
-    FiTrendingUp,
     FiActivity,
     FiClock,
-    FiStar,
-    FiPieChart,
-    FiBarChart,
+    FiUpload,
+    FiDownload,
 } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { pessoaService } from '../services/pessoa-service';
@@ -46,7 +43,7 @@ const countUp = keyframes`
     100% { opacity: 1; transform: translateY(0); }
 `;
 
-const StatCard = ({ title, value, icon, color, helpText, trend, isLoading }) => (
+const StatCard = ({ title, value, icon, color, helpText, isLoading }) => (
     <Card 
         variant="elevated"
         _hover={{
@@ -91,26 +88,16 @@ const StatCard = ({ title, value, icon, color, helpText, trend, isLoading }) => 
                     {isLoading ? <Progress size="sm" isIndeterminate /> : value}
                 </StatNumber>
                 
-                <HStack justify="space-between" align="center" mt={3}>
-                    {helpText && (
-                        <StatHelpText 
-                            fontSize="sm" 
-                            color="gray.600"
-                            mb={0}
-                        >
-                            {helpText}
-                        </StatHelpText>
-                    )}
-                    {trend && (
-                        <Badge
-                            colorScheme={trend > 0 ? 'green' : 'red'}
-                            variant="subtle"
-                            fontSize="xs"
-                        >
-                            {trend > 0 ? '+' : ''}{trend}%
-                        </Badge>
-                    )}
-                </HStack>
+                {helpText && (
+                    <StatHelpText 
+                        fontSize="sm" 
+                        color="gray.600"
+                        mb={0}
+                        mt={3}
+                    >
+                        {helpText}
+                    </StatHelpText>
+                )}
             </Stat>
         </CardBody>
     </Card>
@@ -138,11 +125,10 @@ const QuickActionCard = ({ title, description, icon, color, to, onClick }) => (
                     align="center"
                     justify="center"
                     rounded="2xl"
-                    bg={`${color}.50`}
-                    border="2px solid"
-                    borderColor={`${color}.100`}
+                    bg={`linear-gradient(135deg, ${color}.400, ${color}.600)`}
+                    boxShadow={`0 8px 25px 0 ${color === 'brand' ? 'rgba(30, 119, 243, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`}
                 >
-                    <Icon as={icon} boxSize="8" color={`${color}.500`} />
+                    <Icon as={icon} boxSize="8" color="white" />
                 </Flex>
                 
                 <Box>
@@ -180,7 +166,7 @@ const WelcomeCard = ({ user }) => (
                         Olá, {user?.nome || 'Usuário'}! ??
                     </Heading>
                     <Text fontSize="lg" opacity="0.9" mb={3}>
-                        Bem-vindo de volta ao painel de controle
+                        Bem-vindo ao sistema de cadastro
                     </Text>
                     <Text fontSize="sm" opacity="0.8">
                         Gerencie cadastros de forma simples e eficiente
@@ -198,7 +184,7 @@ const WelcomeCard = ({ user }) => (
                         Administrador
                     </Badge>
                     <Text fontSize="sm" opacity="0.8">
-                        Último acesso: hoje
+                        Sistema em operação
                     </Text>
                 </VStack>
             </HStack>
@@ -212,11 +198,11 @@ const RecentActivity = ({ pessoas }) => {
         .slice(0, 5);
 
     return (
-        <Card>
+        <Card h="fit-content">
             <CardBody p={6}>
                 <HStack justify="space-between" align="center" mb={6}>
                     <Heading size="md" color="gray.800">
-                        Atividade Recente
+                        Cadastros Recentes
                     </Heading>
                     <Icon as={FiActivity} color="gray.400" />
                 </HStack>
@@ -235,7 +221,7 @@ const RecentActivity = ({ pessoas }) => {
                                     {pessoa.nome}
                                 </Text>
                                 <Text fontSize="xs" color="gray.500">
-                                    Cadastrado em {formatarData(pessoa.dataCadastro)}
+                                    {formatarData(pessoa.dataCadastro)}
                                 </Text>
                             </Box>
                             <Badge 
@@ -250,7 +236,7 @@ const RecentActivity = ({ pessoas }) => {
                     
                     {recentPeople.length === 0 && (
                         <Text color="gray.500" textAlign="center" py={4}>
-                            Nenhuma atividade recente
+                            Nenhum cadastro encontrado
                         </Text>
                     )}
                 </VStack>
@@ -297,7 +283,6 @@ const Home = () => {
         if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) {
             idade--;
         }
-
         return idade;
     };
 
@@ -341,14 +326,13 @@ const Home = () => {
             <WelcomeCard user={user} />
 
             {/* Estatísticas principais */}
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mb={8}>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} mb={8}>
                 <StatCard
                     title="Total de Pessoas"
                     value={totalPessoas.toLocaleString()}
                     icon={FiUsers}
                     color="brand"
-                    helpText="cadastradas"
-                    trend={15}
+                    helpText="cadastradas no sistema"
                     isLoading={isLoading}
                 />
 
@@ -357,33 +341,22 @@ const Home = () => {
                     value={cadastrosRecentes}
                     icon={FiUserPlus}
                     color="success"
-                    helpText="últimos 30 dias"
-                    trend={8}
+                    helpText="nos últimos 30 dias"
                     isLoading={isLoading}
                 />
 
                 <StatCard
                     title="Média de Idade"
-                    value={mediaIdade || 'N/A'}
+                    value={mediaIdade ? `${mediaIdade} anos` : 'N/A'}
                     icon={FiCalendar}
                     color="warning"
-                    helpText="anos"
-                    isLoading={isLoading}
-                />
-
-                <StatCard
-                    title="Taxa de Crescimento"
-                    value="12.5%"
-                    icon={FiTrendingUp}
-                    color="success"
-                    helpText="mensal"
-                    trend={12.5}
+                    helpText="dos cadastrados"
                     isLoading={isLoading}
                 />
             </SimpleGrid>
 
             {/* Grid principal */}
-            <Grid templateColumns={{ base: '1fr', lg: '2fr 1fr' }} gap={8} mb={8}>
+            <Grid templateColumns={{ base: '1fr', lg: '2fr 1fr' }} gap={8}>
                 {/* Ações rápidas */}
                 <GridItem>
                     <Heading size="md" mb={6} color="gray.800">
@@ -392,7 +365,7 @@ const Home = () => {
                     <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                         <QuickActionCard
                             title="Gerenciar Pessoas"
-                            description="Visualizar, editar e excluir cadastros existentes"
+                            description="Visualizar, editar e excluir cadastros"
                             icon={FiUsers}
                             color="brand"
                             to="/pessoas"
@@ -400,26 +373,26 @@ const Home = () => {
 
                         <QuickActionCard
                             title="Nova Pessoa"
-                            description="Adicionar um novo cadastro ao sistema"
+                            description="Adicionar um novo cadastro"
                             icon={FiUserPlus}
                             color="success"
                             to="/pessoas/criar"
                         />
 
                         <QuickActionCard
-                            title="Relatórios"
-                            description="Gerar relatórios e estatísticas detalhadas"
-                            icon={FiPieChart}
-                            color="warning"
-                            to="/relatorios"
+                            title="Importar Dados"
+                            description="Upload de arquivo em lote"
+                            icon={FiUpload}
+                            color="accent"
+                            to="/pessoas/importar"
                         />
 
                         <QuickActionCard
-                            title="Configurações"
-                            description="Personalizar preferências do sistema"
-                            icon={FiActivity}
-                            color="accent"
-                            to="/configuracoes"
+                            title="Exportar Dados"
+                            description="Exportar em PDF ou Excel"
+                            icon={FiDownload}
+                            color="warning"
+                            to="/pessoas/exportar"
                         />
                     </SimpleGrid>
                 </GridItem>
@@ -429,57 +402,6 @@ const Home = () => {
                     <RecentActivity pessoas={pessoas} />
                 </GridItem>
             </Grid>
-
-            {/* Resumo de pessoas */}
-            {pessoas.length > 0 && (
-                <Card>
-                    <CardBody p={6}>
-                        <HStack justify="space-between" align="center" mb={6}>
-                            <Heading size="md" color="gray.800">
-                                Resumo dos Cadastros
-                            </Heading>
-                            <AvatarGroup size="sm" max={5}>
-                                {pessoas.slice(0, 8).map((pessoa, index) => (
-                                    <Avatar 
-                                        key={pessoa.id}
-                                        name={pessoa.nome}
-                                        bg={`brand.${(index % 3 + 4) * 100}`}
-                                        color="white"
-                                    />
-                                ))}
-                            </AvatarGroup>
-                        </HStack>
-                        
-                        <HStack spacing={8} wrap="wrap">
-                            <VStack spacing={1} align="start">
-                                <Text fontSize="sm" color="gray.500">
-                                    Último cadastro
-                                </Text>
-                                <Text fontWeight="600" color="gray.800">
-                                    {ultimoCadastro?.nome || 'Nenhum'}
-                                </Text>
-                                {ultimoCadastro && (
-                                    <Text fontSize="xs" color="gray.500">
-                                        {formatarData(ultimoCadastro.dataCadastro)}
-                                    </Text>
-                                )}
-                            </VStack>
-                            
-                            <VStack spacing={1} align="start">
-                                <Text fontSize="sm" color="gray.500">
-                                    Crescimento mensal
-                                </Text>
-                                <HStack>
-                                    <Text fontWeight="600" color="success.500">
-                                        +15.2%
-                                    </Text>
-                                    <Icon as={FiTrendingUp} color="success.500" />
-                                </HStack>
-                            </VStack>
-                        </HStack>
-                    </CardBody>
-                </Card>
-            )}
         </Box>
     );
 };
