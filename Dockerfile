@@ -1,20 +1,18 @@
+# Etapa de build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
 
-# Copiar os arquivos csproj e restaurar dependências
-COPY CadastroDePessoas.API/*.csproj CadastroDePessoas.API/
-COPY CadastroDePessoas.Application/*.csproj CadastroDePessoas.Application/
-COPY CadastroDePessoas.Domain/*.csproj CadastroDePessoas.Domain/
-COPY CadastroDePessoas.Infraestructure/*.csproj CadastroDePessoas.Infraestructure/
-COPY CadastroDePessoas.IoC/*.csproj CadastroDePessoas.IoC/
-COPY *.sln .
-RUN dotnet restore
-
-# Copiar todo o resto e fazer build
+# Primeiro, vamos copiar tudo para dentro do container para garantir que temos todos os arquivos
 COPY . ./
-RUN dotnet publish CadastroDePessoas.API/CadastroDePessoas.API.csproj -c Release -o out
 
-# Build da imagem de runtime
+# Navegar para o diretório correto e restaurar dependências
+WORKDIR /app/CadastroDePessoas
+RUN dotnet restore CadastroDePessoas.sln
+
+# Fazer build da aplicação
+RUN dotnet publish CadastroDePessoas.API/CadastroDePessoas.API.csproj -c Release -o ../out
+
+# Imagem de runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build-env /app/out .
