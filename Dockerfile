@@ -8,8 +8,8 @@ COPY . ./
 # Listar arquivos para debug
 RUN ls -R /app
 
-# Restaurar dependências (o .sln está na raiz do repositório)
-RUN dotnet restore CadastroDePessoas.sln
+# Restaurar dependências apenas do projeto API
+RUN dotnet restore CadastroDePessoas.API/CadastroDePessoas.API.csproj
 
 # Fazer build da aplicação
 RUN dotnet publish CadastroDePessoas.API/CadastroDePessoas.API.csproj -c Release -o out
