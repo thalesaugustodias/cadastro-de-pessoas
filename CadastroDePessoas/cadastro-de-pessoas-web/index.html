@@ -4,52 +4,15 @@
     <meta charset="utf-8" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="description" content="Sistema de Cadastro de Pessoas" />
-    <title>Cadastro de Pessoas</title>
+    <meta name="theme-color" content="#1e77f3" />
+    <meta name="description" content="Sistema de Cadastro de Pessoas - Moderno e Intuitivo" />
     
-    <!-- 🔧 Script de teste rápido -->
-    <script>
-        // Teste rápido da API
-        async function testAPI() {
-            console.log('🧪 Testando conexão com API...');
-            
-            try {
-                const response = await fetch('https://localhost:5001/api/v1/health');
-                const data = await response.json();
-                console.log('✅ API Health Check:', data);
-            } catch (error) {
-                console.error('❌ API Health Check falhou:', error);
-            }
-            
-            try {
-                console.log('🔐 Testando login...');
-                const loginResponse = await fetch('https://localhost:5001/api/v1/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        email: 'admin@exemplo.com',
-                        senha: 'Admin@123'
-                    })
-                });
-                
-                const loginData = await loginResponse.json();
-                console.log('✅ Login Response:', loginData);
-                
-                if (loginData.token) {
-                    localStorage.setItem('debug_token', loginData.token);
-                    console.log('🎯 Token salvo:', loginData.token.substring(0, 50) + '...');
-                }
-            } catch (error) {
-                console.error('❌ Login falhou:', error);
-            }
-        }
-        
-        // Executar teste quando a página carregar
-        window.addEventListener('load', testAPI);
-    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <title>Cadastro de Pessoas</title>
 </head>
 <body>
     <noscript>Você precisa habilitar JavaScript para executar esta aplicação.</noscript>

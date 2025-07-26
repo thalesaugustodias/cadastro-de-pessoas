@@ -1,36 +1,55 @@
 import React, { useState } from 'react';
-import { Box, Flex, useDisclosure } from '@chakra-ui/react';
+import { Box, Flex, useDisclosure, useBreakpointValue } from '@chakra-ui/react';
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
-import SideBar from './SideBar';  // Corrigido: SideBar com 'B' maiúsculo
+import SideBar from './SideBar';
 import Footer from './Footer';
 
 const Layout = () => {
     const { isOpen, onToggle } = useDisclosure();
+    const sidebarWidth = useBreakpointValue({ base: 'full', md: '280px' });
 
     return (
-        <Flex direction="column" minH="100vh">
+        <Flex direction="column" minH="100vh" bg="gray.50">
             <Header onSidebarToggle={onToggle} />
 
-            <Flex flex="1" mt="60px">
+            <Flex flex="1" mt="72px" position="relative">
                 <SideBar isOpen={isOpen} />
 
                 <Box
                     flex="1"
-                    ml={{ base: 0, md: '64' }}
-                    p={5}
-                    bg="gray.50"
-                    minH="calc(100vh - 60px)"
-                    transition="margin-left 0.3s"
+                    ml={{ base: 0, md: sidebarWidth }}
+                    transition="margin-left 0.3s cubic-bezier(.08,.52,.52,1)"
+                    minH="calc(100vh - 72px)"
                 >
-                    <Box
-                        bg="white"
-                        borderRadius="lg"
-                        boxShadow="sm"
-                        p={6}
-                        height="100%"
-                    >
-                        <Outlet />
+                    {/* Overlay para mobile quando sidebar está aberta */}
+                    {isOpen && (
+                        <Box
+                            position="fixed"
+                            top="72px"
+                            left="0"
+                            right="0"
+                            bottom="0"
+                            bg="blackAlpha.600"
+                            zIndex={800}
+                            display={{ base: 'block', md: 'none' }}
+                            onClick={onToggle}
+                        />
+                    )}
+
+                    {/* Conteúdo principal */}
+                    <Box p={{ base: 4, md: 8 }}>
+                        <Box
+                            bg="white"
+                            borderRadius="2xl"
+                            boxShadow="base"
+                            border="1px solid"
+                            borderColor="gray.100"
+                            overflow="hidden"
+                            minH="calc(100vh - 140px)"
+                        >
+                            <Outlet />
+                        </Box>
                     </Box>
                 </Box>
             </Flex>

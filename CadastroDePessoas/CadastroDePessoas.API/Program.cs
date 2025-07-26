@@ -2,8 +2,13 @@ using CadastroDePessoas.API.Configuracoes;
 using CadastroDePessoas.API.Filtros;
 using CadastroDePessoas.API.Middlewares;
 using CadastroDePessoas.IoC;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configurar codificação UTF-8
+Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+Console.OutputEncoding = Encoding.UTF8;
 
 builder.Services.AddControllers(options =>
 {
