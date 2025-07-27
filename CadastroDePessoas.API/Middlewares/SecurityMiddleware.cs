@@ -21,7 +21,7 @@ namespace CadastroDePessoas.API.Middlewares
 
             if (!ValidarOrigemRequisicao(context))
             {
-                logger.LogWarning("Origem não autorizada: {Origin}", context.Request.Headers["Origin"].FirstOrDefault());
+                logger.LogWarning("Origem não autorizada: {Origin}", context.Request.Headers.Origin.FirstOrDefault());
                 context.Response.StatusCode = 403;
                 await context.Response.WriteAsync("Origem não autorizada");
                 return;
@@ -41,14 +41,14 @@ namespace CadastroDePessoas.API.Middlewares
         {
             var response = context.Response;
 
-            response.Headers.Add("X-Content-Type-Options", "nosniff");
-            response.Headers.Add("X-Frame-Options", "DENY");
-            response.Headers.Add("X-XSS-Protection", "1; mode=block");
-            response.Headers.Add("Referrer-Policy", "strict-origin-when-cross-origin");
-            response.Headers.Add("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
-            
-           
-            response.Headers.Add("Content-Security-Policy", "default-src 'self'; connect-src 'self' https://cadastro-de-pessoas-web.onrender.com");
+            response.Headers.Append("X-Content-Type-Options", "nosniff");
+            response.Headers.Append("X-Frame-Options", "DENY");
+            response.Headers.Append("X-XSS-Protection", "1; mode=block");
+            response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+            response.Headers.Append("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
+
+
+            response.Headers.Append("Content-Security-Policy", "default-src 'self'; connect-src 'self' https://cadastro-de-pessoas-web.onrender.com");
             
             response.Headers.Remove("Server");
             response.Headers.Remove("X-Powered-By");
@@ -58,7 +58,7 @@ namespace CadastroDePessoas.API.Middlewares
         private void LogarTentativaAcesso(HttpContext context)
         {
             var ip = context.Connection.RemoteIpAddress?.ToString();
-            var userAgent = context.Request.Headers["User-Agent"].FirstOrDefault();
+            var userAgent = context.Request.Headers.UserAgent.FirstOrDefault();
             var method = context.Request.Method;
             var path = context.Request.Path;
             var isAuthenticated = context.User?.Identity?.IsAuthenticated ?? false;
@@ -78,7 +78,7 @@ namespace CadastroDePessoas.API.Middlewares
 
         private static bool ValidarOrigemRequisicao(HttpContext context)
         {
-            var origin = context.Request.Headers["Origin"].FirstOrDefault();
+            var origin = context.Request.Headers.Origin.FirstOrDefault();
             var host = context.Request.Host.Host;
 
             if (host.Contains("localhost") || host.Contains("render.com"))
@@ -104,7 +104,7 @@ namespace CadastroDePessoas.API.Middlewares
             return true; // Implementar lógica de rate limiting qnd necessário
         }
 
-        private bool IsEndpointPublico(string path)
+        private static bool IsEndpointPublico(string path)
         {
             var endpointsPublicos = new[]
             {
@@ -113,7 +113,6 @@ namespace CadastroDePessoas.API.Middlewares
                 "/api/v1/auth/logout",
                 "/api/v2/auth/logout",
                 "/api/v1/auth/register",
-                "/api/v1/auth/reset-admin",
                 "/api/v1/health",
                 "/api/v2/health",
                 "/swagger",
