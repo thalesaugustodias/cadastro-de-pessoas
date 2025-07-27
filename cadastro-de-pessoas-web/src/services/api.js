@@ -4,10 +4,19 @@ const getBaseURL = () => {
     const isDevelopment = import.meta.env.DEV;
     
     if (isDevelopment) {
-        return import.meta.env.VITE_API_URL || 'https://localhost:5001/api/v1';
+        return import.meta.env.VITE_API_URL || 'https://localhost:5001';
     }
     
-    return import.meta.env.VITE_API_URL || 'https://cadastro-de-pessoas-vina.onrender.com/api/v1';
+    const prodBaseUrl = import.meta.env.VITE_API_URL || 'https://cadastro-de-pessoas-vina.onrender.com';
+    return prodBaseUrl.endsWith('/api/v1') ? prodBaseUrl : prodBaseUrl;
+};
+
+const resolveApiPath = (path) => {
+    if (path.startsWith('/api/v1')) {
+        return path;
+    }    
+    const cleanPath = path.startsWith('/') ? path.substring(1) : path;    
+    return `/api/v1/${cleanPath}`;
 };
 
 const api = axios.create({
@@ -18,12 +27,11 @@ const api = axios.create({
     timeout: 30000,
 });
 
-// Endpoints que n„o precisam de token
 const publicEndpoints = [
-    '/api/v1/Auth/login',
-    '/api/v1/Auth/register',
-    '/api/v1/Auth/logout',
-    '/api/v1/Auth/reset-admin',
+    '/api/v1/auth/login',
+    '/api/v1/auth/register',
+    '/api/v1/auth/logout',
+    '/api/v1/auth/reset-admin',
     '/health',
     '/health/database',
     '/health/reset-database'
@@ -43,7 +51,7 @@ api.interceptors.request.use(
         }
         
         if (import.meta.env.DEV) {
-            console.log(`?? API Request: ${config.method?.toUpperCase()} ${config.url}`, {
+            console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`, {
                 headers: config.headers,
                 data: config.data,
                 isPublic: isPublicEndpoint
@@ -68,7 +76,7 @@ api.interceptors.response.use(
     },
     (error) => {
         if (import.meta.env.DEV) {
-            console.error(`? API Error: ${error.response?.status}`, {
+            console.error(`API Error: ${error.response?.status}`, {
                 url: error.config?.url,
                 method: error.config?.method,
                 data: error.response?.data,
@@ -81,8 +89,8 @@ api.interceptors.response.use(
             
             switch (status) {
                 case 401:
-                    if (!error.config?.url?.includes('/api/v1/auth/login')) {
-                        console.warn('Token inv·lido - redirecionando para login');
+                    if (!error.config?.url?.includes(resolveApiPath('auth/login'))) {
+                        console.warn('Token inv√°lido - redirecionando para login');
                         localStorage.removeItem('token');
                         localStorage.removeItem('user');
                         
@@ -97,11 +105,11 @@ api.interceptors.response.use(
                     break;
                     
                 case 404:
-                    console.warn('Recurso n„o encontrado');
+                    console.warn('Recurso n√£o encontrado');
                     break;
                     
                 case 422:
-                    console.warn('Dados inv·lidos:', data);
+                    console.warn('Dados inv√°lidos:', data);
                     break;
                     
                 case 500:
@@ -112,7 +120,7 @@ api.interceptors.response.use(
                     console.error(`Erro HTTP ${status}:`, data);
             }
         } else if (error.request) {
-            console.error('Erro de rede - Servidor indisponÌvel');
+            console.error('Erro de rede - Servidor indispon√≠vel');
         }
 
         return Promise.reject(error);
@@ -120,3 +128,4 @@ api.interceptors.response.use(
 );
 
 export default api;
+export { resolveApiPath };

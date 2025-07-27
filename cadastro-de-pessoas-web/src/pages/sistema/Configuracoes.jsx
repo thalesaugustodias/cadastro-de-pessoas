@@ -28,7 +28,7 @@ const Configuracoes = () => {
     const [isLoading, setIsLoading] = useState(false);
     
     const [settings, setSettings] = useState({
-        // Notificações
+        // NotificaÃ§Ãµes
         emailNotifications: true,
         systemNotifications: false,
         exportNotifications: true,
@@ -37,8 +37,8 @@ const Configuracoes = () => {
         itemsPerPage: '10',
         dateFormat: 'dd/MM/yyyy',
         autoSave: true,
-        
-        // Segurança
+
+        // SeguranÃ§a
         sessionTimeout: '60',
         requirePasswordChange: false,
         twoFactorAuth: false,
@@ -66,9 +66,9 @@ const Configuracoes = () => {
             // Salvar no localStorage para persistir
             localStorage.setItem('systemSettings', JSON.stringify(settings));
             
-            showSuccess('Configurações salvas com sucesso!');
+            showSuccess('ConfiguraÃ§Ãµes salvas com sucesso!');
         } catch (error) {
-            showError('Erro ao salvar configurações');
+            showError('Erro ao salvar configuraÃ§Ãµes');
         } finally {
             setIsLoading(false);
         }
@@ -89,7 +89,7 @@ const Configuracoes = () => {
             backupFrequency: 'weekly',
             retentionDays: '30',
         });
-        showSuccess('Configurações restauradas para os valores padrão');
+        showSuccess('ConfiguraÃ§Ãµes restauradas para os valores padrÃ£o');
     };
 
     return (
@@ -98,10 +98,10 @@ const Configuracoes = () => {
                 {/* Header */}
                 <Box>
                     <Heading size="lg" mb={2} color="gray.800">
-                        Configurações do Sistema
+                        ConfiguraÃ§Ãµes do Sistema
                     </Heading>
                     <Text color="gray.600">
-                        Personalize as preferências e configurações do sistema
+                        Personalize as preferÃªncias e configuraÃ§Ãµes do sistema
                     </Text>
                 </Box>
 
@@ -109,18 +109,18 @@ const Configuracoes = () => {
                     {/* Coluna Esquerda */}
                     <GridItem>
                         <VStack spacing={6} align="stretch">
-                            {/* Notificações */}
+                            {/* NotificaÃ§Ãµes */}
                             <Card>
                                 <CardBody p={6}>
                                     <VStack spacing={4} align="stretch">
                                         <HStack>
                                             <FiBell />
-                                            <Heading size="md">Notificações</Heading>
+                                            <Heading size="md">NotificaÃ§Ãµes</Heading>
                                         </HStack>
                                         
                                         <VStack spacing={4} align="stretch">
                                             <HStack justify="space-between">
-                                                <Text>Notificações por e-mail</Text>
+                                                <Text>NotificaÃ§Ãµes por e-mail</Text>
                                                 <Switch
                                                     isChecked={settings.emailNotifications}
                                                     onChange={(e) => handleSettingChange('emailNotifications', e.target.checked)}
@@ -129,7 +129,7 @@ const Configuracoes = () => {
                                             </HStack>
                                             
                                             <HStack justify="space-between">
-                                                <Text>Notificações do sistema</Text>
+                                                <Text>NotificaÃ§Ãµes do sistema</Text>
                                                 <Switch
                                                     isChecked={settings.systemNotifications}
                                                     onChange={(e) => handleSettingChange('systemNotifications', e.target.checked)}
@@ -138,7 +138,7 @@ const Configuracoes = () => {
                                             </HStack>
                                             
                                             <HStack justify="space-between">
-                                                <Text>Notificações de exportação</Text>
+                                                <Text>NotificaÃ§Ãµes de exportaÃ§Ã£o</Text>
                                                 <Switch
                                                     isChecked={settings.exportNotifications}
                                                     onChange={(e) => handleSettingChange('exportNotifications', e.target.checked)}
@@ -160,7 +160,7 @@ const Configuracoes = () => {
                                         </HStack>
                                         
                                         <FormControl>
-                                            <FormLabel>Itens por página</FormLabel>
+                                            <FormLabel>Itens por pÃ¡gina</FormLabel>
                                             <Select
                                                 value={settings.itemsPerPage}
                                                 onChange={(e) => handleSettingChange('itemsPerPage', e.target.value)}
@@ -185,7 +185,7 @@ const Configuracoes = () => {
                                         </FormControl>
                                         
                                         <HStack justify="space-between">
-                                            <Text>Salvamento automático</Text>
+                                            <Text>Salvamento automÃ¡tico</Text>
                                             <Switch
                                                 isChecked={settings.autoSave}
                                                 onChange={(e) => handleSettingChange('autoSave', e.target.checked)}
@@ -201,17 +201,17 @@ const Configuracoes = () => {
                     {/* Coluna Direita */}
                     <GridItem>
                         <VStack spacing={6} align="stretch">
-                            {/* Segurança */}
+                            {/* SeguranÃ§a */}
                             <Card>
                                 <CardBody p={6}>
                                     <VStack spacing={4} align="stretch">
                                         <HStack>
                                             <FiShield />
-                                            <Heading size="md">Segurança</Heading>
+                                            <Heading size="md">SeguranÃ§a</Heading>
                                         </HStack>
                                         
                                         <FormControl>
-                                            <FormLabel>Timeout da sessão (minutos)</FormLabel>
+                                            <FormLabel>Timeout da sessÃ£o (minutos)</FormLabel>
                                             <Select
                                                 value={settings.sessionTimeout}
                                                 onChange={(e) => handleSettingChange('sessionTimeout', e.target.value)}
@@ -234,7 +234,7 @@ const Configuracoes = () => {
                                         
                                         <HStack justify="space-between">
                                             <VStack align="start" spacing={0}>
-                                                <Text>Autenticação de dois fatores</Text>
+                                                <Text>AutenticaÃ§Ã£o de dois fatores</Text>
                                                 <Badge colorScheme="orange" size="sm">Em breve</Badge>
                                             </VStack>
                                             <Switch
@@ -258,7 +258,7 @@ const Configuracoes = () => {
                                         </HStack>
                                         
                                         <HStack justify="space-between">
-                                            <Text>Backup automático</Text>
+                                            <Text>Backup automÃ¡tico</Text>
                                             <Switch
                                                 isChecked={settings.autoBackup}
                                                 onChange={(e) => handleSettingChange('autoBackup', e.target.checked)}
@@ -266,21 +266,21 @@ const Configuracoes = () => {
                                             />
                                         </HStack>
                                         
-                                        <FormControl>
-                                            <FormLabel>Frequência do backup</FormLabel>
+                                        <FormControl>s
+                                            <FormLabel>FrequÃªncia do backup</FormLabel>
                                             <Select
                                                 value={settings.backupFrequency}
                                                 onChange={(e) => handleSettingChange('backupFrequency', e.target.value)}
                                                 isDisabled={!settings.autoBackup}
                                             >
-                                                <option value="daily">Diário</option>
+                                                <option value="daily">DiÃ¡rio</option>
                                                 <option value="weekly">Semanal</option>
                                                 <option value="monthly">Mensal</option>
                                             </Select>
                                         </FormControl>
                                         
                                         <FormControl>
-                                            <FormLabel>Retenção (dias)</FormLabel>
+                                            <FormLabel>RetenÃ§Ã£o (dias)</FormLabel>
                                             <Input
                                                 type="number"
                                                 value={settings.retentionDays}
@@ -298,13 +298,13 @@ const Configuracoes = () => {
 
                 <Divider />
 
-                {/* Ações */}
+                {/* AÃ§Ãµes */}
                 <HStack justify="space-between">
                     <Button
                         variant="outline"
                         onClick={resetToDefaults}
                     >
-                        Restaurar Padrões
+                        Restaurar PadrÃµes
                     </Button>
                     
                     <Button
@@ -314,18 +314,18 @@ const Configuracoes = () => {
                         isLoading={isLoading}
                         loadingText="Salvando..."
                     >
-                        Salvar Configurações
+                        Salvar ConfiguraÃ§Ãµes
                     </Button>
                 </HStack>
 
                 <Alert status="info" borderRadius="xl">
                     <AlertIcon />
                     <Box>
-                        <Text fontWeight="600" mb={2}>Informações:</Text>
+                        <Text fontWeight="600" mb={2}>InformaÃ§Ãµes:</Text>
                         <Text fontSize="sm">
-                            • As configurações são salvas localmente no seu navegador<br />
-                            • Algumas funcionalidades podem estar em desenvolvimento<br />
-                            • Alterações de segurança podem exigir nova autenticação
+                            â€¢ As configuraÃ§Ãµes sÃ£o salvas localmente no seu navegador<br />
+                            â€¢ Algumas funcionalidades podem estar em desenvolvimento<br />
+                            â€¢ AlteraÃ§Ãµes de seguranÃ§a podem exigir nova autenticaÃ§Ã£o
                         </Text>
                     </Box>
                 </Alert>

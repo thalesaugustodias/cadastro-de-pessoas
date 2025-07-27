@@ -5,12 +5,10 @@ export const validarCPF = (cpf) => {
         return false;
     }
 
-    // Verifica se todos os dígitos são iguais
     if (/^(\d)\1+$/.test(cpf)) {
         return false;
     }
 
-    // Cálculo do primeiro dígito verificador
     let soma = 0;
     for (let i = 0; i < 9; i++) {
         soma += parseInt(cpf.charAt(i)) * (10 - i);
@@ -19,7 +17,6 @@ export const validarCPF = (cpf) => {
     let resto = 11 - (soma % 11);
     let dv1 = resto > 9 ? 0 : resto;
 
-    // Cálculo do segundo dígito verificador
     soma = 0;
     for (let i = 0; i < 10; i++) {
         soma += parseInt(cpf.charAt(i)) * (11 - i);

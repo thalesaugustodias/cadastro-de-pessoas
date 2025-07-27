@@ -22,8 +22,8 @@ import { useAuth } from '../hooks/useAuth';
 import { useNotification } from '../hooks/useNotification';
 
 const schema = yup.object().shape({
-    email: yup.string().email('Digite um e-mail v·lido').required('O e-mail È obrigatÛrio'),
-    senha: yup.string().required('A senha È obrigatÛria'),
+    email: yup.string().email('Digite um e-mail v√°lido').required('O e-mail √© obrigat√≥rio'),
+    senha: yup.string().required('A senha √© obrigat√≥ria'),
 });
 
 const Login = () => {
@@ -49,7 +49,7 @@ const Login = () => {
             if (result.success) {
                 navigate('/');
             } else {
-                showError(result.message || 'Credenciais inv·lidas');
+                showError(result.message || 'Credenciais inv√°lidas');
             }
         } catch (error) {
             showError('Erro ao realizar login');
@@ -126,7 +126,7 @@ const Login = () => {
                         </Box>
 
                         <Text fontSize="sm" color="gray.500" textAlign="center">
-                            Use o usu·rio padr„o: admin@exemplo.com / Admin@123
+                            Use o usu√°rio padr√£o: admin@exemplo.com / Admin@123
                         </Text>
                     </VStack>
                 </Box>

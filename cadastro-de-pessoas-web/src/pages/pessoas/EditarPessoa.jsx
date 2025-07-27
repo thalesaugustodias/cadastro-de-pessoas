@@ -21,7 +21,7 @@ const EditarPessoa = () => {
                 setPessoa(data);
             } catch (error) {
                 console.error('Erro ao buscar pessoa:', error);
-                showError('Não foi possível carregar os dados da pessoa');
+                showError('NÃ£o foi possÃ­vel carregar os dados da pessoa');
                 navigate('/pessoas');
             } finally {
                 setIsLoading(false);
@@ -40,7 +40,6 @@ const EditarPessoa = () => {
         } catch (error) {
             console.error('Erro ao atualizar pessoa:', error);
 
-            // Verificar se é um erro de validação do servidor
             if (error.response?.data?.errors) {
                 const erros = error.response.data.errors;
                 const mensagens = Object.values(erros).flat();

@@ -23,7 +23,7 @@ const DetalhesPessoa = () => {
             setPessoa(data);
         } catch (error) {
             console.error('Erro ao buscar pessoa:', error);
-            showError('Não foi possível carregar os dados da pessoa');
+            showError('NÃ£o foi possÃ­vel carregar os dados da pessoa');
         } finally {
             setIsLoading(false);
         }
@@ -32,7 +32,7 @@ const DetalhesPessoa = () => {
     const handleDelete = async (id) => {
         try {
             await pessoaService.remover(id);
-            showSuccess('Pessoa excluída com sucesso!');
+            showSuccess('Pessoa excluÃ­da com sucesso!');
             navigate('/pessoas');
         } catch (error) {
             console.error('Erro ao excluir pessoa:', error);

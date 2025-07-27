@@ -19,12 +19,12 @@ const NotFound = () => {
                 </Heading>
 
                 <Heading as="h2" size="xl">
-                    Página não encontrada
+                    PÃ¡gina nÃ£o encontrada
                 </Heading>
 
                 <Text fontSize="lg" maxW="md">
-                    A página que você está procurando pode ter sido removida,
-                    renomeada ou está temporariamente indisponível.
+                    A pÃ¡gina que vocÃª estÃ¡ procurando pode ter sido removida,
+                    renomeada ou estÃ¡ temporariamente indisponÃ­vel.
                 </Text>
 
                 <Button
@@ -34,7 +34,7 @@ const NotFound = () => {
                     colorScheme="blue"
                     size="lg"
                 >
-                    Voltar para o início
+                    Voltar para o inÃ­cio
                 </Button>
             </VStack>
         </Box>

@@ -40,25 +40,24 @@ import {
     FiUserPlus,
 } from 'react-icons/fi';
 
-// Animação de float para elementos decorativos
 const float = keyframes`
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-10px); }
 `;
 
 const loginSchema = yup.object().shape({
-    email: yup.string().email('Digite um e-mail válido').required('O e-mail é obrigatório'),
-    senha: yup.string().required('A senha é obrigatória'),
+    email: yup.string().email('Digite um e-mail vÃ¡lido').required('O e-mail Ã© obrigatÃ³rio'),
+    senha: yup.string().required('A senha Ã© obrigatÃ³ria'),
 });
 
 const registerSchema = yup.object().shape({
-    nome: yup.string().required('O nome é obrigatório').min(2, 'Nome deve ter pelo menos 2 caracteres'),
-    email: yup.string().email('Digite um e-mail válido').required('O e-mail é obrigatório'),
+    nome: yup.string().required('O nome Ã© obrigatÃ³rio').min(2, 'Nome deve ter pelo menos 2 caracteres'),
+    email: yup.string().email('Digite um e-mail vÃ¡lido').required('O e-mail Ã© obrigatÃ³rio'),
     senha: yup.string()
-        .required('A senha é obrigatória')
+        .required('A senha Ã© obrigatÃ³ria')
         .min(6, 'Senha deve ter pelo menos 6 caracteres')
         .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/, 
-                'Senha deve conter: 1 minúscula, 1 maiúscula, 1 número e 1 caractere especial'),
+                'Senha deve conter: 1 minÃºscula, 1 maiÃºscula, 1 nÃºmero e 1 caractere especial'),
 });
 
 const Login = () => {
@@ -91,12 +90,12 @@ const Login = () => {
                 showSuccess(result.message || 'Login realizado com sucesso!');
                 navigate('/');
             } else {
-                const errorMsg = result.message || 'Credenciais inválidas';
+                const errorMsg = result.message || 'Credenciais invÃ¡lidas';
                 setLoginError(errorMsg);
                 showError(errorMsg);
             }
         } catch (error) {
-            const errorMsg = 'Erro ao realizar login. Verifique sua conexão.';
+            const errorMsg = 'Erro ao realizar login. Verifique sua conexÃ£o.';
             setLoginError(errorMsg);
             showError(errorMsg);
         } finally {
@@ -109,12 +108,12 @@ const Login = () => {
 
         try {
             const result = await authService.register(data.nome, data.email, data.senha);
-            showSuccess('Usuário criado com sucesso! Agora você pode fazer login.');
+            showSuccess('UsuÃ¡rio criado com sucesso! Agora vocÃª pode fazer login.');
             registerForm.reset();
         } catch (error) {
             const errorMsg = error.response?.data?.errors 
                 ? Object.values(error.response.data.errors).flat().join(', ')
-                : error.response?.data?.message || 'Erro ao criar usuário';
+                : error.response?.data?.message || 'Erro ao criar usuÃ¡rio';
             showError(errorMsg);
         } finally {
             setIsLoading(false);
@@ -158,28 +157,8 @@ const Login = () => {
                 px={4}
             >
                 <Container maxW="lg">
-                    {/* Logo e título */}
+                    {/* Logo e tï¿½tulo */}
                     <VStack spacing={8} mb={10}>
-                        <Box
-                            w="80px"
-                            h="80px"
-                            bg="linear-gradient(135deg, #1e77f3 0%, #26ece9 100%)"
-                            borderRadius="2xl"
-                            display="flex"
-                            alignItems="center"
-                            justifyContent="center"
-                            boxShadow="0 10px 40px 0 rgba(30, 119, 243, 0.3)"
-                            animation={`${float} 3s ease-in-out infinite`}
-                        >
-                            <Text
-                                color="white"
-                                fontSize="3xl"
-                                fontWeight="bold"
-                            >
-                                CP
-                            </Text>
-                        </Box>
-                        
                         <VStack spacing={2}>
                             <Heading 
                                 size="2xl" 
@@ -243,7 +222,6 @@ const Login = () => {
                             </TabList>
                             
                             <TabPanels>
-                                {/* LOGIN TAB */}
                                 <TabPanel p={0}>
                                     <VStack spacing={8} align="stretch">
                                         <Box textAlign="center">
@@ -345,7 +323,7 @@ const Login = () => {
                                             <AlertIcon color="blue.500" />
                                             <Box>
                                                 <Text fontSize="sm" fontWeight="600" color="blue.800">
-                                                    Usuário de demonstração:
+                                                    Usuario de demonstraÃ§Ã£o:
                                                 </Text>
                                                 <Text fontSize="sm" color="blue.700" mt={1}>
                                                     admin@exemplo.com / Admin@123
@@ -470,9 +448,9 @@ const Login = () => {
                                                     Requisitos para senha:
                                                 </Text>
                                                 <Text fontSize="sm" color="warning.700" mt={1}>
-                                                    • Mínimo 6 caracteres<br />
-                                                    • 1 letra minúscula e 1 maiúscula<br />
-                                                    • 1 número e 1 caractere especial (@$!%*?&)
+                                                     â€¢ MÃ­nimo 6 caracteres<br />
+                                                     â€¢ 1 letra minÃºscula e 1 maiÃºscula<br />
+                                                     â€¢ 1 nÃºmero e 1 caractere especial (@$!%*?&)
                                                 </Text>
                                             </Box>
                                         </Alert>

@@ -6,13 +6,13 @@ export const cepService = {
             const cepLimpo = cep.replace(/\D/g, '');
             
             if (cepLimpo.length !== 8) {
-                throw new Error('CEP deve ter 8 dígitos');
+                throw new Error('CEP deve ter 8 dÃ­gitos');
             }
 
             const response = await axios.get(`https://viacep.com.br/ws/${cepLimpo}/json/`);
             
             if (response.data.erro) {
-                throw new Error('CEP não encontrado');
+                throw new Error('CEP nï¿½o encontrado');
             }
 
             return {

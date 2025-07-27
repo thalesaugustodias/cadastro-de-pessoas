@@ -30,20 +30,20 @@ import { authService } from '../../services/auth-service';
 import { formatarData } from '../../utils/formatters';
 
 const perfilSchema = yup.object().shape({
-    nome: yup.string().required('Nome é obrigatório').min(2, 'Nome deve ter pelo menos 2 caracteres'),
-    email: yup.string().email('E-mail inválido').required('E-mail é obrigatório'),
+    nome: yup.string().required('Nome Ã© obrigatÃ³rio').min(2, 'Nome deve ter pelo menos 2 caracteres'),
+    email: yup.string().email('E-mail invÃ¡lido').required('E-mail Ã© obrigatÃ³rio'),
 });
 
 const senhaSchema = yup.object().shape({
-    senhaAtual: yup.string().required('Senha atual é obrigatória'),
+    senhaAtual: yup.string().required('Senha atual Ã© obrigatÃ³ria'),
     novaSenha: yup.string()
-        .required('Nova senha é obrigatória')
+        .required('Nova senha Ã© obrigatÃ³ria')
         .min(6, 'Senha deve ter pelo menos 6 caracteres')
         .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/, 
-                'Senha deve conter: 1 minúscula, 1 maiúscula, 1 número e 1 caractere especial'),
+                'Senha deve conter: 1 minÃºscula, 1 maiÃºscula, 1 nÃºmero e 1 caractere especial'),
     confirmarSenha: yup.string()
-        .required('Confirmação de senha é obrigatória')
-        .oneOf([yup.ref('novaSenha')], 'Senhas não coincidem'),
+        .required('ConfirmaÃ§Ã£o de senha Ã© obrigatÃ³ria')
+        .oneOf([yup.ref('novaSenha')], 'Senhas nÃ£o coincidem'),
 });
 
 const MeuPerfil = () => {
@@ -81,7 +81,6 @@ const MeuPerfil = () => {
             }
         } catch (error) {
             console.error('Erro ao carregar perfil:', error);
-            // Usar dados do contexto como fallback
             if (user) {
                 perfilForm.reset({
                     nome: user.nome || '',
@@ -102,7 +101,7 @@ const MeuPerfil = () => {
 
             if (response.success) {
                 setProfileData(response.user);
-                updateUser(response.user); // Atualizar contexto
+                updateUser(response.user);
                 showSuccess('Perfil atualizado com sucesso!');
             } else {
                 showError(response.message || 'Erro ao atualizar perfil');
@@ -118,13 +117,13 @@ const MeuPerfil = () => {
     const onUpdateSenha = async (data) => {
         setIsLoadingSenha(true);
         
-        try {
-            // Por enquanto, simular atualização da senha
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // TODO: Implementar endpoint de mudança de senha no backend
-            // await authService.changePassword(data);
-            
+            try {
+                // Por enquanto, simular atualizaÃ§Ã£o da senha
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                // TODO: Implementar endpoint de mudanÃ§a de senha no backend
+                // await authService.changePassword(data);
+
             showSuccess('Senha alterada com sucesso!');
             senhaForm.reset();
         } catch (error) {
@@ -145,26 +144,26 @@ const MeuPerfil = () => {
                         Meu Perfil
                     </Heading>
                     <Text color="gray.600">
-                        Gerencie suas informações pessoais e configurações de conta
+                        Gerencie suas informaÃ§Ãµes pessoais e configuraÃ§Ãµes de conta
                     </Text>
                 </Box>
 
                 <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={8}>
-                    {/* Informações do Perfil */}
+                    {/* InformaÃ§Ãµes do Perfil */}
                     <GridItem>
                         <VStack spacing={6} align="stretch">
-                            {/* Avatar e Info Básica */}
+                            {/* Avatar e Info BÃ¡sica */}
                             <Card>
                                 <CardBody p={6}>
                                     <VStack spacing={4}>
                                         <Avatar 
                                             size="2xl" 
-                                            name={displayUser.nome || 'Usuário'} 
+                                            name={displayUser.nome || 'UsuÃ¡rio'}
                                             bg="brand.500"
                                             color="white"
                                         />
                                         <VStack spacing={1}>
-                                            <Heading size="md">{displayUser.nome || 'Usuário'}</Heading>
+                                            <Heading size="md">{displayUser.nome || 'UsuÃ¡rio'}</Heading>
                                             <Text color="gray.600">{displayUser.email || 'usuario@exemplo.com'}</Text>
                                             <Badge colorScheme="green" mt={2}>
                                                 Conta Ativa
@@ -183,7 +182,7 @@ const MeuPerfil = () => {
                                             </VStack>
                                             <Divider orientation="vertical" h="10" />
                                             <VStack spacing={0}>
-                                                <Text fontSize="sm" color="gray.500">Último acesso</Text>
+                                                <Text fontSize="sm" color="gray.500">Ãšltimo acesso</Text>
                                                 <Text fontSize="sm" fontWeight="600">Hoje</Text>
                                             </VStack>
                                         </HStack>
@@ -197,7 +196,7 @@ const MeuPerfil = () => {
                                     <VStack spacing={4} align="stretch">
                                         <HStack>
                                             <FiUser />
-                                            <Heading size="md">Informações Pessoais</Heading>
+                                            <Heading size="md">InformaÃ§Ãµes Pessoais</Heading>
                                         </HStack>
 
                                         <Box as="form" onSubmit={perfilForm.handleSubmit(onUpdatePerfil)}>
@@ -233,7 +232,7 @@ const MeuPerfil = () => {
                                                     loadingText="Salvando..."
                                                     w="full"
                                                 >
-                                                    Salvar Alterações
+                                                    Salvar AlteraÃ§Ãµes
                                                 </Button>
                                             </VStack>
                                         </Box>
@@ -243,7 +242,7 @@ const MeuPerfil = () => {
                         </VStack>
                     </GridItem>
 
-                    {/* Segurança */}
+                    {/* SeguranÃ§a */}
                     <GridItem>
                         <VStack spacing={6} align="stretch">
                             {/* Alterar Senha */}
@@ -252,13 +251,13 @@ const MeuPerfil = () => {
                                     <VStack spacing={4} align="stretch">
                                         <HStack>
                                             <FiLock />
-                                            <Heading size="md">Segurança</Heading>
+                                            <Heading size="md">SeguranÃ§a</Heading>
                                         </HStack>
 
                                         <Alert status="info" borderRadius="lg" size="sm">
                                             <AlertIcon />
                                             <Text fontSize="sm">
-                                                Funcionalidade de alteração de senha em desenvolvimento
+                                                Funcionalidade de alteraÃ§Ã£o de senha em desenvolvimento
                                             </Text>
                                         </Alert>
 
@@ -320,12 +319,12 @@ const MeuPerfil = () => {
                                 </CardBody>
                             </Card>
 
-                            {/* Informações da Conta */}
+                            {/* InformaÃ§Ãµes da Conta */}
                             <Card>
                                 <CardBody p={6}>
                                     <VStack spacing={4} align="stretch">
-                                        <Heading size="md">Informações da Conta</Heading>
-                                        
+                                        <Heading size="md">InformaÃ§Ãµes da Conta</Heading>
+
                                         <VStack spacing={3} align="stretch">
                                             <HStack justify="space-between">
                                                 <Text color="gray.600">Status da conta:</Text>
@@ -333,17 +332,17 @@ const MeuPerfil = () => {
                                             </HStack>
                                             
                                             <HStack justify="space-between">
-                                                <Text color="gray.600">Tipo de usuário:</Text>
+                                                <Text color="gray.600">Tipo de usuÃ¡rio:</Text>
                                                 <Badge colorScheme="blue">Administrador</Badge>
                                             </HStack>
                                             
                                             <HStack justify="space-between">
-                                                <Text color="gray.600">Último login:</Text>
-                                                <Text fontSize="sm">Hoje às {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</Text>
+                                                <Text color="gray.600">Ãšltimo login:</Text>
+                                                <Text fontSize="sm">Hoje Ã s {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</Text>
                                             </HStack>
                                             
                                             <HStack justify="space-between">
-                                                <Text color="gray.600">ID do usuário:</Text>
+                                                <Text color="gray.600">ID do usuÃ¡rio:</Text>
                                                 <Text fontSize="xs" fontFamily="mono">
                                                     {displayUser.id ? displayUser.id.toString().substring(0, 8) + '...' : 'N/A'}
                                                 </Text>
@@ -359,12 +358,12 @@ const MeuPerfil = () => {
                 <Alert status="info" borderRadius="xl">
                     <AlertIcon />
                     <Box>
-                        <Text fontWeight="600" mb={2}>Dicas de Segurança:</Text>
+                        <Text fontWeight="600" mb={2}>Dicas de SeguranÃ§a:</Text>
                         <Text fontSize="sm">
-                            • Mantenha suas informações sempre atualizadas<br />
-                            • Use um e-mail válido para recuperação de conta<br />
-                            • Não compartilhe suas credenciais de acesso<br />
-                            • Em caso de problemas, entre em contato com o suporte
+                            â€¢ Mantenha suas informaÃ§Ãµes sempre atualizadas<br />
+                            â€¢ Use um e-mail vÃ¡lido para recuperaÃ§Ã£o de conta<br />
+                            â€¢ NÃ£o compartilhe suas credenciais de acesso<br />
+                            â€¢ Em caso de problemas, entre em contato com o suporte
                         </Text>
                     </Box>
                 </Alert>

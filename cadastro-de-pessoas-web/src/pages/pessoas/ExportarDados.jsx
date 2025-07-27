@@ -44,7 +44,7 @@ const ExportarDados = () => {
         { value: 'telefone', label: 'Telefone' },
         { value: 'endereco.cep', label: 'CEP' },
         { value: 'endereco.logradouro', label: 'Logradouro' },
-        { value: 'endereco.numero', label: 'N˙mero' },
+        { value: 'endereco.numero', label: 'NÔøΩmero' },
         { value: 'endereco.bairro', label: 'Bairro' },
         { value: 'endereco.cidade', label: 'Cidade' },
         { value: 'endereco.estado', label: 'Estado' },
@@ -81,12 +81,12 @@ const ExportarDados = () => {
     const exportToPDF = () => {
         const doc = new jsPDF('l', 'mm', 'a4');
         
-        // TÌtulo
+        // T√≠tulo
         doc.setFontSize(18);
-        doc.text('RelatÛrio de Pessoas Cadastradas', 14, 20);
+        doc.text('Relat√≥rio de Pessoas Cadastradas', 14, 20);
         
         doc.setFontSize(10);
-        doc.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')} ‡s ${new Date().toLocaleTimeString('pt-BR')}`, 14, 30);
+        doc.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')} √†s ${new Date().toLocaleTimeString('pt-BR')}`, 14, 30);
         doc.text(`Total de registros: ${pessoas.length}`, 14, 35);
 
         // Preparar dados para a tabela
@@ -125,14 +125,14 @@ const ExportarDados = () => {
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Pessoas Cadastradas');
 
-        // Configurar cabeÁalhos
+        // Configurar cabe√ßalhos
         const headers = selectedFields.map(field => 
             availableFields.find(f => f.value === field)?.label || field
         );
 
         worksheet.addRow(headers);
 
-        // Estilizar cabeÁalho
+        // Estilizar cabe√ßalho
         const headerRow = worksheet.getRow(1);
         headerRow.eachCell((cell) => {
             cell.font = { bold: true, color: { argb: 'FFFFFF' } };
@@ -161,7 +161,7 @@ const ExportarDados = () => {
             column.width = 20;
         });
 
-        // Adicionar bordas nas cÈlulas de dados
+        // Adicionar bordas nas c√©lulas de dados
         worksheet.eachRow((row, rowNumber) => {
             if (rowNumber > 1) {
                 row.eachCell((cell) => {
@@ -193,7 +193,6 @@ const ExportarDados = () => {
         setIsLoading(true);
 
         try {
-            // Simular delay de processamento
             await new Promise(resolve => setTimeout(resolve, 1500));
 
             if (exportFormat === 'pdf') {
@@ -205,7 +204,7 @@ const ExportarDados = () => {
             showSuccess(`Arquivo ${exportFormat.toUpperCase()} exportado com sucesso!`);
         } catch (error) {
             showError('Erro ao exportar arquivo');
-            console.error('Erro na exportaÁ„o:', error);
+            console.error('Erro na exporta√ß√£o:', error);
         } finally {
             setIsLoading(false);
         }
@@ -225,14 +224,14 @@ const ExportarDados = () => {
                 </Box>
 
                 <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={8}>
-                    {/* ConfiguraÁıes */}
+                    {/* Configura√ß√µes */}
                     <GridItem>
                         <VStack spacing={6} align="stretch">
                             {/* Formato */}
                             <Card>
                                 <CardBody p={6}>
                                     <VStack spacing={4} align="stretch">
-                                        <Heading size="md">Formato de ExportaÁ„o</Heading>
+                                        <Heading size="md">Formato de Exporta√ß√£o</Heading>
                                         <HStack spacing={4}>
                                             <Button
                                                 variant={exportFormat === 'pdf' ? 'primary' : 'outline'}
@@ -291,12 +290,12 @@ const ExportarDados = () => {
                     {/* Preview/Stats */}
                     <GridItem>
                         <VStack spacing={6} align="stretch">
-                            {/* EstatÌsticas */}
+                            {/* Estat√≠sticas */}
                             <Card>
                                 <CardBody p={6}>
                                     <VStack spacing={4} align="stretch">
-                                        <Heading size="md">Resumo da ExportaÁ„o</Heading>
-                                        
+                                        <Heading size="md">Resumo da Exporta√ß√£o</Heading>
+
                                         <HStack justify="space-between">
                                             <Text color="gray.600">Total de registros:</Text>
                                             <Badge colorScheme="blue" p={2}>
@@ -321,7 +320,7 @@ const ExportarDados = () => {
                                 </CardBody>
                             </Card>
 
-                            {/* Bot„o de Exportar */}
+                            {/* Bot√£o de Exportar */}
                             <Card>
                                 <CardBody p={6}>
                                     <VStack spacing={4}>
@@ -362,12 +361,12 @@ const ExportarDados = () => {
                 <Alert status="info" borderRadius="xl">
                     <AlertIcon />
                     <Box>
-                        <Text fontWeight="600" mb={2}>InformaÁıes:</Text>
+                        <Text fontWeight="600" mb={2}>Informa√ß√µes:</Text>
                         <Text fontSize="sm">
-                            ï PDF: Ideal para visualizaÁ„o e impress„o com layout profissional<br />
-                            ï Excel: Permite ediÁ„o e an·lise dos dados com formataÁ„o avanÁada<br />
-                            ï Selecione os campos que deseja incluir na exportaÁ„o<br />
-                            ï O arquivo ser· baixado automaticamente no seu navegador
+                            ‚Ä¢ PDF: Ideal para visualiza√ß√£o e impress√£o com layout profissional<br />
+                            ‚Ä¢ Excel: Permite edi√ß√£o e an√°lise dos dados com formata√ß√£o avan√ßada<br />
+                            ‚Ä¢ Selecione os campos que deseja incluir na exporta√ß√£o<br />
+                            ‚Ä¢ O arquivo ser√° baixado automaticamente no seu navegador
                         </Text>
                     </Box>
                 </Alert>

@@ -18,8 +18,6 @@ const CriarPessoa = () => {
             navigate('/pessoas');
         } catch (error) {
             console.error('Erro ao cadastrar pessoa:', error);
-
-            // Verificar se é um erro de validação do servidor
             if (error.response?.data?.errors) {
                 const erros = error.response.data.errors;
                 const mensagens = Object.values(erros).flat();

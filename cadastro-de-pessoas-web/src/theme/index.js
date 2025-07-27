@@ -76,13 +76,11 @@ const colors = {
     }
 };
 
-// Tipografia moderna
 const fonts = {
     heading: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     body: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
 };
 
-// Configurações de tamanhos
 const sizes = {
     container: {
         sm: '640px',
@@ -92,7 +90,6 @@ const sizes = {
     }
 };
 
-// Configurações de sombras elegantes
 const shadows = {
     xs: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
     sm: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
@@ -130,7 +127,6 @@ const theme = extendTheme({
         },
     },
     components: {
-        // Botões modernos
         Button: {
             baseStyle: {
                 fontWeight: '600',
@@ -229,7 +225,6 @@ const theme = extendTheme({
             },
         },
         
-        // Cards elegantes
         Card: {
             baseStyle: {
                 p: '6',
@@ -264,7 +259,6 @@ const theme = extendTheme({
             },
         },
 
-        // Inputs modernos
         Input: {
             baseStyle: {
                 field: {
@@ -296,7 +290,6 @@ const theme = extendTheme({
             },
         },
 
-        // FormLabel melhorado
         FormLabel: {
             baseStyle: {
                 fontSize: 'sm',
@@ -306,7 +299,6 @@ const theme = extendTheme({
             },
         },
 
-        // Select moderno
         Select: {
             baseStyle: {
                 field: {
@@ -325,7 +317,6 @@ const theme = extendTheme({
             },
         },
 
-        // Headings elegantes
         Heading: {
             baseStyle: {
                 fontWeight: '700',
@@ -359,7 +350,6 @@ const theme = extendTheme({
             },
         },
 
-        // Tabs modernos
         Tabs: {
             variants: {
                 modern: {
@@ -382,7 +372,6 @@ const theme = extendTheme({
             },
         },
 
-        // Modal elegante
         Modal: {
             baseStyle: {
                 dialog: {
@@ -392,7 +381,6 @@ const theme = extendTheme({
             },
         },
 
-        // Table moderna
         Table: {
             variants: {
                 modern: {
@@ -425,8 +413,7 @@ const theme = extendTheme({
                 },
             },
         },
-
-        // Badge moderno
+        
         Badge: {
             baseStyle: {
                 borderRadius: 'full',

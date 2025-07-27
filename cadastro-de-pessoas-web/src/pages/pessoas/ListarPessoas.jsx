@@ -24,7 +24,7 @@ const ListarPessoas = () => {
             setPessoas(data);
         } catch (error) {
             console.error('Erro ao buscar pessoas:', error);
-            showError('Não foi possível carregar a lista de pessoas');
+            showError('NÃ£o foi possÃ­vel carregar a lista de pessoas');
         } finally {
             setIsLoading(false);
         }
@@ -42,7 +42,7 @@ const ListarPessoas = () => {
             setIsDeleting(true);
             await pessoaService.remover(selectedId);
             setPessoas(pessoas.filter(p => p.id !== selectedId));
-            showSuccess('Pessoa excluída com sucesso!');
+            showSuccess('Pessoa excluÃ­da com sucesso!');
         } catch (error) {
             console.error('Erro ao excluir pessoa:', error);
             showError('Erro ao excluir pessoa');
@@ -70,7 +70,7 @@ const ListarPessoas = () => {
                 onClose={onClose}
                 onConfirm={handleDelete}
                 title="Excluir Pessoa"
-                message="Tem certeza que deseja excluir esta pessoa? Esta ação não pode ser desfeita."
+                message="Tem certeza que deseja excluir esta pessoa? Esta aÃ§Ã£o nÃ£o pode ser desfeita."
                 isLoading={isDeleting}
             />
         </Box>

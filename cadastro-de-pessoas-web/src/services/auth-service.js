@@ -1,9 +1,9 @@
-import api from './api';
+import api, { resolveApiPath } from './api';
 
 export const authService = {
     login: async (email, senha) => {
         try {
-            const response = await api.post('/api/v1/auth/login', {
+            const response = await api.post(resolveApiPath('auth/login'), {
                 email,
                 senha
             });
@@ -42,14 +42,14 @@ export const authService = {
 
             return {
                 success: false,
-                message: 'Erro de conexão. Verifique se o servidor está rodando.'
+                message: 'Erro de conexÃ£o. Verifique se o servidor estÃ¡ rodando.'
             };
         }
     },
 
     register: async (nome, email, senha) => {
         try {
-            const response = await api.post('/api/v1/Auth/register', {
+            const response = await api.post(resolveApiPath('Auth/register'), {
                 nome,
                 email,
                 senha
@@ -70,7 +70,7 @@ export const authService = {
             if (error.response?.status === 401) {
                 throw new Error('Erro ao registrar. Verifique as credenciais.');
             }
-            throw new Error('Erro de conexão. Verifique se o servidor está rodando.');
+            throw new Error('Erro de conexÃ£o. Verifique se o servidor estÃ¡ rodando.');
         }
     },
 
@@ -82,7 +82,7 @@ export const authService = {
 
     verifyToken: async () => {
         try {
-            const response = await api.get('/api/v1/auth/verify');
+            const response = await api.get(resolveApiPath('auth/verify'));
             return response.data;
         } catch (error) {
             throw error;
@@ -91,7 +91,7 @@ export const authService = {
 
     getProfile: async () => {
         try {
-            const response = await api.get('/api/v1/auth/profile');
+            const response = await api.get(resolveApiPath('auth/profile'));
             return response.data;
         } catch (error) {
             throw error;
@@ -100,7 +100,7 @@ export const authService = {
 
     updateProfile: async (profileData) => {
         try {
-            const response = await api.put('/api/v1/auth/profile', profileData);
+            const response = await api.put(resolveApiPath('auth/profile'), profileData);
             
             if (response.data.success) {
                 localStorage.setItem('user', JSON.stringify(response.data.user));
@@ -117,7 +117,7 @@ export const authService = {
             const userStr = localStorage.getItem('user');
             return userStr ? JSON.parse(userStr) : null;
         } catch (error) {
-            console.error('Erro ao recuperar usuário:', error);
+            console.error('Erro ao recuperar usuÃ¡rio:', error);
             return null;
         }
     },
@@ -137,7 +137,7 @@ export const authService = {
             
             const parts = token.split('.');
             if (parts.length !== 3) {
-                throw new Error('Token JWT inválido');
+                throw new Error('Token JWT invÃ¡lido');
             }
 
             const payload = parts[1];
@@ -171,7 +171,7 @@ export const authService = {
 export const healthService = {
     checkHealth: async () => {
         try {
-            const response = await api.get('/api/v1/health');
+            const response = await api.get(resolveApiPath('health'));
             return response.data;
         } catch (error) {
             throw error;
@@ -180,7 +180,7 @@ export const healthService = {
 
     checkDatabase: async () => {
         try {
-            const response = await api.get('/api/v1/health/database');
+            const response = await api.get(resolveApiPath('health/database'));
             return response.data;
         } catch (error) {
             throw error;

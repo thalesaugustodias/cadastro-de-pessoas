@@ -37,7 +37,7 @@ import { formatarData } from '../utils/formatters';
 import { useAuth } from '../hooks/useAuth';
 import Loading from '../components/ui/Loading';
 
-// Animação para contadores
+// Animaï¿½ï¿½o para contadores
 const countUp = keyframes`
     0% { opacity: 0; transform: translateY(10px); }
     100% { opacity: 1; transform: translateY(0); }
@@ -153,8 +153,8 @@ const WelcomeCard = ({ user }) => (
         <CardBody p={8}>
             <HStack spacing={6} align="center">
                 <Avatar 
-                    size="xl" 
-                    name={user?.nome || 'Usuário'} 
+                    size="xl"
+                    name={user?.nome || 'UsuÃ¡rio'} 
                     bg="whiteAlpha.300"
                     color="white"
                     border="4px solid"
@@ -163,7 +163,7 @@ const WelcomeCard = ({ user }) => (
                 
                 <Box flex="1">
                     <Heading size="lg" mb={2}>
-                        Olá, {user?.nome || 'Usuário'}! ??
+                        OlÃ¡, {user?.nome || 'UsuÃ¡rio'}! ðŸ‘‹
                     </Heading>
                     <Text fontSize="lg" opacity="0.9" mb={3}>
                         Bem-vindo ao sistema de cadastro
@@ -184,7 +184,7 @@ const WelcomeCard = ({ user }) => (
                         Administrador
                     </Badge>
                     <Text fontSize="sm" opacity="0.8">
-                        Sistema em operação
+                        Sistema em operaÃ§Ã£o
                     </Text>
                 </VStack>
             </HStack>
@@ -258,7 +258,7 @@ const Home = () => {
                 setPessoas(data);
             } catch (error) {
                 console.error('Erro ao buscar pessoas:', error);
-                setError('Não foi possível carregar os dados. Tente novamente mais tarde.');
+                setError('NÃ£o foi possÃ­vel carregar os dados. Tente novamente mais tarde.');
             } finally {
                 setIsLoading(false);
             }
@@ -267,13 +267,13 @@ const Home = () => {
         fetchPessoas();
     }, []);
 
-    // Calcular estatísticas
+    // Calcular estatÃ­sticas
     const totalPessoas = pessoas.length;
     const ultimoCadastro = pessoas.length > 0
         ? pessoas.sort((a, b) => new Date(b.dataCadastro) - new Date(a.dataCadastro))[0]
         : null;
 
-    // Calcular média de idade
+    // Calcular mÃ©dia de idade
     const calcularIdade = (dataNascimento) => {
         const hoje = new Date();
         const nascimento = new Date(dataNascimento);
@@ -290,7 +290,7 @@ const Home = () => {
         ? Math.round(pessoas.reduce((acc, p) => acc + calcularIdade(p.dataNascimento), 0) / pessoas.length)
         : 0;
 
-    // Cadastros dos últimos 30 dias
+    // Cadastros dos Ãºltimos 30 dias
     const ultimosMeses = new Date();
     ultimosMeses.setDate(ultimosMeses.getDate() - 30);
     const cadastrosRecentes = pessoas.filter(p => 
@@ -325,7 +325,7 @@ const Home = () => {
             {/* Card de boas-vindas */}
             <WelcomeCard user={user} />
 
-            {/* Estatísticas principais */}
+            {/* EstatÃ­sticas principais */}
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6} mb={8}>
                 <StatCard
                     title="Total de Pessoas"
@@ -341,12 +341,12 @@ const Home = () => {
                     value={cadastrosRecentes}
                     icon={FiUserPlus}
                     color="success"
-                    helpText="nos últimos 30 dias"
+                    helpText="nos Ãºltimos 30 dias"
                     isLoading={isLoading}
                 />
 
                 <StatCard
-                    title="Média de Idade"
+                    title="MÃ©dia de Idade"
                     value={mediaIdade ? `${mediaIdade} anos` : 'N/A'}
                     icon={FiCalendar}
                     color="warning"
@@ -357,10 +357,10 @@ const Home = () => {
 
             {/* Grid principal */}
             <Grid templateColumns={{ base: '1fr', lg: '2fr 1fr' }} gap={8}>
-                {/* Ações rápidas */}
+                {/* AÃ§Ãµes rÃ¡pidas */}
                 <GridItem>
                     <Heading size="md" mb={6} color="gray.800">
-                        Ações Rápidas
+                        AÃ§Ãµes RÃ¡pidas
                     </Heading>
                     <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                         <QuickActionCard

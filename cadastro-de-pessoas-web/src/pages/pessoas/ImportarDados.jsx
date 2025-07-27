@@ -48,28 +48,28 @@ const ImportarDados = () => {
         }
 
         setIsLoading(true);
-        
-        // Simular importação
+
+        // Simular importaÃ§Ã£o
         setTimeout(() => {
             setImportResult({
                 total: 150,
                 success: 145,
                 errors: 5,
                 details: [
-                    { linha: 12, erro: 'CPF inválido: 123.456.789-00' },
-                    { linha: 34, erro: 'Email já cadastrado: joao@email.com' },
-                    { linha: 67, erro: 'Data de nascimento inválida' },
-                    { linha: 89, erro: 'Campo nome obrigatório' },
-                    { linha: 112, erro: 'CEP não encontrado: 12345-999' },
+                    { linha: 12, erro: 'CPF invÃ¡lido: 123.456.789-00' },
+                    { linha: 34, erro: 'Email jÃ¡ cadastrado: joao@email.com' },
+                    { linha: 67, erro: 'Data de nascimento invÃ¡lida' },
+                    { linha: 89, erro: 'Campo nome obrigatÃ³rio' },
+                    { linha: 112, erro: 'CEP nÃ£o encontrado: 12345-999' },
                 ]
             });
             setIsLoading(false);
-            showSuccess('Importação concluída! 145 registros importados com sucesso.');
+            showSuccess('ImportaÃ§Ã£o concluÃ­da! 145 registros importados com sucesso.');
         }, 3000);
     };
 
     const downloadTemplate = () => {
-        const csvContent = 'data:text/csv;charset=utf-8,Nome,Email,CPF,DataNascimento,Telefone,CEP,Logradouro,Numero,Complemento,Bairro,Cidade,Estado\n"João Silva","joao@email.com","123.456.789-01","1990-01-01","(11) 99999-9999","01310-100","Av. Paulista","1000","Apto 101","Bela Vista","São Paulo","SP"';
+        const csvContent = 'data:text/csv;charset=utf-8,Nome,Email,CPF,DataNascimento,Telefone,CEP,Logradouro,Numero,Complemento,Bairro,Cidade,Estado\n"JoÃ£o Silva","joao@email.com","123.456.789-01","1990-01-01","(11) 99999-9999","01310-100","Av. Paulista","1000","Apto 101","Bela Vista","SÃ£o Paulo","SP"';
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement('a');
         link.setAttribute('href', encodedUri);
@@ -88,7 +88,7 @@ const ImportarDados = () => {
                         Importar Dados
                     </Heading>
                     <Text color="gray.600">
-                        Importe dados em lote através de arquivo CSV
+                        Importe dados em lote atravÃ©s de arquivo CSV
                     </Text>
                 </Box>
 
@@ -98,7 +98,7 @@ const ImportarDados = () => {
                         <HStack justify="space-between" align="center">
                             <Box>
                                 <Heading size="md" mb={2}>
-                                    Template de Importação
+                                    Template de ImportaÃ§Ã£o
                                 </Heading>
                                 <Text color="gray.600">
                                     Baixe o modelo CSV com as colunas corretas
@@ -173,7 +173,7 @@ const ImportarDados = () => {
                                     loadingText="Importando..."
                                     w="full"
                                 >
-                                    Iniciar Importação
+                                    Iniciar ImportaÃ§Ã£o
                                 </Button>
                             )}
                         </VStack>
@@ -203,8 +203,8 @@ const ImportarDados = () => {
                     <Card>
                         <CardBody p={6}>
                             <VStack spacing={6} align="stretch">
-                                <Heading size="md">Resultado da Importação</Heading>
-                                
+                                <Heading size="md">Resultado da ImportaÃ§Ã£o</Heading>
+
                                 <HStack spacing={6}>
                                     <Badge colorScheme="blue" p={2} borderRadius="md">
                                         Total: {importResult.total}
@@ -247,12 +247,12 @@ const ImportarDados = () => {
                 <Alert status="info" borderRadius="xl">
                     <AlertIcon />
                     <Box>
-                        <Text fontWeight="600" mb={2}>Instruções:</Text>
+                        <Text fontWeight="600" mb={2}>InstruÃ§Ãµes:</Text>
                         <Text fontSize="sm">
                             1. Baixe o template CSV<br />
                             2. Preencha os dados seguindo o formato<br />
                             3. Selecione o arquivo preenchido<br />
-                            4. Clique em "Iniciar Importação"<br />
+                            4. Clique em "Iniciar ImportaÃ§Ã£o"<br />
                             5. Aguarde o processamento
                         </Text>
                     </Box>
