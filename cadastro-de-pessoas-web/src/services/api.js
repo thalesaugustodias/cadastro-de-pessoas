@@ -81,7 +81,7 @@ api.interceptors.response.use(
             
             switch (status) {
                 case 401:
-                    if (!error.config?.url?.includes('/auth/login')) {
+                    if (!error.config?.url?.includes('/api/v1/auth/login')) {
                         console.warn('Token inválido - redirecionando para login');
                         localStorage.removeItem('token');
                         localStorage.removeItem('user');
