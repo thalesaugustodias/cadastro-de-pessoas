@@ -37,7 +37,7 @@ import { formatarData } from '../utils/formatters';
 import { useAuth } from '../hooks/useAuth';
 import Loading from '../components/ui/Loading';
 
-// Anima��o para contadores
+// Animação para contadores
 const countUp = keyframes`
     0% { opacity: 0; transform: translateY(10px); }
     100% { opacity: 1; transform: translateY(0); }

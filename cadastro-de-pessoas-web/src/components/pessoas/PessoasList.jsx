@@ -119,7 +119,7 @@ const PessoasList = ({
                             <Th>CPF</Th>
                             <Th>Data de Nascimento</Th>
                             <Th>Sexo</Th>
-                            <Th>Ações</Th>
+                            <Th>AÃ§Ãµes</Th>
                         </Tr>
                     </Thead>
                     <Tbody>
@@ -132,7 +132,7 @@ const PessoasList = ({
                                     {pessoa.sexo === 0 && <Badge colorScheme="blue">Masculino</Badge>}
                                     {pessoa.sexo === 1 && <Badge colorScheme="pink">Feminino</Badge>}
                                     {pessoa.sexo === 2 && <Badge colorScheme="purple">Outro</Badge>}
-                                    {pessoa.sexo === null && <Badge colorScheme="gray">Não informado</Badge>}
+                                    {pessoa.sexo === null && <Badge colorScheme="gray">Sexo nÃ£o informado</Badge>}
                                 </Td>
                                 <Td>
                                     <ActionButtons

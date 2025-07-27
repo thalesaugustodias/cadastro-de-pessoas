@@ -170,9 +170,9 @@ const Sidebar = ({ isOpen }) => {
                         icon={FiHome}
                         to="/"
                         isActive={location.pathname === '/'}
-                        description="Visão geral do sistema"
+                        description="VisÃ£o geral do sistema"
                     >
-                        Início
+                        InÃ­cio
                     </SidebarItem>
                 </SidebarSection>
 
@@ -217,7 +217,7 @@ const Sidebar = ({ isOpen }) => {
 
                 <Divider />
 
-                {/* Configurações */}
+                {/* ConfiguraÃ§Ãµes */}
                 <SidebarSection title="Sistema">
                     <SidebarItem
                         icon={FiUser}
@@ -232,9 +232,9 @@ const Sidebar = ({ isOpen }) => {
                         icon={FiSettings}
                         to="/configuracoes"
                         isActive={location.pathname === '/configuracoes'}
-                        description="Preferências do sistema"
+                        description="PreferÃªncias do sistema"
                     >
-                        Configurações
+                        ConfiguraÃ§Ãµes
                     </SidebarItem>
                 </SidebarSection>
             </VStack>

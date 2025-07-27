@@ -22,7 +22,7 @@ const Layout = () => {
                     transition="margin-left 0.3s cubic-bezier(.08,.52,.52,1)"
                     minH="calc(100vh - 72px)"
                 >
-                    {/* Overlay para mobile quando sidebar está aberta */}
+                    {/* Overlay para mobile quando sidebar estÃ¡ aberta */}
                     {isOpen && (
                         <Box
                             position="fixed"
@@ -37,7 +37,7 @@ const Layout = () => {
                         />
                     )}
 
-                    {/* Conteúdo principal com padding adequado */}
+                    {/* ConteÃºdo principal com padding adequado */}
                     <Box
                         minH="calc(100vh - 72px)"
                         bg="white"
@@ -47,6 +47,7 @@ const Layout = () => {
                         border="1px solid"
                         borderColor="gray.100"
                         overflow="hidden"
+                        p={{ base: 4, md: 6 }}
                     >
                         <Outlet />
                     </Box>

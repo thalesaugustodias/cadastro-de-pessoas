@@ -31,7 +31,7 @@ const CriarPessoa = () => {
     };
 
     return (
-        <Box>
+        <Box p={6}>
             <Heading as="h1" size="lg" mb={6}>
                 Cadastrar Nova Pessoa
             </Heading>

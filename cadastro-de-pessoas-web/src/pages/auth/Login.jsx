@@ -157,7 +157,7 @@ const Login = () => {
                 px={4}
             >
                 <Container maxW="lg">
-                    {/* Logo e t�tulo */}
+                    {/* Logo e título */}
                     <VStack spacing={8} mb={10}>
                         <VStack spacing={2}>
                             <Heading 

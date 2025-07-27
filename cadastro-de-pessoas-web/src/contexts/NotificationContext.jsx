@@ -29,7 +29,7 @@ export const NotificationProvider = ({ children }) => {
         });
     };
 
-    const showWarning = (message, title = 'Atenção') => {
+    const showWarning = (message, title = 'AtenÃ§Ã£o') => {
         toast({
             title,
             description: message,
@@ -40,7 +40,7 @@ export const NotificationProvider = ({ children }) => {
         });
     };
 
-    const showInfo = (message, title = 'Informação') => {
+    const showInfo = (message, title = 'InformaÃ§Ã£o') => {
         toast({
             title,
             description: message,

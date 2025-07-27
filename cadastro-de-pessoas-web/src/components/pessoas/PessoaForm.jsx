@@ -30,24 +30,24 @@ import { cepService } from '../../services/cep-service';
 import { useNotification } from '../../hooks/useNotification';
 
 const schema = yup.object().shape({
-    nome: yup.string().required('O nome é obrigatório'),
-    email: yup.string().email('Digite um e-mail válido').nullable(),
+    nome: yup.string().required('O nome Ã© obrigatÃ³rio'),
+    email: yup.string().email('Digite um e-mail vÃ¡lido').nullable(),
     telefone: yup.string().nullable(),
     dataNascimento: yup
         .date()
-        .typeError('Data inválida')
-        .max(new Date(), 'A data de nascimento não pode ser no futuro')
-        .min(new Date(1900, 0, 1), 'A data de nascimento deve ser após 01/01/1900')
-        .required('A data de nascimento é obrigatória'),
+        .typeError('Data invÃ¡lida')
+        .max(new Date(), 'A data de nascimento nÃ£o pode ser no futuro')
+        .min(new Date(1900, 0, 1), 'A data de nascimento deve ser apÃ³s 01/01/1900')
+        .required('A data de nascimento Ã© obrigatÃ³ria'),
     cpf: yup
         .string()
-        .required('O CPF é obrigatório')
-        .test('is-cpf', 'CPF inválido', (value) => validarCPF(value || '')),
+        .required('O CPF Ã© obrigatÃ³rio')
+        .test('is-cpf', 'CPF invÃ¡lido', (value) => validarCPF(value || '')),
     sexo: yup.string().nullable(),
     naturalidade: yup.string().nullable(),
     nacionalidade: yup.string().nullable(),
-    
-    // Campos de endereço
+
+    // Campos de endereÃ§o
     endereco: yup.object().shape({
         cep: yup.string().nullable(),
         logradouro: yup.string().nullable(),
@@ -99,7 +99,6 @@ const PessoaForm = ({ initialData = {}, onSubmit, isLoading, isEdit = false }) =
     const telefone = watch('telefone');
     const cep = watch('endereco.cep');
 
-    // Aplicar máscaras
     React.useEffect(() => {
         if (cpf) {
             setValue('cpf', maskCPF(cpf));
@@ -122,7 +121,7 @@ const PessoaForm = ({ initialData = {}, onSubmit, isLoading, isEdit = false }) =
         const cepValue = getValues('endereco.cep');
         
         if (!cepValue || cepValue.replace(/\D/g, '').length !== 8) {
-            showError('Digite um CEP válido com 8 dígitos');
+            showError('Digite um CEP vÃ¡lido com 8 dÃ­gitos');
             return;
         }
 
@@ -140,7 +139,6 @@ const PessoaForm = ({ initialData = {}, onSubmit, isLoading, isEdit = false }) =
                 
                 showSuccess('CEP encontrado!');
                 
-                // Focar no campo número
                 document.getElementById('endereco.numero')?.focus();
             } else {
                 showError(result.message);
@@ -153,7 +151,6 @@ const PessoaForm = ({ initialData = {}, onSubmit, isLoading, isEdit = false }) =
     };
 
     const submitHandler = (data) => {
-        // Remover formatação
         data.cpf = data.cpf.replace(/\D/g, '');
         
         if (data.telefone) {
@@ -164,14 +161,12 @@ const PessoaForm = ({ initialData = {}, onSubmit, isLoading, isEdit = false }) =
             data.endereco.cep = data.endereco.cep.replace(/\D/g, '');
         }
 
-        // Converter sexo para número se estiver preenchido
         if (data.sexo) {
             data.sexo = parseInt(data.sexo);
         } else {
             data.sexo = null;
         }
 
-        // Remover campos vazios do endereço
         if (data.endereco) {
             Object.keys(data.endereco).forEach(key => {
                 if (data.endereco[key] === '') {
@@ -179,21 +174,18 @@ const PessoaForm = ({ initialData = {}, onSubmit, isLoading, isEdit = false }) =
                 }
             });
             
-            // Se todos os campos do endereço estão vazios, definir como null
             const hasEnderecoData = Object.values(data.endereco).some(value => value !== null && value !== '');
             if (!hasEnderecoData) {
                 data.endereco = null;
             }
         }
 
-        // Remover outros campos vazios
         Object.keys(data).forEach(key => {
             if (key !== 'endereco' && data[key] === '') {
                 data[key] = null;
             }
         });
 
-        // Se for edição, incluir o ID
         if (isEdit) {
             data.id = initialData.id;
         }
@@ -285,7 +277,7 @@ const PessoaForm = ({ initialData = {}, onSubmit, isLoading, isEdit = false }) =
                                 <Input 
                                     id="nacionalidade" 
                                     {...register('nacionalidade')} 
-                                    placeholder="País de origem"
+                                    placeholder="PaÃ­s de origem"
                                 />
                                 <FormErrorMessage>{errors.nacionalidade?.message}</FormErrorMessage>
                             </FormControl>
@@ -295,11 +287,11 @@ const PessoaForm = ({ initialData = {}, onSubmit, isLoading, isEdit = false }) =
 
                 <Divider />
 
-                {/* Endereço */}
+                {/* EndereÃ§o */}
                 <Box>
                     <HStack mb={4}>
                         <Icon as={FiMapPin} color="brand.500" />
-                        <Heading size="md" color="gray.800">Endereço</Heading>
+                        <Heading size="md" color="gray.800">EndereÃ§o</Heading>
                     </HStack>
 
                     <VStack spacing={6} align="stretch">
@@ -341,7 +333,7 @@ const PessoaForm = ({ initialData = {}, onSubmit, isLoading, isEdit = false }) =
                                 <Input
                                     id="endereco.cidade"
                                     {...register('endereco.cidade')}
-                                    placeholder="São Paulo"
+                                    placeholder="SÃ£o Paulo"
                                 />
                                 <FormErrorMessage>{errors.endereco?.cidade?.message}</FormErrorMessage>
                             </FormControl>
@@ -371,7 +363,7 @@ const PessoaForm = ({ initialData = {}, onSubmit, isLoading, isEdit = false }) =
 
                         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                             <FormControl isInvalid={errors.endereco?.numero}>
-                                <FormLabel htmlFor="endereco.numero">Número</FormLabel>
+                                <FormLabel htmlFor="endereco.numero">NÃºmero</FormLabel>
                                 <Input
                                     id="endereco.numero"
                                     {...register('endereco.numero')}
@@ -396,7 +388,7 @@ const PessoaForm = ({ initialData = {}, onSubmit, isLoading, isEdit = false }) =
                 <Alert status="info" borderRadius="lg">
                     <AlertIcon />
                     <Box>
-                        <strong>Dica:</strong> Digite o CEP e clique no ícone de busca para preencher automaticamente o endereço.
+                        <strong>Dica:</strong> Digite o CEP e clique no Ã­cone de busca para preencher automaticamente o endereÃ§o.
                     </Box>
                 </Alert>
 

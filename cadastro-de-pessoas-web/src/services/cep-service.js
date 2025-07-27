@@ -12,7 +12,7 @@ export const cepService = {
             const response = await axios.get(`https://viacep.com.br/ws/${cepLimpo}/json/`);
             
             if (response.data.erro) {
-                throw new Error('CEP n�o encontrado');
+                throw new Error('CEP não encontrado');
             }
 
             return {

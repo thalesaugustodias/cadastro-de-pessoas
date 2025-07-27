@@ -1,3 +1,4 @@
+using CadastroDePessoas.API.Configuracoes;
 using CadastroDePessoas.Application.CQRS.Comandos.Usuario.AutenticarUsuario;
 using CadastroDePessoas.Application.CQRS.Comandos.Usuario.CriarUsuario;
 using CadastroDePessoas.Infraestructure.Contexto;
@@ -10,6 +11,8 @@ namespace CadastroDePessoas.API.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
+    [Produces("application/json")]
+    [Consumes("application/json")]
     public class AuthController(IMediator mediator, AppDbContexto dbContext) : ControllerBase
     {
         /// <summary>
@@ -17,6 +20,8 @@ namespace CadastroDePessoas.API.Controllers
         /// </summary>       
         [HttpPost("login")]
         [AllowAnonymous]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<object>> Login([FromBody] AutenticarUsuarioComando loginDto)
         {
             try
@@ -46,7 +51,7 @@ namespace CadastroDePessoas.API.Controllers
                 {
                     success = true,
                     message = "Login realizado com sucesso",
-                    token = token,
+                    token,
                     user = new
                     {
                         id = usuario.Id,
@@ -70,6 +75,8 @@ namespace CadastroDePessoas.API.Controllers
         /// </summary>   
         [HttpPost("register")]
         [AllowAnonymous]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<object>> Register([FromBody] CriarUsuarioComando criarUsuarioDto)
         {
             try
@@ -221,11 +228,5 @@ namespace CadastroDePessoas.API.Controllers
                 return StatusCode(500, new { message = "Erro interno do servidor" });
             }
         }       
-    }
-
-    public class UpdateProfileRequest
-    {
-        public string Nome { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
     }
 }

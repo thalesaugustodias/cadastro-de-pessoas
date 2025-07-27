@@ -44,7 +44,7 @@ const ExportarDados = () => {
         { value: 'telefone', label: 'Telefone' },
         { value: 'endereco.cep', label: 'CEP' },
         { value: 'endereco.logradouro', label: 'Logradouro' },
-        { value: 'endereco.numero', label: 'N�mero' },
+        { value: 'endereco.numero', label: 'Número' },
         { value: 'endereco.bairro', label: 'Bairro' },
         { value: 'endereco.cidade', label: 'Cidade' },
         { value: 'endereco.estado', label: 'Estado' },

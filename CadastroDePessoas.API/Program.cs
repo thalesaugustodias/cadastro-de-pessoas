@@ -35,13 +35,18 @@ var app = builder.Build();
 
 app.Use(async (context, next) =>
 {
-    context.Response.ContentType = "application/json; charset=utf-8";
     await next.Invoke();
+    
+    // Se a resposta não tiver um tipo de conteúdo e for uma rota de API
+    if (string.IsNullOrEmpty(context.Response.ContentType) && 
+        context.Request.Path.StartsWithSegments("/api"))
+    {
+        context.Response.ContentType = "application/json; charset=utf-8";
+    }
 });
 
-app.UseMiddleware<CorsPreflightMiddleware>();
-
 app.UsarCorsConfiguracao(app.Environment);
+app.UseMiddleware<CorsPreflightMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

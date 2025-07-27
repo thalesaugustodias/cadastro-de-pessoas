@@ -39,7 +39,7 @@ const Footer = () => {
                     maxW="6xl"
                     mx="auto"
                 >
-                    {/* Logo e descrição */}
+                    {/* Logo e descriï¿½ï¿½o */}
                     <VStack spacing={2} align={{ base: 'center', md: 'start' }}>
                         <HStack spacing={3}>
                             <Box
@@ -75,31 +75,7 @@ const Footer = () => {
                         >
                             Sistema de gerenciamento de cadastros
                         </Text>
-                    </VStack>
-
-                    {/* Features */}
-                    <HStack spacing={8} mt={{ base: 4, md: 0 }}>
-                        <VStack spacing={1} align="center">
-                            <Icon as={FiZap} color="brand.500" />
-                            <Text fontSize="xs" color="gray.500" fontWeight="600">
-                                Rápido
-                            </Text>
-                        </VStack>
-                        
-                        <VStack spacing={1} align="center">
-                            <Icon as={FiShield} color="success.500" />
-                            <Text fontSize="xs" color="gray.500" fontWeight="600">
-                                Seguro
-                            </Text>
-                        </VStack>
-                        
-                        <VStack spacing={1} align="center">
-                            <Icon as={FiCode} color="accent.500" />
-                            <Text fontSize="xs" color="gray.500" fontWeight="600">
-                                Moderno
-                            </Text>
-                        </VStack>
-                    </HStack>
+                    </VStack>                   
                 </Flex>
 
                 <Divider />
@@ -117,12 +93,11 @@ const Footer = () => {
                 >
                     <HStack spacing={2} mb={{ base: 2, md: 0 }}>
                         <Text>
-                            © {currentYear} Cadastro de Pessoas.
+                            Â© {currentYear} Cadastro de Pessoas.
                         </Text>
                         <Text>
-                            Desenvolvido com
-                        </Text>
-                        <Icon as={FiHeart} color="red.500" />
+                            Desenvolvido por Thales Augusto Dias
+                        </Text>                       
                     </HStack>
 
                     <HStack spacing={6} fontSize="sm">
@@ -138,7 +113,7 @@ const Footer = () => {
                             _hover={{ color: 'brand.500' }}
                             fontWeight="500"
                         >
-                            Documentação
+                            DocumentaÃ§Ã£o
                         </Link>
                     </HStack>
                 </Flex>

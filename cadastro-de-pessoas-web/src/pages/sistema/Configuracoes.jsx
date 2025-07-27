@@ -266,7 +266,7 @@ const Configuracoes = () => {
                                             />
                                         </HStack>
                                         
-                                        <FormControl>s
+                                        <FormControl>
                                             <FormLabel>Frequência do backup</FormLabel>
                                             <Select
                                                 value={settings.backupFrequency}

@@ -18,7 +18,7 @@ import { formatarData, formatarCPF } from '../../utils/formatters';
 import Confirm from '../ui/Confirm';
 import Loading from '../ui/Loading';
 
-const InfoItem = ({ label, value, placeholder = 'Não informado' }) => (
+const InfoItem = ({ label, value, placeholder = 'Nï¿½o informado' }) => (
     <Box mb={4}>
         <Text fontSize="sm" color="gray.500" fontWeight="medium">
             {label}
@@ -49,7 +49,7 @@ const PessoaItem = ({
     if (!pessoa) {
         return (
             <Box textAlign="center" py={10}>
-                <Text fontSize="lg" mb={4}>Pessoa não encontrada</Text>
+                <Text fontSize="lg" mb={4}>Pessoa nÃ£o encontrada</Text>
                 <Button
                     as={Link}
                     to="/pessoas"
@@ -79,7 +79,7 @@ const PessoaItem = ({
                         {pessoa.sexo === 0 && <Badge colorScheme="blue">Masculino</Badge>}
                         {pessoa.sexo === 1 && <Badge colorScheme="pink">Feminino</Badge>}
                         {pessoa.sexo === 2 && <Badge colorScheme="purple">Outro</Badge>}
-                        {pessoa.sexo === null && <Badge colorScheme="gray">Sexo não informado</Badge>}
+                        {pessoa.sexo === null && <Badge colorScheme="gray">Sexo nÃ£o informado</Badge>}
 
                         <Badge colorScheme="green">{pessoa.idade} anos</Badge>
                     </HStack>
@@ -119,7 +119,7 @@ const PessoaItem = ({
             <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                 <Box>
                     <Heading as="h3" size="md" mb={4}>
-                        Informações Pessoais
+                        InformaÃ§Ãµes Pessoais
                     </Heading>
 
                     <InfoItem
@@ -150,11 +150,11 @@ const PessoaItem = ({
 
                 <Box>
                     <Heading as="h3" size="md" mb={4}>
-                        Informações Adicionais
+                        InformaÃ§Ãµes Adicionais
                     </Heading>
 
                     <InfoItem
-                        label="Endereço"
+                        label="EndereÃ§o"
                         value={pessoa.endereco}
                     />
 
@@ -165,7 +165,7 @@ const PessoaItem = ({
 
                     {pessoa.dataAtualizacao && (
                         <InfoItem
-                            label="Última Atualização"
+                            label="Ãšltima AtualizaÃ§Ã£o"
                             value={formatarData(pessoa.dataAtualizacao)}
                         />
                     )}
@@ -177,7 +177,7 @@ const PessoaItem = ({
                 onClose={onClose}
                 onConfirm={handleDelete}
                 title="Excluir Pessoa"
-                message={`Tem certeza que deseja excluir ${pessoa.nome}? Esta ação não pode ser desfeita.`}
+                message={`Tem certeza que deseja excluir ${pessoa.nome}? Esta aÃ§Ã£o nÃ£o pode ser desfeita.`}
                 isLoading={isDeleting}
             />
         </Box>

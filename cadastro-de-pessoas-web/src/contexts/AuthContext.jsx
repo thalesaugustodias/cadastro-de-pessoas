@@ -14,8 +14,9 @@ export const AuthProvider = ({ children }) => {
             
             if (token) {
                 try {
-                    // Verificar se o token n�o est� expirado
                     if (authService.isTokenExpired(token)) {
+                        // Apenas faça logout se o token estiver realmente expirado
+                        console.log("Token expirado, fazendo logout");
                         authService.logout();
                         setAuthenticated(false);
                         setUser(null);
@@ -23,7 +24,17 @@ export const AuthProvider = ({ children }) => {
                         return;
                     }
 
-                    // Verificar token no backend
+                    // Tente obter os dados do usuário do localStorage primeiro para evitar
+                    // requisições desnecessárias ao recarregar a página
+                    const storedUser = authService.getCurrentUser();
+                    if (storedUser) {
+                        setAuthenticated(true);
+                        setUser(storedUser);
+                        setLoading(false);
+                        return;
+                    }
+
+                    // Se não tiver usuário no localStorage, então faça a requisição
                     const response = await authService.verifyToken();
                     if (response.valid) {
                         setAuthenticated(true);
@@ -35,9 +46,16 @@ export const AuthProvider = ({ children }) => {
                     }
                 } catch (error) {
                     console.error('Erro ao verificar token:', error);
-                    authService.logout();
-                    setAuthenticated(false);
-                    setUser(null);
+                    // Em caso de erro de conexão, mantenha o usuário logado se tiver dados no localStorage
+                    const storedUser = authService.getCurrentUser();
+                    if (storedUser) {
+                        setAuthenticated(true);
+                        setUser(storedUser);
+                    } else {
+                        authService.logout();
+                        setAuthenticated(false);
+                        setUser(null);
+                    }
                 }
             }
             
@@ -61,7 +79,7 @@ export const AuthProvider = ({ children }) => {
             console.error('Erro no login:', error);
             return {
                 success: false,
-                message: 'Erro de conex�o. Tente novamente.'
+                message: 'Erro de conexão. Tente novamente.'
             };
         }
     };

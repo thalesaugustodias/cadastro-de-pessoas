@@ -54,7 +54,7 @@ const ListarPessoas = () => {
     };
 
     return (
-        <Box>
+        <Box p={6}>
             <Heading as="h1" size="lg" mb={6}>
                 Gerenciar Pessoas
             </Heading>

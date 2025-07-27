@@ -42,7 +42,7 @@ const DetalhesPessoa = () => {
     };
 
     return (
-        <Box>
+        <Box p={6}>
             <PessoaItem
                 pessoa={pessoa}
                 isLoading={isLoading}

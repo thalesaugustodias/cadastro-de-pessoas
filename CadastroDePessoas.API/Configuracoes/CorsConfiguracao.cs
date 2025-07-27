@@ -32,9 +32,12 @@
 
                 options.AddPolicy("Development", builder =>
                 {
-                    builder.AllowAnyOrigin()
+                    builder.SetIsOriginAllowed(origin => 
+                        origin.StartsWith("http://localhost") || 
+                        origin.StartsWith("https://localhost"))
                            .AllowAnyMethod()
-                           .AllowAnyHeader();
+                           .AllowAnyHeader()
+                           .AllowCredentials();
                 });
 
                 // Política específica para produção com configurações mais restritivas
@@ -59,7 +62,7 @@
             }
             else
             {
-                app.UseCors("Production");
+                app.UseCors();
             }
             
             return app;
