@@ -30,16 +30,18 @@ namespace CadastroDePessoas.Infraestructure.Mapeamentos
                 .IsRequired()
                 .HasMaxLength(14);
 
-            builder.Property(p => p.Endereco)
-                .HasMaxLength(200);
-
-            builder.Property(p => p.DataCadastro)
-                .IsRequired();
-
-            builder.Property(p => p.DataAtualizacao);
+            builder.Property(p => p.Telefone)
+                .IsRequired(false)
+                .HasMaxLength(20);
 
             builder.HasIndex(p => p.CPF)
                 .IsUnique();
+
+            builder.HasOne(p => p.Endereco)
+                .WithOne(e => e.Pessoa)
+                .HasForeignKey<Endereco>(e => e.PessoaId);
+
+            builder.Ignore(p => p.EnderecoCompleto);
         }
     }
 }

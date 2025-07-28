@@ -1,4 +1,3 @@
-using CadastroDePessoas.API.Configuracoes;
 using CadastroDePessoas.Application.CQRS.Comandos.Usuario.AutenticarUsuario;
 using CadastroDePessoas.Application.CQRS.Comandos.Usuario.CriarUsuario;
 using CadastroDePessoas.Infraestructure.Contexto;
@@ -6,22 +5,17 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using BC = BCrypt.Net.BCrypt;
 
 namespace CadastroDePessoas.API.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    [Produces("application/json")]
-    [Consumes("application/json")]
     public class AuthController(IMediator mediator, AppDbContexto dbContext) : ControllerBase
-    {
-        /// <summary>
-        /// Realiza login do usuário
-        /// </summary>       
+    {   
         [HttpPost("login")]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(object), StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<object>> Login([FromBody] AutenticarUsuarioComando loginDto)
         {
             try
@@ -69,14 +63,9 @@ namespace CadastroDePessoas.API.Controllers
                 });
             }
         }
-
-        /// <summary>
-        /// Cria novo usuário no sistema
-        /// </summary>   
+ 
         [HttpPost("register")]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<object>> Register([FromBody] CriarUsuarioComando criarUsuarioDto)
         {
             try
@@ -104,9 +93,6 @@ namespace CadastroDePessoas.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Endpoint para logout (apenas remove token no client-side)
-        /// </summary>
         [HttpPost("logout")]
         [AllowAnonymous]
         public ActionResult Logout()
@@ -114,37 +100,42 @@ namespace CadastroDePessoas.API.Controllers
             return Ok(new { message = "Logout realizado com sucesso" });
         }
 
-        /// <summary>
-        /// Verifica se o token está válido
-        /// </summary>
         [HttpGet("verify")]
         [Authorize]
         public ActionResult VerifyToken()
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst("sub")?.Value;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value ?? User.FindFirst("email")?.Value;
+            var name = User.FindFirst(ClaimTypes.Name)?.Value ?? User.FindFirst("name")?.Value;
+
             return Ok(new 
             { 
                 valid = true,
                 user = new
                 {
-                    id = User.FindFirst("sub")?.Value,
-                    email = User.FindFirst("email")?.Value,
-                    name = User.FindFirst("name")?.Value
+                    id = userId,
+                    email,
+                    name
                 }
             });
         }
 
-        /// <summary>
-        /// Obtém dados do perfil do usuário autenticado
-        /// </summary>
         [HttpGet("profile")]
         [Authorize]
         public async Task<ActionResult<object>> GetProfile()
         {
-            var userId = User.FindFirst("sub")?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst("sub")?.Value;
             
             if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid))
             {
-                return BadRequest(new { message = "Token inválido" });
+                // Log de debug para ajudar a identificar o problema
+                var availableClaims = User.Claims.Select(c => $"{c.Type}: {c.Value}").ToList();
+                var claimsInfo = string.Join(", ", availableClaims);
+                
+                return BadRequest(new { 
+                    message = "Token inválido ou sem identificador de usuário",
+                    debug = $"Claims disponíveis: {claimsInfo}"
+                });
             }
 
             try
@@ -172,20 +163,17 @@ namespace CadastroDePessoas.API.Controllers
                     user = usuario
                 });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Erro interno do servidor" });
+                return StatusCode(500, new { message = "Erro interno do servidor", detail = ex.Message });
             }
         }
 
-        /// <summary>
-        /// Atualiza dados do perfil do usuário
-        /// </summary>
         [HttpPut("profile")]
         [Authorize]
         public async Task<ActionResult<object>> UpdateProfile([FromBody] UpdateProfileRequest request)
         {
-            var userId = User.FindFirst("sub")?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst("sub")?.Value;
             
             if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid))
             {
@@ -223,10 +211,61 @@ namespace CadastroDePessoas.API.Controllers
                     }
                 });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Erro interno do servidor" });
+                return StatusCode(500, new { message = "Erro interno do servidor", detail = ex.Message });
             }
-        }       
+        }
+
+        [HttpPut("password")]
+        [Authorize]
+        public async Task<ActionResult<object>> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst("sub")?.Value;
+            
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid))
+            {
+                return BadRequest(new { message = "Token inválido" });
+            }
+
+            try
+            {
+                var usuario = await dbContext.Usuarios.FindAsync(userGuid);
+                
+                if (usuario == null)
+                {
+                    return NotFound(new { message = "Usuário não encontrado" });
+                }
+
+                if (!BC.Verify(request.SenhaAtual, usuario.Senha))
+                {
+                    return BadRequest(new { message = "Senha atual incorreta" });
+                }
+
+                if (request.NovaSenha.Length < 6)
+                {
+                    return BadRequest(new { message = "A nova senha deve ter pelo menos 6 caracteres" });
+                }
+
+                if (request.NovaSenha != request.ConfirmarSenha)
+                {
+                    return BadRequest(new { message = "A nova senha e a confirmação não coincidem" });
+                }
+
+                usuario.AlterarSenha(BC.HashPassword(request.NovaSenha, 12));
+                
+                await dbContext.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Senha alterada com sucesso"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Erro interno do servidor: {ex.Message}" });
+            }
+        }
     }
 }

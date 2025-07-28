@@ -1,4 +1,5 @@
-﻿using CadastroDePessoas.Domain.Enums;
+﻿using CadastroDePessoas.Application.DTOs.Endereco;
+using CadastroDePessoas.Domain.Enums;
 
 namespace CadastroDePessoas.Application.DTOs.Pessoa
 {
@@ -13,7 +14,11 @@ namespace CadastroDePessoas.Application.DTOs.Pessoa
         public string Naturalidade { get; set; }
         public string Nacionalidade { get; set; }
         public string CPF { get; set; }
-        public string Endereco { get; set; }
+        public string Telefone { get; set; }
+        public EnderecoDTO Endereco { get; set; }
+        public string EnderecoCompleto => Endereco != null ? 
+            $"{Endereco.Logradouro}, {Endereco.Numero}, {Endereco.Bairro}, {Endereco.Cidade} - {Endereco.Estado}, {Endereco.CEP}" : 
+            null;
         public DateTime DataCadastro { get; set; }
         public DateTime? DataAtualizacao { get; set; }
         public int Idade => CalcularIdade();

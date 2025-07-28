@@ -24,6 +24,17 @@ namespace CadastroDePessoas.Application.Testes.Comandos.Pessoa
         public async Task Handle_ComDadosValidos_DeveCriarPessoa()
         {
             // Arrange
+            var endereco = new EnderecoComando
+            {
+                CEP = "01310-100",
+                Logradouro = "Av. Paulista",
+                Numero = "1000",
+                Complemento = "Apto 101",
+                Bairro = "Bela Vista",
+                Cidade = "São Paulo",
+                Estado = "SP"
+            };
+
             var comando = new CriarPessoaComando
             {
                 Nome = "João Silva",
@@ -32,7 +43,9 @@ namespace CadastroDePessoas.Application.Testes.Comandos.Pessoa
                 DataNascimento = new DateTime(1990, 1, 1),
                 Naturalidade = "São Paulo",
                 Nacionalidade = "Brasileira",
-                CPF = "52998224725"
+                CPF = "52998224725",
+                Telefone = "(11) 99999-9999",
+                Endereco = endereco
             };
 
             _repositorioPessoaMock
@@ -56,10 +69,54 @@ namespace CadastroDePessoas.Application.Testes.Comandos.Pessoa
             Assert.Equal(comando.Naturalidade, resultado.Naturalidade);
             Assert.Equal(comando.Nacionalidade, resultado.Nacionalidade);
             Assert.Equal(comando.CPF, resultado.CPF);
+            Assert.Equal(comando.Telefone, resultado.Telefone);
+            Assert.NotNull(resultado.Endereco);
+            Assert.Equal(endereco.CEP, resultado.Endereco.CEP);
+            Assert.Equal(endereco.Logradouro, resultado.Endereco.Logradouro);
+            Assert.Equal(endereco.Numero, resultado.Endereco.Numero);
+            Assert.Equal(endereco.Cidade, resultado.Endereco.Cidade);
 
             _repositorioPessoaMock.Verify(r => r.CpfExisteAsync(It.IsAny<string>(), It.IsAny<Guid?>()), Times.Once);
             _repositorioPessoaMock.Verify(r => r.AdicionarAsync(It.IsAny<Domain.Entidades.Pessoa>()), Times.Once);
             _servicoCacheMock.Verify(c => c.RemoverAsync("pessoas_lista"), Times.Once);
+        }
+
+        [Fact]
+        public async Task Handle_SemEndereco_DeveCriarPessoaSemEndereco()
+        {
+            // Arrange
+            var comando = new CriarPessoaComando
+            {
+                Nome = "João Silva",
+                Sexo = Sexo.Masculino,
+                Email = "joao@exemplo.com",
+                DataNascimento = new DateTime(1990, 1, 1),
+                Naturalidade = "São Paulo",
+                Nacionalidade = "Brasileira",
+                CPF = "52998224725",
+                Telefone = "(11) 99999-9999",
+                Endereco = null
+            };
+
+            _repositorioPessoaMock
+                .Setup(r => r.CpfExisteAsync(It.IsAny<string>(), It.IsAny<Guid?>()))
+                .ReturnsAsync(false);
+
+            _repositorioPessoaMock
+                .Setup(r => r.AdicionarAsync(It.IsAny<Domain.Entidades.Pessoa>()))
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var resultado = await _manipulador.Handle(comando, CancellationToken.None);
+
+            // Assert
+            Assert.NotNull(resultado);
+            Assert.Equal(comando.Nome, resultado.Nome);
+            Assert.Equal(comando.CPF, resultado.CPF);
+            Assert.Equal(comando.Telefone, resultado.Telefone);
+            Assert.Null(resultado.Endereco);
+
+            _repositorioPessoaMock.Verify(r => r.AdicionarAsync(It.IsAny<Domain.Entidades.Pessoa>()), Times.Once);
         }
 
         [Fact]
@@ -74,7 +131,8 @@ namespace CadastroDePessoas.Application.Testes.Comandos.Pessoa
                 DataNascimento = new DateTime(1990, 1, 1),
                 Naturalidade = "São Paulo",
                 Nacionalidade = "Brasileira",
-                CPF = "52998224725"
+                CPF = "52998224725",
+                Telefone = "(11) 99999-9999"
             };
 
             _repositorioPessoaMock

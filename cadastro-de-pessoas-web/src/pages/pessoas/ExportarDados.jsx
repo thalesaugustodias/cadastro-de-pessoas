@@ -36,6 +36,20 @@ const ExportarDados = () => {
         'nome', 'email', 'cpf', 'dataNascimento', 'telefone'
     ]);
 
+    const fieldMapping = {
+        'nome': ['nome', 'Nome'],
+        'email': ['email', 'Email'],
+        'cpf': ['cpf', 'CPF'],
+        'dataNascimento': ['dataNascimento', 'DataNascimento'],
+        'telefone': ['telefone', 'Telefone'],
+        'endereco.cep': ['endereco.cep', 'Endereco.CEP'],
+        'endereco.logradouro': ['endereco.logradouro', 'Endereco.Logradouro'],
+        'endereco.numero': ['endereco.numero', 'Endereco.Numero'],
+        'endereco.bairro': ['endereco.bairro', 'Endereco.Bairro'],
+        'endereco.cidade': ['endereco.cidade', 'Endereco.Cidade'],
+        'endereco.estado': ['endereco.estado', 'Endereco.Estado'],
+    };
+
     const availableFields = [
         { value: 'nome', label: 'Nome' },
         { value: 'email', label: 'E-mail' },
@@ -57,31 +71,52 @@ const ExportarDados = () => {
     const loadPessoas = async () => {
         try {
             const data = await pessoaService.listar();
-            setPessoas(data);
+            setPessoas(data);           
         } catch (error) {
             showError('Erro ao carregar dados');
+            console.error("Erro ao carregar dados:", error);
         }
     };
 
     const getFieldValue = (pessoa, fieldPath) => {
-        const keys = fieldPath.split('.');
-        let value = pessoa;
+        if (!pessoa) return '-';
         
-        for (const key of keys) {
-            value = value?.[key];
+        const possiblePaths = fieldMapping[fieldPath] || [fieldPath];
+        
+        for (const path of possiblePaths) {
+            const keys = path.split('.');
+            let value = pessoa;
+            let valid = true;
+            
+            for (const key of keys) {
+                if (value === undefined || value === null) {
+                    valid = false;
+                    break;
+                }
+                value = value[key];
+            }
+            
+            if (valid && value !== undefined && value !== null) {
+                if (fieldPath === 'dataNascimento' && value) {
+                    try {
+                        return new Date(value).toLocaleDateString('pt-BR');
+                    } catch (e) {
+                        console.warn("Erro ao formatar data:", e);
+                        return value;
+                    }
+                }
+                
+                return value;
+            }
         }
         
-        if (fieldPath === 'dataNascimento' && value) {
-            return new Date(value).toLocaleDateString('pt-BR');
-        }
-        
-        return value || '-';
+        const directValue = pessoa[fieldPath];
+        return directValue !== undefined && directValue !== null ? directValue : '-';
     };
 
     const exportToPDF = () => {
         const doc = new jsPDF('l', 'mm', 'a4');
         
-        // Título
         doc.setFontSize(18);
         doc.text('Relatório de Pessoas Cadastradas', 14, 20);
         
@@ -89,16 +124,15 @@ const ExportarDados = () => {
         doc.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}`, 14, 30);
         doc.text(`Total de registros: ${pessoas.length}`, 14, 35);
 
-        // Preparar dados para a tabela
         const headers = selectedFields.map(field => 
             availableFields.find(f => f.value === field)?.label || field
         );
+        
+        const data = pessoas.map(pessoa => {
+            const row = selectedFields.map(field => getFieldValue(pessoa, field));
+            return row;
+        });
 
-        const data = pessoas.map(pessoa => 
-            selectedFields.map(field => getFieldValue(pessoa, field))
-        );
-
-        // Adicionar tabela
         doc.autoTable({
             head: [headers],
             body: data,
@@ -117,7 +151,6 @@ const ExportarDados = () => {
             },
         });
 
-        // Salvar
         doc.save(`pessoas-cadastradas-${new Date().toISOString().split('T')[0]}.pdf`);
     };
 
@@ -125,14 +158,12 @@ const ExportarDados = () => {
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Pessoas Cadastradas');
 
-        // Configurar cabeçalhos
         const headers = selectedFields.map(field => 
             availableFields.find(f => f.value === field)?.label || field
         );
 
         worksheet.addRow(headers);
 
-        // Estilizar cabeçalho
         const headerRow = worksheet.getRow(1);
         headerRow.eachCell((cell) => {
             cell.font = { bold: true, color: { argb: 'FFFFFF' } };
@@ -150,18 +181,15 @@ const ExportarDados = () => {
             };
         });
 
-        // Adicionar dados
         pessoas.forEach(pessoa => {
             const row = selectedFields.map(field => getFieldValue(pessoa, field));
             worksheet.addRow(row);
         });
 
-        // Ajustar largura das colunas
         worksheet.columns.forEach(column => {
             column.width = 20;
         });
 
-        // Adicionar bordas nas células de dados
         worksheet.eachRow((row, rowNumber) => {
             if (rowNumber > 1) {
                 row.eachCell((cell) => {
@@ -175,7 +203,6 @@ const ExportarDados = () => {
             }
         });
 
-        // Gerar buffer e fazer download
         const buffer = await workbook.xlsx.writeBuffer();
         const blob = new Blob([buffer], { 
             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
@@ -190,10 +217,15 @@ const ExportarDados = () => {
             return;
         }
 
+        if (pessoas.length === 0) {
+            showError('Não há dados para exportar');
+            return;
+        }
+
         setIsLoading(true);
 
         try {
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
             if (exportFormat === 'pdf') {
                 exportToPDF();
@@ -213,7 +245,6 @@ const ExportarDados = () => {
     return (
         <Box p={8}>
             <VStack spacing={8} align="stretch">
-                {/* Header */}
                 <Box>
                     <Heading size="lg" mb={2} color="gray.800">
                         Exportar Dados
@@ -224,10 +255,8 @@ const ExportarDados = () => {
                 </Box>
 
                 <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={8}>
-                    {/* Configurações */}
                     <GridItem>
                         <VStack spacing={6} align="stretch">
-                            {/* Formato */}
                             <Card>
                                 <CardBody p={6}>
                                     <VStack spacing={4} align="stretch">
@@ -254,7 +283,6 @@ const ExportarDados = () => {
                                 </CardBody>
                             </Card>
 
-                            {/* Campos */}
                             <Card>
                                 <CardBody p={6}>
                                     <VStack spacing={4} align="stretch">
@@ -287,10 +315,8 @@ const ExportarDados = () => {
                         </VStack>
                     </GridItem>
 
-                    {/* Preview/Stats */}
                     <GridItem>
                         <VStack spacing={6} align="stretch">
-                            {/* Estatísticas */}
                             <Card>
                                 <CardBody p={6}>
                                     <VStack spacing={4} align="stretch">
@@ -320,7 +346,6 @@ const ExportarDados = () => {
                                 </CardBody>
                             </Card>
 
-                            {/* Botão de Exportar */}
                             <Card>
                                 <CardBody p={6}>
                                     <VStack spacing={4}>
@@ -356,8 +381,6 @@ const ExportarDados = () => {
                         </VStack>
                     </GridItem>
                 </Grid>
-
-                {/* Info */}
                 <Alert status="info" borderRadius="xl">
                     <AlertIcon />
                     <Box>

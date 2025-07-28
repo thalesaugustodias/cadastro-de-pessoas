@@ -4,20 +4,25 @@ using BC = BCrypt.Net.BCrypt;
 
 namespace CadastroDePessoas.Infraestructure.Contexto
 {
-    public class AppDbContexto : DbContext
+    public class AppDbContexto(DbContextOptions<AppDbContexto> options) : DbContext(options)
     {
         public DbSet<Pessoa> Pessoas { get; set; }
+        public DbSet<Endereco> Enderecos { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
-
-        public AppDbContexto(DbContextOptions<AppDbContexto> options) : base(options)
-        {
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContexto).Assembly);
+
+            modelBuilder.Entity<Pessoa>().Ignore("EnderecoCompleto");
+
+            modelBuilder.Entity<Pessoa>()
+                .HasOne(p => p.Endereco)
+                .WithOne(e => e.Pessoa)
+                .HasForeignKey<Endereco>(e => e.PessoaId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             var senhaHasheada = BC.HashPassword("Admin@123", 12);
             var adminId = Guid.Parse("11111111-1111-1111-1111-111111111111");

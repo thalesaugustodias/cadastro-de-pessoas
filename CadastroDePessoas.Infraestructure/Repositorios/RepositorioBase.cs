@@ -10,17 +10,17 @@ namespace CadastroDePessoas.Infraestructure.Repositorios
         protected readonly AppDbContexto _contexto = contexto;
         protected readonly DbSet<T> _dbSet = contexto.Set<T>();
 
-        public async Task<T> ObterPorIdAsync(Guid id)
+        public virtual async Task<T> ObterPorIdAsync(Guid id)
         {
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task<IEnumerable<T>> ObterTodosAsync()
+        public virtual async Task<IEnumerable<T>> ObterTodosAsync()
         {
             return await _dbSet.ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> ObterAsync(Expression<Func<T, bool>> predicado)
+        public virtual async Task<IEnumerable<T>> ObterAsync(Expression<Func<T, bool>> predicado)
         {
             return await _dbSet.Where(predicado).ToListAsync();
         }

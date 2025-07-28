@@ -17,6 +17,57 @@ namespace CadastroDePessoas.Infraestructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
+            modelBuilder.Entity("CadastroDePessoas.Domain.Entidades.Endereco", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Bairro")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CEP")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Cidade")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Complemento")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Logradouro")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Numero")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("PessoaId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PessoaId")
+                        .IsUnique();
+
+                    b.ToTable("Enderecos");
+                });
+
             modelBuilder.Entity("CadastroDePessoas.Domain.Entidades.Pessoa", b =>
                 {
                     b.Property<Guid>("Id")
@@ -38,22 +89,14 @@ namespace CadastroDePessoas.Infraestructure.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Endereco")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Nacionalidade")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Naturalidade")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
@@ -64,6 +107,10 @@ namespace CadastroDePessoas.Infraestructure.Migrations
 
                     b.Property<int?>("Sexo")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Telefone")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -110,7 +157,7 @@ namespace CadastroDePessoas.Infraestructure.Migrations
                             DataCadastro = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@exemplo.com",
                             Nome = "Administrador",
-                            Senha = "$2a$12$ykxaUG2TOCFl1oCs0./Qv.yoR.vG4jA4u3HdYJO8C4fCyAabSnzXC"
+                            Senha = "$2a$12$Fm13satlzTI/qiTH3ExOjuoccGxKlvc4X3v.A3EU6COcTrVvdqhQy"
                         },
                         new
                         {
@@ -118,8 +165,24 @@ namespace CadastroDePessoas.Infraestructure.Migrations
                             DataCadastro = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "user@teste.com",
                             Nome = "Usuário Teste",
-                            Senha = "$2a$12$w2ClXDQOe/ON4xWe7qxmTud4i72WEYJ04EOMbNjxRMJec9qiH1ggS"
+                            Senha = "$2a$12$OJ8nX5cnZvbvt638SUZlJuCTKjAP72mUcy02a3j0KRriFlOdSpHFW"
                         });
+                });
+
+            modelBuilder.Entity("CadastroDePessoas.Domain.Entidades.Endereco", b =>
+                {
+                    b.HasOne("CadastroDePessoas.Domain.Entidades.Pessoa", "Pessoa")
+                        .WithOne("Endereco")
+                        .HasForeignKey("CadastroDePessoas.Domain.Entidades.Endereco", "PessoaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pessoa");
+                });
+
+            modelBuilder.Entity("CadastroDePessoas.Domain.Entidades.Pessoa", b =>
+                {
+                    b.Navigation("Endereco");
                 });
 #pragma warning restore 612, 618
         }

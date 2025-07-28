@@ -39,7 +39,7 @@ const Footer = () => {
                     maxW="6xl"
                     mx="auto"
                 >
-                    {/* Logo e descri��o */}
+                    {/* Logo e descrição */}
                     <VStack spacing={2} align={{ base: 'center', md: 'start' }}>
                         <HStack spacing={3}>
                             <Box
@@ -96,7 +96,7 @@ const Footer = () => {
                             © {currentYear} Cadastro de Pessoas.
                         </Text>
                         <Text>
-                            Desenvolvido por Thales Augusto Dias
+                            Desenvolvido por Thales Augusto Dias - Desafio Stefanini
                         </Text>                       
                     </HStack>
 

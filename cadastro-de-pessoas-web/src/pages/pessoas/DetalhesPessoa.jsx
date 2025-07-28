@@ -1,9 +1,11 @@
 import React from 'react';
-import { Box } from '@chakra-ui/react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { Box, Heading, Text, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Flex, Icon } from '@chakra-ui/react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { FiHome, FiUsers, FiUser } from 'react-icons/fi';
 import PessoaItem from '../../components/pessoas/PessoaItem';
 import { pessoaService } from '../../services/pessoa-service';
 import { useNotification } from '../../hooks/useNotification';
+import Loading from '../../components/ui/Loading';
 
 const DetalhesPessoa = () => {
     const { id } = useParams();
@@ -43,11 +45,43 @@ const DetalhesPessoa = () => {
 
     return (
         <Box p={6}>
-            <PessoaItem
-                pessoa={pessoa}
-                isLoading={isLoading}
-                onDelete={handleDelete}
-            />
+            {/* Breadcrumb de navegação */}
+            <Breadcrumb mb={6} fontSize="sm" separator=">" color="gray.500">
+                <BreadcrumbItem>
+                    <BreadcrumbLink as={Link} to="/" display="flex" alignItems="center">
+                        <Icon as={FiHome} mr={1} />
+                        Início
+                    </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbItem>
+                    <BreadcrumbLink as={Link} to="/pessoas" display="flex" alignItems="center">
+                        <Icon as={FiUsers} mr={1} />
+                        Pessoas
+                    </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbItem isCurrentPage fontWeight="semibold">
+                    <Flex align="center">
+                        <Icon as={FiUser} mr={1} />
+                        <Text>Detalhes da Pessoa</Text>
+                    </Flex>
+                </BreadcrumbItem>
+            </Breadcrumb>
+
+            {/* Título da página */}
+            <Heading as="h1" size="lg" mb={6} color="gray.700" display="flex" alignItems="center">
+                <Icon as={FiUser} mr={2} color="brand.500" />
+                Detalhes da Pessoa
+            </Heading>
+
+            {isLoading ? (
+                <Loading text="Carregando detalhes da pessoa..." />
+            ) : (
+                <PessoaItem
+                    pessoa={pessoa}
+                    isLoading={false}
+                    onDelete={handleDelete}
+                />
+            )}
         </Box>
     );
 };

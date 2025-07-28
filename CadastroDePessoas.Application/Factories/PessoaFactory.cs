@@ -1,4 +1,5 @@
-﻿using CadastroDePessoas.Application.DTOs.Pessoa;
+﻿using CadastroDePessoas.Application.DTOs.Endereco;
+using CadastroDePessoas.Application.DTOs.Pessoa;
 using CadastroDePessoas.Domain.Entidades;
 
 namespace CadastroDePessoas.Application.Factories
@@ -7,6 +8,17 @@ namespace CadastroDePessoas.Application.Factories
     {
         public static Pessoa CriarEntidade(PessoaCriacaoDTO dto)
         {
+            var endereco = dto.Endereco != null ? 
+                new Endereco(
+                    dto.Endereco.CEP,
+                    dto.Endereco.Logradouro,
+                    dto.Endereco.Numero,
+                    dto.Endereco.Complemento,
+                    dto.Endereco.Bairro,
+                    dto.Endereco.Cidade,
+                    dto.Endereco.Estado
+                ) : null;
+
             return new Pessoa(
                 dto.Nome,
                 dto.Sexo,
@@ -15,12 +27,26 @@ namespace CadastroDePessoas.Application.Factories
                 dto.Naturalidade,
                 dto.Nacionalidade,
                 dto.CPF,
-                dto.Endereco
+                dto.Telefone,
+                endereco
             );
         }
 
         public static PessoaDTO CriarDTO(Pessoa entidade)
         {
+            var enderecoDto = entidade.Endereco != null ? 
+                new EnderecoDTO
+                {
+                    Id = entidade.Endereco.Id,
+                    CEP = entidade.Endereco.CEP,
+                    Logradouro = entidade.Endereco.Logradouro,
+                    Numero = entidade.Endereco.Numero,
+                    Complemento = entidade.Endereco.Complemento,
+                    Bairro = entidade.Endereco.Bairro,
+                    Cidade = entidade.Endereco.Cidade,
+                    Estado = entidade.Endereco.Estado
+                } : null;
+
             return new PessoaDTO
             {
                 Id = entidade.Id,
@@ -31,7 +57,8 @@ namespace CadastroDePessoas.Application.Factories
                 Naturalidade = entidade.Naturalidade,
                 Nacionalidade = entidade.Nacionalidade,
                 CPF = entidade.CPF,
-                Endereco = entidade.Endereco,
+                Telefone = entidade.Telefone,
+                Endereco = enderecoDto,
                 DataCadastro = entidade.DataCadastro,
                 DataAtualizacao = entidade.DataAtualizacao
             };

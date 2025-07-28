@@ -13,7 +13,6 @@ namespace CadastroDePessoas.API.Middlewares
 
         public async Task InvokeAsync(HttpContext context)
         {
-            // Obtenha os origens permitidos
             var corsOrigins = _configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
             var origin = context.Request.Headers.Origin.ToString();
             
@@ -36,8 +35,6 @@ namespace CadastroDePessoas.API.Middlewares
             }
             else
             {
-                // Para requisições não-OPTIONS, adicionar os cabeçalhos CORS também
-                // para evitar problemas com requisições CORS que não usam preflight
                 if (isAllowedOrigin && !string.IsNullOrEmpty(origin))
                 {
                     context.Response.OnStarting(() =>

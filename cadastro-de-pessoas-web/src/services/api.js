@@ -1,5 +1,13 @@
 import axios from 'axios';
 
+let notificationService = null;
+let navigateFunction = null;
+
+export const setupApiErrorHandling = (notificationHook, navigate) => {
+    notificationService = notificationHook;
+    navigateFunction = navigate;
+};
+
 const getBaseURL = () => {
     const isDevelopment = import.meta.env.DEV;
     
@@ -28,14 +36,85 @@ const api = axios.create({
 });
 
 const publicEndpoints = [
-    '/api/v1/auth/login',
-    '/api/v1/auth/register',
-    '/api/v1/auth/logout',
-    '/api/v1/auth/reset-admin',
-    '/health',
-    '/health/database',
-    '/health/reset-database'
+    '/api/v1/Auth/login',
+    '/api/v1/Auth/register',
+    '/api/v1/Auth/logout',
+    '/api/v1/Auth/reset-admin',
+    '/Health',
+    '/Health/database',
+    '/Health/reset-database'
 ];
+
+const isTokenExpired = (token) => {
+    if (!token) return true;
+    
+    try {
+        const parts = token.split('.');
+        if (parts.length !== 3) return true;
+        
+        const payload = parts[1];
+        const decodedPayload = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+        
+        if (!decodedPayload.exp) return true;
+        
+        const currentTime = Math.floor(Date.now() / 1000) - 30;
+        return decodedPayload.exp < currentTime;
+    } catch (error) {
+        console.error('Erro ao verificar expiração do token:', error);
+        return true;
+    }
+};
+
+const getValidToken = () => {
+    const token = localStorage.getItem('token');
+    
+    if (!token || isTokenExpired(token)) {
+        if (window.location.pathname !== '/login' && 
+            window.location.pathname !== '/register' && 
+            window.location.pathname !== '/' &&
+            !window.location.pathname.includes('/pessoas')) {
+            
+            if (notificationService) {
+                notificationService.showWarning(
+                    'Sua sessão expirou ou não foi encontrada. Por favor, faça login novamente.',
+                    'Sessão Expirada'
+                );
+            }
+        }
+        return null;
+    }
+    
+    return token;
+};
+
+const showNotification = (type, message, title) => {
+    if (notificationService) {
+        switch (type) {
+            case 'error':
+                notificationService.showError(message, title);
+                break;
+            case 'warning':
+                notificationService.showWarning(message, title);
+                break;
+            case 'info':
+                notificationService.showInfo(message, title);
+                break;
+            case 'success':
+                notificationService.showSuccess(message, title);
+                break;
+            default:
+                notificationService.showInfo(message, title);
+        }
+    }
+};
+
+const redirectTo = (path, options = {}) => {
+    if (navigateFunction) {
+        navigateFunction(path, options);
+    } else {
+        window.location.href = path;
+    }
+};
 
 api.interceptors.request.use(
     (config) => {
@@ -44,37 +123,31 @@ api.interceptors.request.use(
         );
         
         if (!isPublicEndpoint) {
-            const token = localStorage.getItem('token');
+            const token = getValidToken();
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
+            } else {
+                showNotification('warning', 'Autenticação necessária para acessar este recurso.', 'Acesso Restrito');
             }
-        }
-        
-        if (import.meta.env.DEV) {
-            console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`, {
-                headers: config.headers,
-                data: config.data,
-                isPublic: isPublicEndpoint
-            });
         }
         
         return config;
     },
     (error) => {
-        console.error('? Request Error:', error);
+        showNotification('error', 'Erro ao preparar requisição para o servidor', 'Erro de Requisição');
         return Promise.reject(error);
     }
 );
 
+let refreshAttempts = 0;
+const MAX_REFRESH_ATTEMPTS = 3;
+
 api.interceptors.response.use(
     (response) => {
-        if (import.meta.env.DEV) {
-            console.log(`? API Response: ${response.status}`, response.data);
-        }
-        
+        refreshAttempts = 0;
         return response;
     },
-    (error) => {
+    async (error) => {
         if (import.meta.env.DEV) {
             console.error(`API Error: ${error.response?.status}`, {
                 url: error.config?.url,
@@ -84,43 +157,77 @@ api.interceptors.response.use(
             });
         }
 
-        if (error.response) {
-            const { status, data } = error.response;
+        if (!error.response) {
+            showNotification('error', 'Não foi possível conectar ao servidor. Verifique sua conexão.', 'Erro de Conexão');
+            redirectTo('/erro-conexao', { state: { offline: true } });
+            return Promise.reject(error);
+        }
+
+        const { status, data } = error.response;
+        const errorMessage = data?.message || 'Ocorreu um erro na comunicação com o servidor';
+        const currentPath = window.location.pathname;
+        
+        if (status === 401) {
+            const isLoginRequest = error.config?.url?.includes(resolveApiPath('Auth/login'));
             
-            switch (status) {
-                case 401:
-                    if (!error.config?.url?.includes(resolveApiPath('auth/login'))) {
-                        console.warn('Token inválido - redirecionando para login');
+            if (!isLoginRequest) {
+                if (refreshAttempts < MAX_REFRESH_ATTEMPTS) {
+                    refreshAttempts++;
+                    
+                    showNotification('warning', 'Sua sessão expirou. Por favor, faça login novamente.', 'Sessão Expirada');
+                    
+                    if (currentPath !== '/perfil' && 
+                        !publicEndpoints.some(e => currentPath.includes(e.replace('/api/v1/', '')))) {
+                        
                         localStorage.removeItem('token');
                         localStorage.removeItem('user');
                         
-                        if (window.location.pathname !== '/login') {
-                            window.location.href = '/login';
+                        if (currentPath !== '/login' && currentPath !== '/sessao-expirada') {
+                            redirectTo('/sessao-expirada', { state: { from: currentPath } });
                         }
                     }
-                    break;
-                    
-                case 403:
-                    console.warn('Acesso negado');
-                    break;
-                    
-                case 404:
-                    console.warn('Recurso não encontrado');
-                    break;
-                    
-                case 422:
-                    console.warn('Dados inválidos:', data);
-                    break;
-                    
-                case 500:
-                    console.error('Erro interno do servidor');
-                    break;
-                    
-                default:
-                    console.error(`Erro HTTP ${status}:`, data);
+                } else {
+                    showNotification('error', 'Múltiplas falhas de autenticação. Por favor, faça login novamente.', 'Erro de Autenticação');
+                    refreshAttempts = 0;
+                    redirectTo('/login?error=auth');
+                }
             }
-        } else if (error.request) {
-            console.error('Erro de rede - Servidor indisponível');
+        } 
+        // Acesso negado
+        else if (status === 403) {
+            showNotification('error', data?.message || 'Você não tem permissão para acessar este recurso', 'Acesso Negado');
+            if (currentPath !== '/acesso-negado') {
+                redirectTo('/acesso-negado', { state: { from: currentPath } });
+            }
+        } 
+        else if (status === 404) {
+            showNotification('warning', 'O recurso solicitado não foi encontrado', 'Não Encontrado');
+            const isErrorPage = ['/pagina-nao-encontrada', '/erro', '/acesso-negado', '/erro-conexao'].includes(currentPath);
+            
+            if (!error.config?.url?.includes('profile') && !isErrorPage) {
+                const resource = error.config?.url?.includes('Pessoas') ? 'pessoa' : 'recurso';
+                redirectTo('/pagina-nao-encontrada', { state: { resource } });
+            }
+        } 
+        else if (status === 422) {
+            showNotification('warning', 'Os dados fornecidos são inválidos', 'Dados Inválidos');
+            
+            if (data?.errors) {
+                const errorDetails = Object.entries(data.errors)
+                    .map(([field, errors]) => `${field}: ${errors.join(', ')}`)
+                    .join('\n');
+                
+                showNotification('warning', errorDetails, 'Erros de Validação');
+            }
+        } 
+        else if (status === 500) {
+            showNotification('error', 'Ocorreu um erro no servidor. Tente novamente mais tarde.', 'Erro do Servidor');
+            if (!['/erro', '/pagina-nao-encontrada', '/acesso-negado', '/erro-conexao'].includes(currentPath)) {
+                redirectTo('/erro', { state: { errorMessage, statusCode: 500 } });
+            }
+        } 
+        else {
+            showNotification('error', `Erro HTTP ${status}: ${errorMessage}`, 'Erro de Comunicação');
         }
 
         return Promise.reject(error);

@@ -11,13 +11,24 @@ import ImportarDados from './pages/pessoas/ImportarDados';
 import ExportarDados from './pages/pessoas/ExportarDados';
 import MeuPerfil from './pages/sistema/MeuPerfil';
 import Configuracoes from './pages/sistema/Configuracoes';
+
 import NotFound from './pages/NotFound';
+import AcessoNegado from './pages/AcessoNegado';
+import ErroServidor from './pages/ErroServidor';
+import ErroConexao from './pages/ErroConexao';
+import SessaoExpirada from './pages/SessaoExpirada';
+
 import { useAuth } from './hooks/useAuth';
+import Loading from './components/ui/Loading';
 
 const ProtectedRoute = ({ children }) => {
-    const { authenticated } = useAuth();
-
-    if (!authenticated) {
+    const auth = useAuth();
+    
+    if (auth.loading) {
+        return <Loading />;
+    }
+    
+    if (!auth.authenticated) {
         return <Navigate to="/login" replace />;
     }
 
@@ -47,6 +58,12 @@ const AppRoutes = () => {
                 <Route path="configuracoes" element={<Configuracoes />} />
             </Route>
 
+            <Route path="/pagina-nao-encontrada" element={<NotFound />} />
+            <Route path="/acesso-negado" element={<AcessoNegado />} />
+            <Route path="/erro" element={<ErroServidor />} />
+            <Route path="/erro-conexao" element={<ErroConexao />} />
+            <Route path="/sessao-expirada" element={<SessaoExpirada />} />
+            
             <Route path="*" element={<NotFound />} />
         </Routes>
     );

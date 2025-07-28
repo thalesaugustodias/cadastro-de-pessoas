@@ -36,12 +36,12 @@ const PessoasList = ({
 
         return pessoas.filter(pessoa => {
             const matchFiltro = !filtro ||
-                pessoa.nome.toLowerCase().includes(filtro.toLowerCase()) ||
-                pessoa.cpf.includes(filtro) ||
-                pessoa.email?.toLowerCase().includes(filtro.toLowerCase());
+                pessoa.Nome.toLowerCase().includes(filtro.toLowerCase()) ||
+                pessoa.CPF.includes(filtro) ||
+                pessoa.Email?.toLowerCase().includes(filtro.toLowerCase());
 
             const matchSexo = !filtroSexo ||
-                pessoa.sexo?.toString() === filtroSexo;
+                pessoa.Sexo?.toString() === filtroSexo;
 
             return matchFiltro && matchSexo;
         });
@@ -124,19 +124,19 @@ const PessoasList = ({
                     </Thead>
                     <Tbody>
                         {pessoasFiltradas.map((pessoa) => (
-                            <Tr key={pessoa.id}>
-                                <Td fontWeight="medium">{pessoa.nome}</Td>
-                                <Td>{formatarCPF(pessoa.cpf)}</Td>
-                                <Td>{formatarData(pessoa.dataNascimento)}</Td>
+                            <Tr key={pessoa.Id}>
+                                <Td fontWeight="medium">{pessoa.Nome}</Td>
+                                <Td>{formatarCPF(pessoa.CPF)}</Td>
+                                <Td>{formatarData(pessoa.DataNascimento)}</Td>
                                 <Td>
-                                    {pessoa.sexo === 0 && <Badge colorScheme="blue">Masculino</Badge>}
-                                    {pessoa.sexo === 1 && <Badge colorScheme="pink">Feminino</Badge>}
-                                    {pessoa.sexo === 2 && <Badge colorScheme="purple">Outro</Badge>}
-                                    {pessoa.sexo === null && <Badge colorScheme="gray">Sexo não informado</Badge>}
+                                    {pessoa.Sexo === 0 && <Badge colorScheme="blue">Masculino</Badge>}
+                                    {pessoa.Sexo === 1 && <Badge colorScheme="pink">Feminino</Badge>}
+                                    {pessoa.Sexo === 2 && <Badge colorScheme="purple">Outro</Badge>}
+                                    {pessoa.Sexo === null && <Badge colorScheme="gray">Sexo não informado</Badge>}
                                 </Td>
                                 <Td>
                                     <ActionButtons
-                                        id={pessoa.id}
+                                        id={pessoa.Id}
                                         onDelete={onDelete}
                                     />
                                 </Td>

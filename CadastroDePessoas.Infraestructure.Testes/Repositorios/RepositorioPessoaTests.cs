@@ -2,6 +2,7 @@
 using CadastroDePessoas.Infraestructure.Contexto;
 using CadastroDePessoas.Infraestructure.Repositorios;
 using Microsoft.EntityFrameworkCore;
+using Xunit;
 
 namespace CadastroDePessoas.Infraestructure.Testes.Repositorios
 {
@@ -26,7 +27,8 @@ namespace CadastroDePessoas.Infraestructure.Testes.Repositorios
                 new DateTime(1990, 1, 1),
                 "São Paulo",
                 "Brasileira",
-                "52998224725"
+                "52998224725",
+                "(11) 98765-4321" // Adicionando o telefone
             );
 
             // Act
@@ -49,6 +51,7 @@ namespace CadastroDePessoas.Infraestructure.Testes.Repositorios
                 Assert.Equal("São Paulo", pessoaPersistida.Naturalidade);
                 Assert.Equal("Brasileira", pessoaPersistida.Nacionalidade);
                 Assert.Equal("52998224725", pessoaPersistida.CPF);
+                Assert.Equal("(11) 98765-4321", pessoaPersistida.Telefone);
             }
         }
 
@@ -64,7 +67,8 @@ namespace CadastroDePessoas.Infraestructure.Testes.Repositorios
                 new DateTime(1990, 1, 1),
                 "São Paulo",
                 "Brasileira",
-                "52998224725"
+                "52998224725",
+                "(11) 98765-4321" // Adicionando o telefone
             );
 
             using (var contexto = new AppDbContexto(options))
@@ -96,7 +100,9 @@ namespace CadastroDePessoas.Infraestructure.Testes.Repositorios
                 new DateTime(1990, 1, 1),
                 "São Paulo",
                 "Brasileira",
-                "52998224725");
+                "52998224725",
+                "(11) 98765-4321" // Adicionando o telefone
+            );
 
             using (var contexto = new AppDbContexto(options))
             {
@@ -127,7 +133,8 @@ namespace CadastroDePessoas.Infraestructure.Testes.Repositorios
                 new DateTime(1990, 1, 1),
                 "São Paulo",
                 "Brasileira",
-                "52998224725"
+                "52998224725",
+                "(11) 98765-4321" // Adicionando o telefone
             );
 
             using (var contexto = new AppDbContexto(options))
@@ -160,7 +167,8 @@ namespace CadastroDePessoas.Infraestructure.Testes.Repositorios
                 new DateTime(1990, 1, 1),
                 "São Paulo",
                 "Brasileira",
-                "52998224725"
+                "52998224725",
+                "(11) 98765-4321" // Adicionando o telefone
             );
 
             using (var contexto = new AppDbContexto(options))
@@ -180,6 +188,7 @@ namespace CadastroDePessoas.Infraestructure.Testes.Repositorios
                 Assert.NotNull(resultado);
                 Assert.Equal(pessoaExistente.Id, resultado.Id);
                 Assert.Equal("João Silva", resultado.Nome);
+                Assert.Equal("(11) 98765-4321", resultado.Telefone);
             }
         }
 
@@ -212,7 +221,8 @@ namespace CadastroDePessoas.Infraestructure.Testes.Repositorios
                 new DateTime(1990, 1, 1),
                 "São Paulo",
                 "Brasileira",
-                "52998224725"
+                "52998224725",
+                "(11) 98765-4321" // Adicionando o telefone
             );
 
             var pessoa2 = new Domain.Entidades.Pessoa(
@@ -222,7 +232,8 @@ namespace CadastroDePessoas.Infraestructure.Testes.Repositorios
                 new DateTime(1992, 5, 10),
                 "Rio de Janeiro",
                 "Brasileira",
-                "11144477735"
+                "11144477735",
+                "(21) 98765-4321" // Adicionando o telefone
             );
 
             using (var contexto = new AppDbContexto(options))
@@ -255,7 +266,8 @@ namespace CadastroDePessoas.Infraestructure.Testes.Repositorios
                 new DateTime(1990, 1, 1),
                 "São Paulo",
                 "Brasileira",
-                "52998224725"
+                "52998224725",
+                "(11) 98765-4321" // Adicionando o telefone
             );
 
             using (var contexto = new AppDbContexto(options))
@@ -276,7 +288,8 @@ namespace CadastroDePessoas.Infraestructure.Testes.Repositorios
                     "joao.atualizado@exemplo.com",
                     new DateTime(1990, 1, 1),
                     "Rio de Janeiro",
-                    "Brasileira"
+                    "Brasileira",
+                    "(11) 99999-8888" // Atualizando o telefone
                 );
 
                 await repositorio.AtualizarAsync(pessoaExistente);
@@ -290,6 +303,7 @@ namespace CadastroDePessoas.Infraestructure.Testes.Repositorios
                 Assert.Equal("João Silva Atualizado", pessoaAtualizada.Nome);
                 Assert.Equal("joao.atualizado@exemplo.com", pessoaAtualizada.Email);
                 Assert.Equal("Rio de Janeiro", pessoaAtualizada.Naturalidade);
+                Assert.Equal("(11) 99999-8888", pessoaAtualizada.Telefone);
                 Assert.NotNull(pessoaAtualizada.DataAtualizacao);
             }
         }
@@ -306,7 +320,8 @@ namespace CadastroDePessoas.Infraestructure.Testes.Repositorios
                 new DateTime(1990, 1, 1),
                 "São Paulo",
                 "Brasileira",
-                "52998224725"
+                "52998224725",
+                "(11) 98765-4321" // Adicionando o telefone
             );
 
             using (var contexto = new AppDbContexto(options))

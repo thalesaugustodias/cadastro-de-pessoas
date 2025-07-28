@@ -4,6 +4,7 @@ import PessoasList from '../../components/pessoas/PessoasList';
 import Confirm from '../../components/ui/Confirm';
 import { pessoaService } from '../../services/pessoa-service';
 import { useNotification } from '../../hooks/useNotification';
+import { toCamelCase } from '../../utils/caseConverter';
 
 const ListarPessoas = () => {
     const [pessoas, setPessoas] = React.useState([]);
@@ -41,7 +42,7 @@ const ListarPessoas = () => {
         try {
             setIsDeleting(true);
             await pessoaService.remover(selectedId);
-            setPessoas(pessoas.filter(p => p.id !== selectedId));
+            setPessoas(pessoas.filter(p => p.Id !== selectedId));
             showSuccess('Pessoa excluída com sucesso!');
         } catch (error) {
             console.error('Erro ao excluir pessoa:', error);

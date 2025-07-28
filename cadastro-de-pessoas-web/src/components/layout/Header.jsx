@@ -14,7 +14,7 @@ import {
     useBreakpointValue,
     Divider,
 } from '@chakra-ui/react';
-
+import { Link } from 'react-router-dom';
 import { HamburgerIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { FiUser, FiLogOut } from 'react-icons/fi';
 import { useAuth } from '../../hooks/useAuth';
@@ -98,7 +98,7 @@ const Header = ({ onSidebarToggle }) => {
                     </Flex>
                 </Flex>
 
-                {/* Menu do usuário */}
+                {/* Menu do usuÃ¡rio */}
                 <HStack spacing={4}>
                     <Menu>
                         <MenuButton
@@ -117,7 +117,7 @@ const Header = ({ onSidebarToggle }) => {
                             <HStack spacing={3}>
                                 <Avatar 
                                     size="sm" 
-                                    name={user?.nome || 'Usuário'} 
+                                    name={user?.nome || 'UsuÃ¡rio'}
                                     bg="brand.500"
                                     color="white"
                                     border="2px solid"
@@ -132,7 +132,7 @@ const Header = ({ onSidebarToggle }) => {
                                             color="gray.800"
                                             lineHeight="1.2"
                                         >
-                                            {user?.nome || 'Usuário'}
+                                            {user?.nome || 'UsuÃ¡rio'}
                                         </Text>
                                         <Text 
                                             fontSize="xs" 
@@ -161,7 +161,7 @@ const Header = ({ onSidebarToggle }) => {
                                     fontWeight="600" 
                                     color="gray.800"
                                 >
-                                    {user?.nome || 'Usuário'}
+                                    {user?.nome || 'UsuÃ¡rio'}
                                 </Text>
                                 <Text 
                                     fontSize="xs" 
@@ -178,6 +178,8 @@ const Header = ({ onSidebarToggle }) => {
                                 fontWeight="500"
                                 py={3}
                                 _hover={{ bg: 'gray.50' }}
+                                as={Link}
+                                to="/perfil"
                             >
                                 Meu Perfil
                             </MenuItem>

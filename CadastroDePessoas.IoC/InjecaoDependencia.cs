@@ -22,6 +22,8 @@ namespace CadastroDePessoas.IoC
             services.AddScoped<IRepositorioUsuario, RepositorioUsuario>();
 
             services.AddScoped<IServiceToken, ServiceToken>();
+            services.AddScoped<ExportacaoService>();
+            services.AddScoped<ImportacaoService>();
 
             if (bool.Parse(configuration["UseRedisCache"] ?? "false"))
             {

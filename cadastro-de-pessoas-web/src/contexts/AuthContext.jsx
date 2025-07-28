@@ -1,7 +1,15 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { authService } from '../services/auth-service';
 
-export const AuthContext = createContext();
+export const AuthContext = createContext({
+    authenticated: false,
+    user: null,
+    loading: true,
+    login: () => {},
+    logout: () => {},
+    updateUser: () => {},
+    isAuthenticated: () => false
+});
 
 export const AuthProvider = ({ children }) => {
     const [authenticated, setAuthenticated] = useState(false);
@@ -10,13 +18,14 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const checkAuth = async () => {
+            setLoading(true);
+            
             const token = authService.getToken();
             
             if (token) {
                 try {
                     if (authService.isTokenExpired(token)) {
-                        // Apenas faça logout se o token estiver realmente expirado
-                        console.log("Token expirado, fazendo logout");
+                        
                         authService.logout();
                         setAuthenticated(false);
                         setUser(null);
@@ -24,8 +33,6 @@ export const AuthProvider = ({ children }) => {
                         return;
                     }
 
-                    // Tente obter os dados do usuário do localStorage primeiro para evitar
-                    // requisições desnecessárias ao recarregar a página
                     const storedUser = authService.getCurrentUser();
                     if (storedUser) {
                         setAuthenticated(true);
@@ -34,7 +41,6 @@ export const AuthProvider = ({ children }) => {
                         return;
                     }
 
-                    // Se não tiver usuário no localStorage, então faça a requisição
                     const response = await authService.verifyToken();
                     if (response.valid) {
                         setAuthenticated(true);
@@ -46,7 +52,6 @@ export const AuthProvider = ({ children }) => {
                     }
                 } catch (error) {
                     console.error('Erro ao verificar token:', error);
-                    // Em caso de erro de conexão, mantenha o usuário logado se tiver dados no localStorage
                     const storedUser = authService.getCurrentUser();
                     if (storedUser) {
                         setAuthenticated(true);
@@ -94,13 +99,18 @@ export const AuthProvider = ({ children }) => {
         setUser(userData);
     };
 
+    const isAuthenticated = () => {
+        return authenticated && user !== null;
+    };
+
     const value = {
         authenticated,
         user,
         loading,
         login,
         logout,
-        updateUser
+        updateUser,
+        isAuthenticated
     };
 
     return (

@@ -1,0 +1,23 @@
+/* Estilos para corrigir a exibição de ícones */
+.chakra-icon {
+  color: currentColor !important; /* Isso fará o ícone herdar a cor do elemento pai */
+}
+
+/* Estilos específicos para ícones em cards e estatísticas */
+.chakra-card .chakra-icon,
+.chakra-stat .chakra-icon {
+  color: inherit !important;
+}
+
+/* Garantir que os ícones dentro de elementos com fundo colorido sejam visíveis */
+[data-bg] .chakra-icon,
+[style*="background"] .chakra-icon,
+[style*="bg"] .chakra-icon {
+  color: white !important;
+}
+
+/* Correção para ícones em botões */
+.chakra-button .chakra-icon {
+  color: inherit !important;
+  margin-right: 0.5rem;
+}

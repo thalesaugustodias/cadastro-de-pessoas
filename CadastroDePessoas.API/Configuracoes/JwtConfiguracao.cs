@@ -40,13 +40,11 @@ namespace CadastroDePessoas.API.Configuracoes
             });
 
             services.AddAuthorizationBuilder()
-                .SetFallbackPolicy(new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build())
                 .AddPolicy("AdminOnly", policy =>
                     policy.RequireAuthenticatedUser()
                           .RequireClaim("role", "admin"))
-                .AddPolicy("AuthenticatedUser", policy => policy.RequireAuthenticatedUser());
+                .AddPolicy("AuthenticatedUser", policy => 
+                    policy.RequireAuthenticatedUser());
 
             return services;
         }

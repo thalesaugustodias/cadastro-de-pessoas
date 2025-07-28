@@ -1,13 +1,9 @@
 ﻿using CadastroDePessoas.Application.CQRS.Comandos.Pessoa.RemoverPessoa;
 using CadastroDePessoas.Application.Interfaces;
+using CadastroDePessoas.Domain.Entidades;
 using CadastroDePessoas.Domain.Enums;
 using CadastroDePessoas.Domain.Interfaces;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CadastroDePessoas.Application.Testes.Comandos.Pessoa
 {
@@ -29,6 +25,16 @@ namespace CadastroDePessoas.Application.Testes.Comandos.Pessoa
         public async Task Handle_ComPessoaExistente_DeveRemoverPessoa()
         {
             // Arrange
+            var endereco = new Endereco(
+                "01310-100",
+                "Av. Paulista",
+                "1000",
+                "Apto 101",
+                "Bela Vista",
+                "São Paulo",
+                "SP"
+            );
+
             var pessoaExistente = new Domain.Entidades.Pessoa(
                 "João Silva",
                 Sexo.Masculino,
@@ -36,7 +42,9 @@ namespace CadastroDePessoas.Application.Testes.Comandos.Pessoa
                 new DateTime(1990, 1, 1),
                 "São Paulo",
                 "Brasileira",
-                "52998224725"
+                "52998224725",
+                "(11) 99999-9999",
+                endereco
             );
 
             var comando = new RemoverPessoaComando(_pessoaId);
@@ -59,6 +67,42 @@ namespace CadastroDePessoas.Application.Testes.Comandos.Pessoa
             _repositorioPessoaMock.Verify(r => r.RemoverAsync(It.IsAny<Domain.Entidades.Pessoa>()), Times.Once);
             _servicoCacheMock.Verify(c => c.RemoverAsync("pessoas_lista"), Times.Once);
             _servicoCacheMock.Verify(c => c.RemoverAsync($"pessoa_{_pessoaId}"), Times.Once);
+        }
+
+        [Fact]
+        public async Task Handle_ComPessoaSemEndereco_DeveRemoverPessoa()
+        {
+            // Arrange
+            var pessoaExistente = new Domain.Entidades.Pessoa(
+                "João Silva",
+                Sexo.Masculino,
+                "joao@exemplo.com",
+                new DateTime(1990, 1, 1),
+                "São Paulo",
+                "Brasileira",
+                "52998224725",
+                "(11) 99999-9999",
+                null
+            );
+
+            var comando = new RemoverPessoaComando(_pessoaId);
+
+            _repositorioPessoaMock
+                .Setup(r => r.ObterPorIdAsync(_pessoaId))
+                .ReturnsAsync(pessoaExistente);
+
+            _repositorioPessoaMock
+                .Setup(r => r.RemoverAsync(It.IsAny<Domain.Entidades.Pessoa>()))
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var resultado = await _manipulador.Handle(comando, CancellationToken.None);
+
+            // Assert
+            Assert.True(resultado);
+
+            _repositorioPessoaMock.Verify(r => r.ObterPorIdAsync(_pessoaId), Times.Once);
+            _repositorioPessoaMock.Verify(r => r.RemoverAsync(It.IsAny<Domain.Entidades.Pessoa>()), Times.Once);
         }
 
         [Fact]

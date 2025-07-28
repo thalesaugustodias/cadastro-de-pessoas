@@ -36,7 +36,7 @@ const EditarPessoa = () => {
             setIsSubmitting(true);
             await pessoaService.atualizar(data);
             showSuccess('Pessoa atualizada com sucesso!');
-            navigate(`/pessoas/${id}`);
+            navigate('/pessoas');
         } catch (error) {
             console.error('Erro ao atualizar pessoa:', error);
 

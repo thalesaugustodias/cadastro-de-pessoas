@@ -1,4 +1,5 @@
 ﻿using CadastroDePessoas.Domain.Validacoes;
+using Xunit;
 
 namespace CadastroDePessoas.Domain.Testes.Validacoes
 {

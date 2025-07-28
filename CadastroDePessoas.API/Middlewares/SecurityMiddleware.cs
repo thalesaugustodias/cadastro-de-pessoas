@@ -34,6 +34,7 @@ namespace CadastroDePessoas.API.Middlewares
                 return;
             }
 
+            
             await next(context);
         }
 
@@ -47,8 +48,12 @@ namespace CadastroDePessoas.API.Middlewares
             response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
             response.Headers.Append("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
 
-
-            response.Headers.Append("Content-Security-Policy", "default-src 'self'; connect-src 'self' https://cadastro-de-pessoas-web.onrender.com");
+            response.Headers.Append("Content-Security-Policy", 
+                "default-src 'self'; " +
+                "connect-src 'self' http://localhost:* https://localhost:* https://cadastro-de-pessoas-web.onrender.com; " +
+                "img-src 'self' data:; " +
+                "style-src 'self' 'unsafe-inline'; " +
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval';");
             
             response.Headers.Remove("Server");
             response.Headers.Remove("X-Powered-By");
@@ -101,7 +106,7 @@ namespace CadastroDePessoas.API.Middlewares
 
         private bool ValidarRateLimit(HttpContext context)
         { 
-            return true; // Implementar lógica de rate limiting qnd necessário
+            return true; // Implementar lógica de rate limiting quando necessário
         }
 
         private static bool IsEndpointPublico(string path)

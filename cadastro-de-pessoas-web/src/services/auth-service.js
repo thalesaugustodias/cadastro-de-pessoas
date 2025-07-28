@@ -3,7 +3,7 @@ import api, { resolveApiPath } from './api';
 export const authService = {
     login: async (email, senha) => {
         try {
-            const response = await api.post(resolveApiPath('auth/login'), {
+            const response = await api.post(resolveApiPath('Auth/login'), {
                 email,
                 senha
             });
@@ -82,7 +82,7 @@ export const authService = {
 
     verifyToken: async () => {
         try {
-            const response = await api.get(resolveApiPath('auth/verify'));
+            const response = await api.get(resolveApiPath('Auth/verify'));
             return response.data;
         } catch (error) {
             throw error;
@@ -91,7 +91,7 @@ export const authService = {
 
     getProfile: async () => {
         try {
-            const response = await api.get(resolveApiPath('auth/profile'));
+            const response = await api.get(resolveApiPath('Auth/profile'));
             return response.data;
         } catch (error) {
             throw error;
@@ -100,7 +100,7 @@ export const authService = {
 
     updateProfile: async (profileData) => {
         try {
-            const response = await api.put(resolveApiPath('auth/profile'), profileData);
+            const response = await api.put(resolveApiPath('Auth/profile'), profileData);
             
             if (response.data.success) {
                 localStorage.setItem('user', JSON.stringify(response.data.user));
@@ -110,7 +110,19 @@ export const authService = {
         } catch (error) {
             throw error;
         }
-    },   
+    },
+    
+    changePassword: async (passwordData) => {
+        try {
+            const response = await api.put(resolveApiPath('Auth/password'), passwordData);
+            return response.data;
+        } catch (error) {
+            if (error.response?.data?.message) {
+                throw new Error(error.response.data.message);
+            }
+            throw error;
+        }
+    },
 
     getCurrentUser: () => {
         try {
@@ -171,7 +183,7 @@ export const authService = {
 export const healthService = {
     checkHealth: async () => {
         try {
-            const response = await api.get(resolveApiPath('health'));
+            const response = await api.get(resolveApiPath('Health'));
             return response.data;
         } catch (error) {
             throw error;
@@ -180,7 +192,7 @@ export const healthService = {
 
     checkDatabase: async () => {
         try {
-            const response = await api.get(resolveApiPath('health/database'));
+            const response = await api.get(resolveApiPath('Health/database'));
             return response.data;
         } catch (error) {
             throw error;

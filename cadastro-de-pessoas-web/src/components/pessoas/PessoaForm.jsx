@@ -28,6 +28,7 @@ import { maskCPF, maskCEP, maskTelefone } from '../../utils/masks';
 import { validarCPF } from '../../utils/validators';
 import { cepService } from '../../services/cep-service';
 import { useNotification } from '../../hooks/useNotification';
+import { useNavigate } from 'react-router-dom';
 
 const schema = yup.object().shape({
     nome: yup.string().required('O nome é obrigatório'),
@@ -47,7 +48,6 @@ const schema = yup.object().shape({
     naturalidade: yup.string().nullable(),
     nacionalidade: yup.string().nullable(),
 
-    // Campos de endereço
     endereco: yup.object().shape({
         cep: yup.string().nullable(),
         logradouro: yup.string().nullable(),
@@ -62,6 +62,7 @@ const schema = yup.object().shape({
 const PessoaForm = ({ initialData = {}, onSubmit, isLoading, isEdit = false }) => {
     const { showError, showSuccess } = useNotification();
     const [isLoadingCep, setIsLoadingCep] = useState(false);
+    const navigate = useNavigate();
 
     const {
         register,
@@ -73,28 +74,58 @@ const PessoaForm = ({ initialData = {}, onSubmit, isLoading, isEdit = false }) =
     } = useForm({
         resolver: yupResolver(schema),
         defaultValues: {
-            nome: initialData.nome || '',
-            email: initialData.email || '',
-            telefone: initialData.telefone || '',
-            dataNascimento: initialData.dataNascimento
-                ? new Date(initialData.dataNascimento).toISOString().split('T')[0]
+            nome: initialData.Nome || '',
+            email: initialData.Email || '',
+            telefone: initialData.Telefone || '',
+            dataNascimento: initialData.DataNascimento
+                ? new Date(initialData.DataNascimento).toISOString().split('T')[0]
                 : '',
-            cpf: initialData.cpf || '',
-            sexo: initialData.sexo?.toString() || '',
-            naturalidade: initialData.naturalidade || '',
-            nacionalidade: initialData.nacionalidade || '',
+            cpf: initialData.CPF || '',
+            sexo: initialData.Sexo?.toString() || '',
+            naturalidade: initialData.Naturalidade || '',
+            nacionalidade: initialData.Nacionalidade || '',
             endereco: {
-                cep: initialData.endereco?.cep || '',
-                logradouro: initialData.endereco?.logradouro || '',
-                numero: initialData.endereco?.numero || '',
-                complemento: initialData.endereco?.complemento || '',
-                bairro: initialData.endereco?.bairro || '',
-                cidade: initialData.endereco?.cidade || '',
-                estado: initialData.endereco?.estado || '',
+                cep: initialData.Endereco?.CEP || '',
+                logradouro: initialData.Endereco?.Logradouro || '',
+                numero: initialData.Endereco?.Numero || '',
+                complemento: initialData.Endereco?.Complemento || '',
+                bairro: initialData.Endereco?.Bairro || '',
+                cidade: initialData.Endereco?.Cidade || '',
+                estado: initialData.Endereco?.Estado || '',
             },
         },
     });
 
+    const onSubmitForm = (data) => {
+        if (isEdit && initialData.Id) {
+            data.Id = initialData.Id;
+        }
+        
+        const transformedData = {
+            Id: data.Id,
+            Nome: data.nome,
+            Email: data.email,
+            Telefone: data.telefone,
+            DataNascimento: data.dataNascimento,
+            CPF: data.cpf,
+            Sexo: data.sexo ? parseInt(data.sexo) : null,
+            Naturalidade: data.naturalidade,
+            Nacionalidade: data.nacionalidade,
+            Endereco: data.endereco ? {
+                Id: data.endereco.id || (initialData.Endereco ? initialData.Endereco.Id : null),
+                CEP: data.endereco.cep,
+                Logradouro: data.endereco.logradouro,
+                Numero: data.endereco.numero,
+                Complemento: data.endereco.complemento,
+                Bairro: data.endereco.bairro,
+                Cidade: data.endereco.cidade,
+                Estado: data.endereco.estado
+            } : null
+        };
+        
+        onSubmit(transformedData);
+    };
+    
     const cpf = watch('cpf');
     const telefone = watch('telefone');
     const cep = watch('endereco.cep');
@@ -226,6 +257,7 @@ const PessoaForm = ({ initialData = {}, onSubmit, isLoading, isEdit = false }) =
                                     {...register('cpf')}
                                     disabled={isEdit}
                                     placeholder="000.000.000-00"
+                                    maxLength={14}
                                 />
                                 <FormErrorMessage>{errors.cpf?.message}</FormErrorMessage>
                             </FormControl>
@@ -236,6 +268,7 @@ const PessoaForm = ({ initialData = {}, onSubmit, isLoading, isEdit = false }) =
                                     id="telefone"
                                     {...register('telefone')}
                                     placeholder="(00) 00000-0000"
+                                    maxLength={15}
                                 />
                                 <FormErrorMessage>{errors.telefone?.message}</FormErrorMessage>
                             </FormControl>
@@ -303,6 +336,7 @@ const PessoaForm = ({ initialData = {}, onSubmit, isLoading, isEdit = false }) =
                                         id="endereco.cep"
                                         {...register('endereco.cep')}
                                         placeholder="00000-000"
+                                        maxLength={9}
                                     />
                                     <InputRightElement>
                                         <IconButton
@@ -396,8 +430,7 @@ const PessoaForm = ({ initialData = {}, onSubmit, isLoading, isEdit = false }) =
                     <Button
                         variant="outline"
                         colorScheme="gray"
-                        as={isEdit ? 'a' : 'button'}
-                        href={isEdit ? `/pessoas/${initialData.id}` : '/pessoas'}
+                        onClick={() => navigate('/pessoas')}
                     >
                         Cancelar
                     </Button>
@@ -405,6 +438,7 @@ const PessoaForm = ({ initialData = {}, onSubmit, isLoading, isEdit = false }) =
                         type="submit"
                         variant="primary"
                         isLoading={isLoading}
+                        onClick={handleSubmit(onSubmitForm)}
                     >
                         {isEdit ? 'Atualizar' : 'Cadastrar'}
                     </Button>

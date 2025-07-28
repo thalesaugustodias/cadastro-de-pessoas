@@ -1,4 +1,5 @@
-﻿using CadastroDePessoas.Domain.Enums;
+﻿using CadastroDePessoas.Application.DTOs.Endereco;
+using CadastroDePessoas.Domain.Enums;
 
 namespace CadastroDePessoas.Application.DTOs.Pessoa
 {
@@ -11,6 +12,7 @@ namespace CadastroDePessoas.Application.DTOs.Pessoa
         public DateTime DataNascimento { get; set; }
         public string Naturalidade { get; set; }
         public string Nacionalidade { get; set; }
-        public string Endereco { get; set; }
+        public string Telefone { get; set; }
+        public EnderecoCriacaoDTO Endereco { get; set; }
     }
 }

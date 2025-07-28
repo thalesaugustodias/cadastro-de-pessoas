@@ -1,4 +1,4 @@
-namespace CadastroDePessoas.API.Configuracoes
+namespace CadastroDePessoas.API.Controllers
 {
     public class UpdateProfileRequest
     {
