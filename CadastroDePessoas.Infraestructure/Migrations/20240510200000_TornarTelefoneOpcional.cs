@@ -1,10 +1,11 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
-
 namespace CadastroDePessoas.Infraestructure.Migrations
 {
+    [ExcludeFromCodeCoverage]
     public partial class TornarTelefoneOpcional : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)

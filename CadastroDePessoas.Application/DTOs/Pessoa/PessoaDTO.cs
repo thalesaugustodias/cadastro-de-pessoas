@@ -5,6 +5,11 @@ namespace CadastroDePessoas.Application.DTOs.Pessoa
 {
     public class PessoaDTO
     {
+        public PessoaDTO()
+        {
+            Id = Guid.NewGuid();
+        }
+
         public Guid Id { get; set; }
         public string Nome { get; set; }
         public Sexo? Sexo { get; set; }
@@ -16,8 +21,7 @@ namespace CadastroDePessoas.Application.DTOs.Pessoa
         public string CPF { get; set; }
         public string Telefone { get; set; }
         public EnderecoDTO Endereco { get; set; }
-        public string EnderecoCompleto => Endereco != null ? 
-            $"{Endereco.Logradouro}, {Endereco.Numero}, {Endereco.Bairro}, {Endereco.Cidade} - {Endereco.Estado}, {Endereco.CEP}" : 
+        public string EnderecoCompleto => Endereco != null ? $"{Endereco.Logradouro}, {Endereco.Numero}, {Endereco.Bairro}, {Endereco.Cidade} - {Endereco.Estado}, {Endereco.CEP}" : 
             null;
         public DateTime DataCadastro { get; set; }
         public DateTime? DataAtualizacao { get; set; }
@@ -26,6 +30,11 @@ namespace CadastroDePessoas.Application.DTOs.Pessoa
         private int CalcularIdade()
         {
             var hoje = DateTime.Today;
+            
+            // Verificar se a data de nascimento é no futuro
+            if (DataNascimento > hoje)
+                return 0;
+                
             var idade = hoje.Year - DataNascimento.Year;
             if (DataNascimento.Date > hoje.AddYears(-idade)) idade--;
             return idade;

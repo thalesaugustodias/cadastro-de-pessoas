@@ -7,12 +7,19 @@ using System.Text;
 
 namespace CadastroDePessoas.Application.Services
 {
-    public class ServiceToken(IConfiguration configuration) : IServiceToken
+    public class ServiceToken : IServiceToken
     {
+        private readonly IConfiguration _configuration;
+
+        public ServiceToken(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         private string ObterChaveJwt()
         {
             // Prioriza variável de ambiente, depois appsettings
-            var chave = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? configuration["Jwt:Chave"];
+            var chave = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? _configuration["Jwt:Chave"];
 
             if (string.IsNullOrEmpty(chave))
             {
@@ -43,11 +50,12 @@ namespace CadastroDePessoas.Application.Services
             var chaveSecreta = ObterChaveJwt();
             var chave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(chaveSecreta));
             var credenciais = new SigningCredentials(chave, SecurityAlgorithms.HmacSha256);
-            var expiracao = DateTime.UtcNow.AddHours(double.Parse(configuration["Jwt:ExpiracionHoras"] ?? "1"));
+            var expiracao = DateTime.UtcNow.AddHours(double.Parse(_configuration["Jwt:ExpiracionHoras"] ?? "1"));
 
+            // Usar JwtSecurityToken diretamente em vez de SecurityTokenDescriptor
             var token = new JwtSecurityToken(
-                issuer: configuration["Jwt:Emissor"],
-                audience: configuration["Jwt:Audiencia"],
+                issuer: _configuration["Jwt:Emissor"],
+                audience: _configuration["Jwt:Audiencia"],
                 claims: claims,
                 expires: expiracao,
                 signingCredentials: credenciais
@@ -58,23 +66,53 @@ namespace CadastroDePessoas.Application.Services
 
         public ClaimsPrincipal ValidarToken(string token)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var chaveSecreta = ObterChaveJwt();
-            var chave = Encoding.UTF8.GetBytes(chaveSecreta);
-
-            var validationParameters = new TokenValidationParameters
+            if (string.IsNullOrEmpty(token))
             {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(chave),
-                ValidateIssuer = true,
-                ValidIssuer = configuration["Jwt:Emissor"],
-                ValidateAudience = true,
-                ValidAudience = configuration["Jwt:Audiencia"],
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
-            };
+                throw new ArgumentException("O token não pode ser nulo ou vazio", nameof(token));
+            }
 
-            return tokenHandler.ValidateToken(token, validationParameters, out _);
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                
+                // Verificar se o token tem o formato JWT válido
+                if (!tokenHandler.CanReadToken(token))
+                {
+                    throw new ArgumentException("O token fornecido não está no formato JWT válido", nameof(token));
+                }
+                
+                var chaveSecreta = ObterChaveJwt();
+                var chave = Encoding.UTF8.GetBytes(chaveSecreta);
+
+                var validationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(chave),
+                    ValidateIssuer = true,
+                    ValidIssuer = _configuration["Jwt:Emissor"],
+                    ValidateAudience = true,
+                    ValidAudience = _configuration["Jwt:Audiencia"],
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+
+                SecurityToken validatedToken;
+                var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+                
+                return principal;
+            }
+            catch (SecurityTokenMalformedException)
+            {
+                throw new ArgumentException("O token fornecido não está no formato JWT válido", nameof(token));
+            }
+            catch (Exception ex) when (
+                ex is SecurityTokenInvalidSignatureException || 
+                ex is SecurityTokenInvalidIssuerException || 
+                ex is SecurityTokenInvalidAudienceException || 
+                ex is SecurityTokenExpiredException)
+            {
+                throw new ArgumentException($"Token inválido: {ex.Message}", nameof(token));
+            }
         }
     }
 }

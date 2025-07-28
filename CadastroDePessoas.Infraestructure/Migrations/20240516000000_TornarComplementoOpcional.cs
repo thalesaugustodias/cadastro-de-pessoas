@@ -1,10 +1,11 @@
-using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using System.Diagnostics.CodeAnalysis;
 
 #nullable disable
 
 namespace CadastroDePessoas.Infraestructure.Migrations
 {
+    [ExcludeFromCodeCoverage]
     public partial class TornarComplementoOpcional : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)

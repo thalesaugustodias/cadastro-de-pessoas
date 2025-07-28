@@ -527,3 +527,4 @@ dist/
 ehthumbs.db
 Thumbs.db
 /CadastroDePessoas/CadastroDePessoas.Infraestructure/Migrations
+/coverage_report

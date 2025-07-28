@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using System.Security.Claims;
+using Xunit;
 
 namespace CadastroDePessoas.API.Testes.Controllers
 {
@@ -17,6 +18,7 @@ namespace CadastroDePessoas.API.Testes.Controllers
         private readonly Mock<IMediator> _mediatorMock;
         private readonly Mock<AppDbContexto> _dbContextMock;
         private readonly AuthController _controller;
+        private readonly Mock<DbSet<Usuario>> _usuariosDbSetMock;
 
         public AuthControllerTests()
         {
@@ -27,6 +29,9 @@ namespace CadastroDePessoas.API.Testes.Controllers
                 .Options;
             
             _dbContextMock = new Mock<AppDbContexto>(options);
+            _usuariosDbSetMock = new Mock<DbSet<Usuario>>();
+            _dbContextMock.Setup(c => c.Usuarios).Returns(_usuariosDbSetMock.Object);
+            
             _controller = new AuthController(_mediatorMock.Object, _dbContextMock.Object);
         }
 
@@ -47,20 +52,13 @@ namespace CadastroDePessoas.API.Testes.Controllers
                 .Setup(m => m.Send(comando, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(token);
 
-            var usuariosDbSet = new Mock<DbSet<Usuario>>();
-            var usuario = new Usuario("João Silva", "joao@exemplo.com", "senha-hash")
-            {
-                Id = usuarioId
-            };
-
+            var usuario = new Usuario("João Silva", "joao@exemplo.com", "senha-hash");
             var usuarios = new List<Usuario> { usuario }.AsQueryable();
             
-            usuariosDbSet.As<IQueryable<Usuario>>().Setup(m => m.Provider).Returns(usuarios.Provider);
-            usuariosDbSet.As<IQueryable<Usuario>>().Setup(m => m.Expression).Returns(usuarios.Expression);
-            usuariosDbSet.As<IQueryable<Usuario>>().Setup(m => m.ElementType).Returns(usuarios.ElementType);
-            usuariosDbSet.As<IQueryable<Usuario>>().Setup(m => m.GetEnumerator()).Returns(usuarios.GetEnumerator);
-
-            _dbContextMock.Setup(c => c.Usuarios).Returns(usuariosDbSet.Object);
+            _usuariosDbSetMock.As<IQueryable<Usuario>>().Setup(m => m.Provider).Returns(usuarios.Provider);
+            _usuariosDbSetMock.As<IQueryable<Usuario>>().Setup(m => m.Expression).Returns(usuarios.Expression);
+            _usuariosDbSetMock.As<IQueryable<Usuario>>().Setup(m => m.ElementType).Returns(usuarios.ElementType);
+            _usuariosDbSetMock.As<IQueryable<Usuario>>().Setup(m => m.GetEnumerator()).Returns(usuarios.GetEnumerator);
 
             // Act
             var resultado = await _controller.Login(comando);
@@ -80,6 +78,44 @@ namespace CadastroDePessoas.API.Testes.Controllers
             
             Assert.Equal(true, successProperty.GetValue(response));
             Assert.Equal(token, tokenProperty.GetValue(response));
+        }
+
+        [Fact]
+        public async Task Login_ComUsuarioNulo_DeveRetornarUnauthorized()
+        {
+            // Arrange
+            var comando = new AutenticarUsuarioComando
+            {
+                Email = "naoexiste@exemplo.com",
+                Senha = "Senha123"
+            };
+
+            var token = "token-jwt-valido";
+
+            _mediatorMock
+                .Setup(m => m.Send(comando, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(token);
+
+            var usuarios = new List<Usuario>().AsQueryable();
+            
+            _usuariosDbSetMock.As<IQueryable<Usuario>>().Setup(m => m.Provider).Returns(usuarios.Provider);
+            _usuariosDbSetMock.As<IQueryable<Usuario>>().Setup(m => m.Expression).Returns(usuarios.Expression);
+            _usuariosDbSetMock.As<IQueryable<Usuario>>().Setup(m => m.ElementType).Returns(usuarios.ElementType);
+            _usuariosDbSetMock.As<IQueryable<Usuario>>().Setup(m => m.GetEnumerator()).Returns(usuarios.GetEnumerator);
+
+            // Act
+            var resultado = await _controller.Login(comando);
+
+            // Assert
+            var unauthorizedResult = Assert.IsType<UnauthorizedObjectResult>(resultado.Result);
+            var response = Assert.IsAssignableFrom<object>(unauthorizedResult.Value);
+            
+            var properties = response.GetType().GetProperties();
+            Assert.Contains(properties, p => p.Name == "success");
+            Assert.Contains(properties, p => p.Name == "message");
+
+            var successProperty = properties.First(p => p.Name == "success");
+            Assert.Equal(false, successProperty.GetValue(response));
         }
 
         [Fact]
@@ -220,6 +256,307 @@ namespace CadastroDePessoas.API.Testes.Controllers
 
             var validProperty = properties.First(p => p.Name == "valid");
             Assert.Equal(true, validProperty.GetValue(response));
+        }
+
+        [Fact]
+        public async Task GetProfile_ComUsuarioValido_DeveRetornarOk()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            ConfigurarUsuarioNaRequisicao(userId.ToString());
+
+            // Criar usuário usando o construtor para definir propriedades privadas
+            var usuario = new Usuario("João Silva", "joao@exemplo.com", "senha-hash");
+            
+            var usuariosMock = new List<Usuario> { usuario }.AsQueryable();
+            _usuariosDbSetMock.As<IQueryable<Usuario>>().Setup(m => m.Provider).Returns(usuariosMock.Provider);
+            _usuariosDbSetMock.As<IQueryable<Usuario>>().Setup(m => m.Expression).Returns(usuariosMock.Expression);
+            _usuariosDbSetMock.As<IQueryable<Usuario>>().Setup(m => m.ElementType).Returns(usuariosMock.ElementType);
+            _usuariosDbSetMock.As<IQueryable<Usuario>>().Setup(m => m.GetEnumerator()).Returns(usuariosMock.GetEnumerator);
+
+            // Act
+            var resultado = await _controller.GetProfile();
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(resultado.Result);
+            var response = Assert.IsAssignableFrom<object>(okResult.Value);
+            
+            var properties = response.GetType().GetProperties();
+            Assert.Contains(properties, p => p.Name == "success");
+            Assert.Contains(properties, p => p.Name == "user");
+
+            var successProperty = properties.First(p => p.Name == "success");
+            Assert.Equal(true, successProperty.GetValue(response));
+
+            var userProperty = properties.First(p => p.Name == "user");
+            var user = userProperty.GetValue(response);
+            Assert.NotNull(user);
+        }
+
+        [Fact]
+        public async Task GetProfile_ComUsuarioNaoEncontrado_DeveRetornarNotFound()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            ConfigurarUsuarioNaRequisicao(userId.ToString());
+
+            var usuariosMock = new List<Usuario>().AsQueryable();
+            _usuariosDbSetMock.As<IQueryable<Usuario>>().Setup(m => m.Provider).Returns(usuariosMock.Provider);
+            _usuariosDbSetMock.As<IQueryable<Usuario>>().Setup(m => m.Expression).Returns(usuariosMock.Expression);
+            _usuariosDbSetMock.As<IQueryable<Usuario>>().Setup(m => m.ElementType).Returns(usuariosMock.ElementType);
+            _usuariosDbSetMock.As<IQueryable<Usuario>>().Setup(m => m.GetEnumerator()).Returns(usuariosMock.GetEnumerator);
+
+            // Act
+            var resultado = await _controller.GetProfile();
+
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(resultado.Result);
+        }
+
+        [Fact]
+        public async Task GetProfile_ComIdInvalido_DeveRetornarBadRequest()
+        {
+            // Arrange
+            ConfigurarUsuarioNaRequisicao("id-invalido");
+
+            // Act
+            var resultado = await _controller.GetProfile();
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(resultado.Result);
+        }
+
+        [Fact]
+        public async Task UpdateProfile_ComDadosValidos_DeveRetornarOk()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            ConfigurarUsuarioNaRequisicao(userId.ToString());
+
+            var usuario = new Usuario("João Silva", "joao@exemplo.com", "senha-hash");
+
+            _dbContextMock.Setup(c => c.Usuarios.FindAsync(userId))
+                .ReturnsAsync(usuario);
+
+            _dbContextMock.Setup(c => c.Usuarios.AnyAsync(
+                It.IsAny<System.Linq.Expressions.Expression<Func<Usuario, bool>>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(false);
+
+            _dbContextMock.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(1);
+
+            var request = new UpdateProfileRequest
+            {
+                Nome = "João Silva Atualizado",
+                Email = "joao.atualizado@exemplo.com"
+            };
+
+            // Act
+            var resultado = await _controller.UpdateProfile(request);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(resultado.Result);
+            var response = Assert.IsAssignableFrom<object>(okResult.Value);
+            
+            var properties = response.GetType().GetProperties();
+            Assert.Contains(properties, p => p.Name == "success");
+            Assert.Contains(properties, p => p.Name == "message");
+
+            var successProperty = properties.First(p => p.Name == "success");
+            Assert.Equal(true, successProperty.GetValue(response));
+        }
+
+        [Fact]
+        public async Task UpdateProfile_ComEmailJaExistente_DeveRetornarBadRequest()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            ConfigurarUsuarioNaRequisicao(userId.ToString());
+
+            var usuario = new Usuario("João Silva", "joao@exemplo.com", "senha-hash");
+
+            _dbContextMock.Setup(c => c.Usuarios.FindAsync(userId))
+                .ReturnsAsync(usuario);
+
+            _dbContextMock.Setup(c => c.Usuarios.AnyAsync(
+                It.IsAny<System.Linq.Expressions.Expression<Func<Usuario, bool>>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(true);
+
+            var request = new UpdateProfileRequest
+            {
+                Nome = "João Silva Atualizado",
+                Email = "outro@exemplo.com"
+            };
+
+            // Act
+            var resultado = await _controller.UpdateProfile(request);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(resultado.Result);
+        }
+
+        [Fact]
+        public async Task UpdateProfile_ComUsuarioNaoEncontrado_DeveRetornarNotFound()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            ConfigurarUsuarioNaRequisicao(userId.ToString());
+
+            _dbContextMock.Setup(c => c.Usuarios.FindAsync(userId))
+                .ReturnsAsync((Usuario?)null);
+
+            var request = new UpdateProfileRequest
+            {
+                Nome = "João Silva Atualizado",
+                Email = "joao.atualizado@exemplo.com"
+            };
+
+            // Act
+            var resultado = await _controller.UpdateProfile(request);
+
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(resultado.Result);
+        }
+
+        [Fact]
+        public async Task ChangePassword_ComDadosValidos_DeveRetornarOk()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            ConfigurarUsuarioNaRequisicao(userId.ToString());
+
+            var senhaAtual = BCrypt.Net.BCrypt.HashPassword("senha123", 12);
+            var usuario = new Usuario("João Silva", "joao@exemplo.com", senhaAtual);
+
+            _dbContextMock.Setup(c => c.Usuarios.FindAsync(userId))
+                .ReturnsAsync(usuario);
+
+            _dbContextMock.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(1);
+
+            var request = new ChangePasswordRequest
+            {
+                SenhaAtual = "senha123",
+                NovaSenha = "novaSenha123",
+                ConfirmarSenha = "novaSenha123"
+            };
+
+            // Act
+            var resultado = await _controller.ChangePassword(request);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(resultado.Result);
+            var response = Assert.IsAssignableFrom<object>(okResult.Value);
+            
+            var properties = response.GetType().GetProperties();
+            Assert.Contains(properties, p => p.Name == "success");
+            Assert.Contains(properties, p => p.Name == "message");
+
+            var successProperty = properties.First(p => p.Name == "success");
+            Assert.Equal(true, successProperty.GetValue(response));
+        }
+
+        [Fact]
+        public async Task ChangePassword_ComSenhaAtualIncorreta_DeveRetornarBadRequest()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            ConfigurarUsuarioNaRequisicao(userId.ToString());
+
+            var senhaAtual = BCrypt.Net.BCrypt.HashPassword("senha123", 12);
+            var usuario = new Usuario("João Silva", "joao@exemplo.com", senhaAtual);
+
+            _dbContextMock.Setup(c => c.Usuarios.FindAsync(userId))
+                .ReturnsAsync(usuario);
+
+            var request = new ChangePasswordRequest
+            {
+                SenhaAtual = "senha_errada",
+                NovaSenha = "novaSenha123",
+                ConfirmarSenha = "novaSenha123"
+            };
+
+            // Act
+            var resultado = await _controller.ChangePassword(request);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(resultado.Result);
+        }
+
+        [Fact]
+        public async Task ChangePassword_ComSenhaFraca_DeveRetornarBadRequest()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            ConfigurarUsuarioNaRequisicao(userId.ToString());
+
+            var senhaAtual = BCrypt.Net.BCrypt.HashPassword("senha123", 12);
+            var usuario = new Usuario("João Silva", "joao@exemplo.com", senhaAtual);
+
+            _dbContextMock.Setup(c => c.Usuarios.FindAsync(userId))
+                .ReturnsAsync(usuario);
+
+            var request = new ChangePasswordRequest
+            {
+                SenhaAtual = "senha123",
+                NovaSenha = "123",
+                ConfirmarSenha = "123"
+            };
+
+            // Act
+            var resultado = await _controller.ChangePassword(request);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(resultado.Result);
+        }
+
+        [Fact]
+        public async Task ChangePassword_ComSenhasNaoCoincidentes_DeveRetornarBadRequest()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            ConfigurarUsuarioNaRequisicao(userId.ToString());
+
+            var senhaAtual = BCrypt.Net.BCrypt.HashPassword("senha123", 12);
+            var usuario = new Usuario("João Silva", "joao@exemplo.com", senhaAtual);
+
+            _dbContextMock.Setup(c => c.Usuarios.FindAsync(userId))
+                .ReturnsAsync(usuario);
+
+            var request = new ChangePasswordRequest
+            {
+                SenhaAtual = "senha123",
+                NovaSenha = "novaSenha123",
+                ConfirmarSenha = "outraSenha123"
+            };
+
+            // Act
+            var resultado = await _controller.ChangePassword(request);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(resultado.Result);
+        }
+
+        private void ConfigurarUsuarioNaRequisicao(string userId)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim("sub", userId),
+                new Claim("email", "joao@exemplo.com"),
+                new Claim("name", "João Silva")
+            };
+            var identity = new ClaimsIdentity(claims, "TestAuth");
+            var principal = new ClaimsPrincipal(identity);
+
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = principal
+                }
+            };
         }
     }
 }
