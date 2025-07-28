@@ -6,7 +6,7 @@ O projeto Cadastro de Pessoas é uma solução completa de gerenciamento de cada
 
 A aplicação está disponível nos seguintes endereços:
 
-- **Backend (API)**: [https://cadastro-de-pessoas-vina.onrender.com/swagger/index.html](https://cadastro-de-pessoas-vina.onrender.com/swagger/index.html)
+- **Backend (API)**: [https://cadastro-de-pessoas-15rn.onrender.com/index.html](https://cadastro-de-pessoas-15rn.onrender.com/index.html)
 - **Frontend**: [https://cadastro-de-pessoas-web.onrender.com/](https://cadastro-de-pessoas-web.onrender.com/)
 
 ## 🏗️ Estrutura do Projeto
@@ -36,8 +36,8 @@ O projeto segue uma arquitetura em camadas com separação clara de responsabili
 
 1. **Clone o repositório**:
    ```bash
-   git clone https://github.com/thalesaugustodias/desafio-stefanini.git
-   cd desafio-stefanini/CadastroDePessoas
+   git clone https://github.com/thalesaugustodias/cadastro-de-pessoas.git
+   cd cadastro-de-pessoas/CadastroDePessoas
    ```
 
 2. **Restaure as dependências**:
@@ -80,10 +80,6 @@ A aplicação utiliza SQLite por padrão para facilitar a execução sem configu
 - **Admin**: admin@exemplo.com / Admin@123
 - **Usuário**: user@teste.com / User@123
 
-### Resetar o banco de dados
-Para limpar e recriar o banco de dados com os dados iniciais, acesse:
-- `https://localhost:5001/api/v1/health/reset-database` (POST)
-
 ## 🔄 Cache com Redis (Opcional)
 
 A aplicação pode usar Redis como provedor de cache ou a memória local. Para habilitar o Redis:
@@ -114,7 +110,7 @@ No arquivo `appsettings.json` ou `appsettings.Development.json`:
 
 A documentação da API está disponível via Swagger:
 - `https://localhost:5001/swagger` (ambiente local)
-- `https://cadastro-de-pessoas-vina.onrender.com/swagger` (ambiente de produção)
+- `https://cadastro-de-pessoas-15rn.onrender.com/index.html` (ambiente de produção)
 
 ## 🧪 Testes
 

@@ -15,7 +15,7 @@ const getBaseURL = () => {
         return import.meta.env.VITE_API_URL || 'https://localhost:5001';
     }
     
-    const prodBaseUrl = import.meta.env.VITE_API_URL || 'https://cadastro-de-pessoas-vina.onrender.com';
+    const prodBaseUrl = import.meta.env.VITE_API_URL || 'https://cadastro-de-pessoas-15rn.onrender.com';
     return prodBaseUrl.endsWith('/api/v1') ? prodBaseUrl : prodBaseUrl;
 };
 
