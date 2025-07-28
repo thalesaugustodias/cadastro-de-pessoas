@@ -77,7 +77,7 @@ namespace CadastroDePessoas.Application.Testes.Comandos.Pessoa
                 .ReturnsAsync(pessoaExistente);
 
             _repositorioPessoaMock
-                .Setup(r => r.AtualizarAsync(It.IsAny<Domain.Entidades.Pessoa>()))
+                .Setup(r => r.AtualizarPessoaComEnderecoAsync(It.IsAny<Domain.Entidades.Pessoa>()))
                 .Returns(Task.CompletedTask);
 
             // Act
@@ -97,7 +97,7 @@ namespace CadastroDePessoas.Application.Testes.Comandos.Pessoa
             Assert.Equal(enderecoAtualizado.Cidade, resultado.Endereco.Cidade);
 
             _repositorioPessoaMock.Verify(r => r.ObterPorIdAsync(_pessoaId), Times.Once);
-            _repositorioPessoaMock.Verify(r => r.AtualizarAsync(It.IsAny<Domain.Entidades.Pessoa>()), Times.Once);
+            _repositorioPessoaMock.Verify(r => r.AtualizarPessoaComEnderecoAsync(It.IsAny<Domain.Entidades.Pessoa>()), Times.Once);
             _servicoCacheMock.Verify(c => c.RemoverAsync("pessoas_lista"), Times.Once);
             _servicoCacheMock.Verify(c => c.RemoverAsync($"pessoa_{_pessoaId}"), Times.Once);
         }
@@ -146,7 +146,7 @@ namespace CadastroDePessoas.Application.Testes.Comandos.Pessoa
                 .ReturnsAsync(pessoaExistente);
 
             _repositorioPessoaMock
-                .Setup(r => r.AtualizarAsync(It.IsAny<Domain.Entidades.Pessoa>()))
+                .Setup(r => r.AtualizarPessoaComEnderecoAsync(It.IsAny<Domain.Entidades.Pessoa>()))
                 .Returns(Task.CompletedTask);
 
             // Act
@@ -189,7 +189,7 @@ namespace CadastroDePessoas.Application.Testes.Comandos.Pessoa
             Assert.Equal("Pessoa não encontrada", excecao.Message);
 
             _repositorioPessoaMock.Verify(r => r.ObterPorIdAsync(_pessoaId), Times.Once);
-            _repositorioPessoaMock.Verify(r => r.AtualizarAsync(It.IsAny<Domain.Entidades.Pessoa>()), Times.Never);
+            _repositorioPessoaMock.Verify(r => r.AtualizarPessoaComEnderecoAsync(It.IsAny<Domain.Entidades.Pessoa>()), Times.Never);
             _servicoCacheMock.Verify(c => c.RemoverAsync(It.IsAny<string>()), Times.Never);
         }
     }

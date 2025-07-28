@@ -174,7 +174,14 @@ namespace CadastroDePessoas.Domain.Testes.Entidades
             pessoa.AtualizarEndereco(novoEndereco);
 
             // Assert
-            Assert.Same(novoEndereco, pessoa.Endereco);
+            Assert.Equal(novoEndereco.CEP, pessoa.Endereco.CEP);
+            Assert.Equal(novoEndereco.Logradouro, pessoa.Endereco.Logradouro);
+            Assert.Equal(novoEndereco.Numero, pessoa.Endereco.Numero);
+            Assert.Equal(novoEndereco.Complemento, pessoa.Endereco.Complemento);
+            Assert.Equal(novoEndereco.Bairro, pessoa.Endereco.Bairro);
+            Assert.Equal(novoEndereco.Cidade, pessoa.Endereco.Cidade);
+            Assert.Equal(novoEndereco.Estado, pessoa.Endereco.Estado);
+            Assert.Equal(novoEndereco.ToString(), pessoa.Endereco.ToString());
             Assert.NotNull(pessoa.DataAtualizacao);
             Assert.True(DateTime.UtcNow.AddMinutes(-1) <= pessoa.DataAtualizacao && pessoa.DataAtualizacao <= DateTime.UtcNow);
         }
