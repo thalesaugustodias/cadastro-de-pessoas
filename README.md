@@ -2,6 +2,13 @@
 
 O projeto Cadastro de Pessoas é uma solução completa de gerenciamento de cadastros desenvolvida com .NET 8 (backend) e React 18 (frontend). Esta aplicação demonstra boas práticas de desenvolvimento, arquitetura limpa e utilização de tecnologias modernas.
 
+## 🚀 Aplicação em Produção
+
+A aplicação está disponível nos seguintes endereços:
+
+- **Backend (API)**: [https://cadastro-de-pessoas-vina.onrender.com/swagger/index.html](https://cadastro-de-pessoas-vina.onrender.com/swagger/index.html)
+- **Frontend**: [https://cadastro-de-pessoas-web.onrender.com/](https://cadastro-de-pessoas-web.onrender.com/)
+
 ## 🏗️ Estrutura do Projeto
 
 O projeto segue uma arquitetura em camadas com separação clara de responsabilidades:
@@ -106,15 +113,57 @@ No arquivo `appsettings.json` ou `appsettings.Development.json`:
 ## 📝 API Documentation
 
 A documentação da API está disponível via Swagger:
-- `https://localhost:5001/swagger`
+- `https://localhost:5001/swagger` (ambiente local)
+- `https://cadastro-de-pessoas-vina.onrender.com/swagger` (ambiente de produção)
 
 ## 🧪 Testes
+
+### Executando Testes Unitários
 
 Para executar os testes automatizados:
 
 ```bash
 dotnet test
 ```
+
+### Gerando Relatório de Cobertura
+
+Para executar os testes com geração de relatório de cobertura:
+
+```powershell
+# PowerShell (Windows)
+dotnet test --collect:"XPlat Code Coverage"; reportgenerator -reports:"**/TestResults/**/coverage.cobertura.xml" -targetdir:coverage_report -reporttypes:Html
+```
+
+```bash
+# Bash (Linux/macOS)
+dotnet test --collect:"XPlat Code Coverage" && reportgenerator -reports:"**/TestResults/**/coverage.cobertura.xml" -targetdir:coverage_report -reporttypes:Html
+```
+
+O relatório de cobertura será gerado na pasta `coverage_report` e pode ser visualizado abrindo o arquivo `index.html` em um navegador.
+
+## ✨ Funcionalidades Implementadas
+
+A aplicação atende a todos os requisitos solicitados no desafio e inclui diversas funcionalidades adicionais:
+
+### Requisitos Originais Atendidos:
+- ✅ Cadastro completo de pessoas com validações
+- ✅ Listagem de pessoas cadastradas com paginação
+- ✅ Edição e exclusão de cadastros
+- ✅ Frontend responsivo e amigável
+- ✅ API RESTful seguindo boas práticas
+- ✅ Arquitetura em camadas
+
+### Funcionalidades Extras:
+- ✅ **Sistema de Autenticação e Autorização**: Login, registro e JWT para proteção de rotas
+- ✅ **Perfil de Usuário**: Gerenciamento de perfil e senha
+- ✅ **Endereços Completos**: Suporte para cadastro de endereços detalhados
+- ✅ **Importação e Exportação**: Suporte para importar/exportar cadastros em Excel e CSV
+- ✅ **Cache com Redis**: Implementação de cache para melhor performance
+- ✅ **Documentação via Swagger**: API completamente documentada
+- ✅ **Testes Automatizados**: Cobertura significativa com testes unitários
+- ✅ **Validações Avançadas**: Verificação de CPF, formatação de dados, etc.
+- ✅ **Deploy em Produção**: Aplicação disponível online
 
 ## 🤝 Contribuição
 
