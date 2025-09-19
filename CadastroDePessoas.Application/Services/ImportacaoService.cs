@@ -1,4 +1,3 @@
-using System.Globalization;
 using CadastroDePessoas.Application.CQRS.Comandos.Pessoa.CriarPessoa;
 using CadastroDePessoas.Application.DTOs;
 using CadastroDePessoas.Domain.Enums;
@@ -6,9 +5,11 @@ using CadastroDePessoas.Domain.Interfaces;
 using CadastroDePessoas.Domain.Validacoes;
 using ClosedXML.Excel;
 using MediatR;
+using System.Globalization;
 
 namespace CadastroDePessoas.Application.Services
 {
+
     public class ImportacaoService(IMediator mediator, IRepositorioPessoa repositorioPessoa)
     {
         private static readonly string[] DateFormats = { 
@@ -36,26 +37,20 @@ namespace CadastroDePessoas.Application.Services
             {
                 using var workbook = new XLWorkbook(excelStream);
                 var worksheet = workbook.Worksheets.FirstOrDefault() ?? 
-                    throw new Exception("Arquivo Excel não contém planilhas");
+                    throw new ImportacaoException("Arquivo Excel não contém planilhas");
                 
                 var cabecalhos = new List<string>();
                 var primeiraLinha = worksheet.Row(1);
-                
-                foreach (var cell in primeiraLinha.Cells())
-                {
-                    if (!string.IsNullOrWhiteSpace(cell.Value.ToString()))
-                    {
-                        cabecalhos.Add(cell.Value.ToString().Trim());
-                    }
-                }
-                
+                cabecalhos.AddRange(from cell in primeiraLinha.Cells()
+                                    where !string.IsNullOrWhiteSpace(cell.Value.ToString())
+                                    select cell.Value.ToString().Trim());
                 if (cabecalhos.Count == 0)
                 {
-                    throw new Exception("Cabeçalhos não encontrados na planilha");
+                    throw new ImportacaoException("Cabeçalhos não encontrados na planilha");
                 }
                 
                 var linhaInicial = 2;
-                var ultimaLinha = worksheet.LastRowUsed().RowNumber();
+                var ultimaLinha = worksheet.LastRowUsed()?.RowNumber();
                 
                 for (int i = linhaInicial; i <= ultimaLinha; i++)
                 {
@@ -245,7 +240,7 @@ namespace CadastroDePessoas.Application.Services
             return await ImportarExcel(excelStream, importarParcialmente);
         }
         
-        private async Task ConvertCsvToExcel(Stream csvStream, Stream excelStream)
+        private static async Task ConvertCsvToExcel(Stream csvStream, Stream excelStream)
         {
             if (csvStream.CanSeek)
             {
@@ -258,7 +253,7 @@ namespace CadastroDePessoas.Application.Services
             
             if (lines.Length == 0)
             {
-                throw new Exception("Arquivo CSV vazio");
+                throw new ImportacaoException("Arquivo CSV vazio");
             }
             
             using var workbook = new XLWorkbook();
@@ -435,14 +430,14 @@ namespace CadastroDePessoas.Application.Services
         
         private static string GetValor(Dictionary<string, string> registro, string campo)
         {
-            if (registro.TryGetValue(campo, out string valor))
+            if (registro.TryGetValue(campo, out var valor) && valor is not null)
             {
                 return valor;
             }
             return string.Empty;
         }
         
-        public async Task<byte[]> GerarTemplateExcel()
+        public static Task<byte[]> GerarTemplateExcel()
         {
             using var workbook = new XLWorkbook();
             var worksheet = workbook.AddWorksheet("Template");
@@ -494,7 +489,7 @@ namespace CadastroDePessoas.Application.Services
             
             using var ms = new MemoryStream();
             workbook.SaveAs(ms);
-            return ms.ToArray();
+            return Task.FromResult(ms.ToArray());
         }
     }
 }
