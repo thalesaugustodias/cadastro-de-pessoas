@@ -113,7 +113,6 @@ namespace CadastroDePessoas.Application.Services
 
             using var ms = new MemoryStream();
             var document = new Document(PageSize.A4.Rotate());
-            var writer = PdfWriter.GetInstance(document, ms);
             document.Open();
 
             // Adicionar título
@@ -173,7 +172,7 @@ namespace CadastroDePessoas.Application.Services
             return ms.ToArray();
         }
 
-        public async Task<byte[]> GerarTemplateCsv()
+        public static async Task<byte[]> GerarTemplateCsv()
         {
             var cabecalhos = "Nome,Email,CPF,DataNascimento,Telefone,Sexo,Naturalidade,Nacionalidade,CEP,Logradouro,Numero,Complemento,Bairro,Cidade,Estado";
             var exemplo = "\"João Silva\",\"joao@email.com\",\"123.456.789-01\",\"1990-01-01\",\"(11) 99999-9999\",\"0\",\"São Paulo\",\"Brasil\",\"01310-100\",\"Av. Paulista\",\"1000\",\"Apto 101\",\"Bela Vista\",\"São Paulo\",\"SP\"";
@@ -182,7 +181,7 @@ namespace CadastroDePessoas.Application.Services
             return Encoding.UTF8.GetBytes(conteudo);
         }
 
-        private string ObterNomeCampo(string campo)
+        private static string ObterNomeCampo(string campo)
         {
             return campo switch
             {
@@ -205,7 +204,7 @@ namespace CadastroDePessoas.Application.Services
             };
         }
 
-        private string ObterValorCampo(PessoaDTO pessoa, string campo)
+        private static string ObterValorCampo(PessoaDTO pessoa, string campo)
         {
             return campo switch
             {
