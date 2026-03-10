@@ -11,6 +11,7 @@ import ImportarDados from './pages/pessoas/ImportarDados';
 import ExportarDados from './pages/pessoas/ExportarDados';
 import MeuPerfil from './pages/sistema/MeuPerfil';
 import Configuracoes from './pages/sistema/Configuracoes';
+import RelatorioTecnico from './pages/sistema/RelatorioTecnico';
 
 import NotFound from './pages/NotFound';
 import AcessoNegado from './pages/AcessoNegado';
@@ -56,6 +57,7 @@ const AppRoutes = () => {
                 </Route>
                 <Route path="perfil" element={<MeuPerfil />} />
                 <Route path="configuracoes" element={<Configuracoes />} />
+                <Route path="relatorio-tecnico" element={<RelatorioTecnico />} />
             </Route>
 
             <Route path="/pagina-nao-encontrada" element={<NotFound />} />
