@@ -21,6 +21,7 @@ import {
     FiUser,
     FiDownload,
     FiUpload,
+    FiFileText,
 } from 'react-icons/fi';
 
 const SidebarItem = ({ icon, children, to, isActive, badge, description }) => {
@@ -235,6 +236,15 @@ const Sidebar = ({ isOpen }) => {
                         description="Preferências do sistema"
                     >
                         Configurações
+                    </SidebarItem>
+
+                    <SidebarItem
+                        icon={FiFileText}
+                        to="/relatorio-tecnico"
+                        isActive={location.pathname === '/relatorio-tecnico'}
+                        description="SDA-56 · Disputa da Timeline"
+                    >
+                        Relatório Técnico
                     </SidebarItem>
                 </SidebarSection>
             </VStack>
