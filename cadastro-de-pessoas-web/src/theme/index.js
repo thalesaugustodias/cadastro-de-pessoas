@@ -440,6 +440,12 @@ const theme = extendTheme({
                 },
             },
         },
+
+        Icon: {
+            baseStyle: {
+                color: 'currentColor',
+            },
+        },
     },
 });
 

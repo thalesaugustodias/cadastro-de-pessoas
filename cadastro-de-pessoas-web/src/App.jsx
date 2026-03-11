@@ -7,7 +7,6 @@ import { useNotification } from './hooks/useNotification';
 import { setupApiErrorHandling } from './services/api';
 import theme from './theme';
 import AppRoutes from './routes.jsx';
-import './styles/icon-fixes.css';
 
 const ApiErrorHandler = () => {
     const navigate = useNavigate();
