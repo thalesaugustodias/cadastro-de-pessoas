@@ -1,3 +1,11 @@
+/*
+ * Estilos globais para corrigir a exibição de ícones do Chakra UI.
+ *
+ * Nota: Este projeto usa React (não Angular). A substituição do encapsulamento
+ * de estilos em React é feita via CSS global ou via prop `sx` do Chakra UI.
+ * O seletor `::ng-deep` do Angular (depreciado desde Angular 7) não se aplica aqui.
+ */
+
 /* Estilos para corrigir a exibição de ícones */
 .chakra-icon {
   color: currentColor !important; /* Isso fará o ícone herdar a cor do elemento pai */
