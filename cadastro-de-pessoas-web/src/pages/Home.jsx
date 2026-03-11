@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/icon-fixes.css';
 import {
     Box,
     Heading,
@@ -114,7 +113,7 @@ const StatCard = ({ title, value, icon, color, helpText, isLoading }) => {
                             boxShadow={boxShadow}
                             animation={isLoading ? `${pulse} 1.5s ease-in-out infinite` : 'none'}
                         >
-                            <Icon as={icon} boxSize="6" color="white" style={{ color: 'white' }} />
+                            <Icon as={icon} boxSize="6" color="white" />
                         </Flex>
                     </HStack>
                     
@@ -182,7 +181,7 @@ const QuickActionCard = ({ title, description, icon, color, to, onClick }) => {
                         bg={bgGradient}
                         boxShadow={boxShadow}
                     >
-                        <Icon as={icon} boxSize="8" color="white" style={{ color: 'white !important' }} />
+                        <Icon as={icon} boxSize="8" color="white" />
                     </Flex>
                     
                     <Box>
@@ -259,7 +258,7 @@ const WelcomeCard = ({ user, stats }) => {
                             Administrador
                         </Badge>
                         <HStack key="welcome-date" spacing={2} mt={2}>
-                            <Icon as={FiClock} boxSize="3" color="white" style={{ color: 'white' }} />
+                            <Icon as={FiClock} boxSize="3" color="white" />
                             <Text fontSize="sm" opacity="0.8">
                                 {new Date().toLocaleDateString('pt-BR', { 
                                     weekday: 'long', 
@@ -306,7 +305,7 @@ const RecentActivity = ({ pessoas, isLoading }) => {
                         <Heading size="md" color="gray.800">
                             Cadastros Recentes
                         </Heading>
-                        <Icon as={FiActivity} color="gray.400" style={{ color: 'var(--chakra-colors-gray-400)' }} />
+                        <Icon as={FiActivity} color="gray.400" />
                     </HStack>
                     
                     <VStack spacing={4} align="stretch">
@@ -496,7 +495,7 @@ const StatisticsCard = ({ pessoas }) => {
                     <Heading size="md" color="gray.800">
                         Estatísticas
                     </Heading>
-                    <Icon as={FiPieChart} color="gray.400" style={{ color: 'var(--chakra-colors-gray-400)' }} />
+                    <Icon as={FiPieChart} color="gray.400" />
                 </HStack>
                 
                 <VStack spacing={4} align="stretch">
@@ -694,7 +693,7 @@ const Home = () => {
                     Visão Geral
                 </Heading>
                 <Button 
-                    leftIcon={<Icon as={FiRefreshCw} style={{ color: 'inherit' }} />}
+                    leftIcon={<FiRefreshCw />}
                     onClick={handleRefresh}
                     variant="outline"
                     size="sm"
