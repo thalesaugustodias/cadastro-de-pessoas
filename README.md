@@ -161,6 +161,42 @@ A aplicação atende a todos os requisitos solicitados no desafio e inclui diver
 - ✅ **Validações Avançadas**: Verificação de CPF, formatação de dados, etc.
 - ✅ **Deploy em Produção**: Aplicação disponível online
 
+## 🎨 Padrões de Estilização CSS
+
+Este projeto utiliza **React 18** (não Angular), portanto **não utiliza** o seletor `::ng-deep`, que é exclusivo do Angular.
+
+### Por que `::ng-deep` não se aplica aqui?
+
+O `::ng-deep` é uma pseudo-classe CSS específica do Angular usada para forçar a penetração do encapsulamento de estilos dos componentes. Ele foi **depreciado oficialmente desde o Angular 7** (lançado em 2018) — muito antes das versões 20+. Seu uso continuou funcionando nas versões posteriores, mas sempre com um aviso de depreciação, e a remoção definitiva está planejada pelo time do Angular.
+
+Como este projeto usa **React com Chakra UI**, a estilização global de componentes é feita de forma diferente:
+
+| Angular (depreciado)         | React/Chakra UI (usado neste projeto)         |
+|------------------------------|-----------------------------------------------|
+| `::ng-deep .meu-seletor {}`  | CSS global em `index.css` ou `icon-fixes.css` |
+| `ViewEncapsulation.None`     | `sx` prop no Chakra UI                        |
+| `:host ::ng-deep`            | Theming via `extendTheme` do Chakra UI        |
+
+### Abordagem adotada no projeto
+
+Os estilos globais do projeto estão organizados em:
+- **`src/index.css`** — reset e estilos base da aplicação
+- **`src/App.css`** — estilos do layout principal
+- **`src/styles/icon-fixes.css`** — correções de exibição para ícones do Chakra UI
+
+Exemplo de como substituir o `::ng-deep` no contexto React/Chakra UI:
+
+```jsx
+// ❌ Não se aplica (Angular com ::ng-deep depreciado)
+// ::ng-deep .chakra-icon { color: white; }
+
+// ✅ Correto no React com Chakra UI — usando a prop sx:
+<Icon as={MeuIcone} sx={{ color: 'white' }} />
+
+// ✅ Ou via CSS global (como usado em icon-fixes.css):
+// .chakra-icon { color: currentColor !important; }
+```
+
 ## 🤝 Contribuição
 
 Contribuições são bem-vindas! Para contribuir:
